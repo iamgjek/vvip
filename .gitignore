@@ -1,0 +1,28 @@
+# 設定檔
+.env
+local_settings.py
+.vscode
+*.pyc
+config.ini
+
+# 靜態文件
+/static/*
+/media/*
+/logs/*
+
+# db
+db.sqlite3
+
+__pycache__/
+
+# 當資料庫有變更時
+# 在本地端執行:
+# python manage.py makemigrations
+# python manage.py migrate
+# 沒問題後請註釋:
+*/migrations/*
+# 把 migrations 上到gitlab後再解註釋 */migrations/*
+
+celerybeat-schedule
+uwsgi.sock
+nginx.conf
