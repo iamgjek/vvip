@@ -1,15 +1,48 @@
-from django.shortcuts import render
-from django.views import View
-from rest_framework import authentication, permissions, serializers
-from rest_framework.views import APIView
-import time
 import json
-from django.http import HttpResponse, JsonResponse
-from v_search.util import CustomJsonEncoder, get_dba
+import logging
+import time
 from datetime import date, datetime, timedelta
 
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
+from django.views.generic.base import TemplateView, View
+from rest_framework import authentication, permissions, serializers
+from rest_framework.views import APIView
 
-class GetSearchResponseV3View(APIView): # LoginRequiredMixin
+from v_search.util import CustomJsonEncoder, get_dba
+
+# Create your views here.
+logger = logging.getLogger(__name__)
+
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        if self.request.GET.get('next'):
+            logger.debug('I see next!!!')
+            context['next'] = self.request.GET.get('next')
+        if self.request.GET.get('display_main'):
+            logger.debug('I see display_main!!!')
+            context['display_main'] = self.request.GET.get('display_main')
+        debug = False
+        if not self.request.user.is_anonymous:
+            context['first_name'] = self.request.user.first_name if len(self.request.user.first_name) > 0 else None
+            context['user_name'] = self.request.user.username
+            if self.request.user.username:
+                user = User.objects.get(username=self.request.user.username)
+                uid = user.id
+            if settings.DEBUG == True:
+                debug = True
+        context['debug'] = debug
+        return context
+
+
+class GetSearchResponseV3View(APIView):
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -718,3 +751,4 @@ class GetSearchResponseV3View(APIView): # LoginRequiredMixin
         en1 = time.perf_counter()
         print('查詢總時間 : {}'.format(en1 - st1))
         return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+

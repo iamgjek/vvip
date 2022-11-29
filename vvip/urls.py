@@ -20,8 +20,10 @@ from rest_framework import routers, serializers, viewsets
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
+from v_search import views as v_view
 
-urlpatterns = [
+urlpatterns = [    
+    re_path(r'^$', v_view.IndexView.as_view(), name="index"),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('api-auth/', include('rest_framework.urls')),
