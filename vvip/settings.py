@@ -14,6 +14,8 @@ from decouple import config, Csv
 import ast
 from pathlib import Path
 import os
+import ast
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'v_search',
+    'users',
+    't_search',
 
     'allauth',
     'allauth.account',
@@ -111,6 +115,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 ACCOUNT_LOGOUT_ON_GET = True
 
+ACCOUNT_ADAPTER = 'user.forms.NoNewUsersAccountAdapter'
 
 WSGI_APPLICATION = 'vvip.wsgi.application'
 
@@ -122,7 +127,24 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+}
+
+DATABASE_ROUTERS = ['vvip.db_router.DatabaseAppsRouter']
+DATABASE_APPS_MAPPING = {
+    # example:
+    # 'app_name':'database_name',
+    #'carinfo',
+    # 'bigdata': 'bigdata',
+    # 'developement': 'land_data',
+    # 'use_zone': 'land_data',
+    # 'users': 'land_data',
+    # 'ssapis': 'land_data',
+    # 'build_data': 'build_data',
+    # 'community': 'build_data',
+    # 'lvr_land': 'lvr_land',
+    't_search': 'diablo_test',
+    # 't_search': 'diablo',
 }
 
 

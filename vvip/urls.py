@@ -22,11 +22,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from v_search import views as v_view
 
-urlpatterns = [
+urlpatterns = [    
     re_path(r'^$', v_view.IndexView.as_view(), name="index"),
-    path(r'^admin/$', admin.site.urls),
-    path(r'^accounts/$', include('allauth.urls')),
-    path(r'^api-auth/$', include('rest_framework.urls'))
+    path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('v_search/', include('v_search.urls')),
 ]
 
 urlpatterns += [

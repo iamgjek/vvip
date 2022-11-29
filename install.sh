@@ -50,7 +50,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 # # 第一次 makemigrations 的動作 ！！
-# python manage.py makemigrations user common land building extra_building extra_land
+# python manage.py makemigrations user
 # python manage.py migrate
 
 python manage.py collectstatic --noinput
