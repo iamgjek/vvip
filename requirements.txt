@@ -20,7 +20,7 @@ djangorestframework==3.13.1
 drf-spectacular==0.22.0
 
 # 影像處理
-# Pillow==9.0.1
+Pillow==9.0.1
 
 # 座標處理
 # django-leaflet==0.28.3
