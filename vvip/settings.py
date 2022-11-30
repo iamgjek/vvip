@@ -10,12 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from decouple import config, Csv
 import ast
-from pathlib import Path
 import os
-import ast
+from pathlib import Path
 
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+40=cx1=%@eo4w-1v663)&kp$+-^cd20#ki0r2%l5uur2_ln)5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool, default=True)
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -130,7 +129,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 ACCOUNT_LOGOUT_ON_GET = True
 
-ACCOUNT_ADAPTER = 'user.forms.NoNewUsersAccountAdapter'
+ACCOUNT_ADAPTER = 'users.forms.NoNewUsersAccountAdapter'
 
 WSGI_APPLICATION = 'vvip.wsgi.application'
 
