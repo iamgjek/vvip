@@ -1,6 +1,8 @@
 import json
 import logging
+import requests
 import time
+import pandas as pd
 from datetime import date, datetime, timedelta
 
 from django.conf import settings
@@ -11,10 +13,14 @@ from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 from rest_framework import authentication, permissions, serializers
 from rest_framework.views import APIView
+from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
+
+from v_search.serializers import PlanNameSerializer
 
 from v_search.util import CustomJsonEncoder, get_dba
+from t_search.models import info_config
 
-# Create your views here.
 logger = logging.getLogger(__name__)
 
 class IndexView(TemplateView):
@@ -40,6 +46,41 @@ class IndexView(TemplateView):
                 debug = True
         context['debug'] = debug
         return context
+
+class GetPlanNameView(APIView):
+    authentication_classes = [authentication.SessionAuthentication]  #authentication.TokenAuthentication, 
+    permission_classes = [permissions.AllowAny] # permissions.IsAuthenticated
+
+    def process(self, datas):
+        name_res, nickname_res = [], []
+        area = datas.get('area')
+        sql = f"SELECT T1.lbkey, T2.plan_name, T2.nickname \
+                FROM diablo.t_search_landdevelopementlkeyslist T1 LEFT JOIN diablo.t_search_landdevelopementlist T2 on T1.plan_id = T2.plan_id \
+                WHERE  T2.valid =1 and lbkey LIKE '{area}%' \
+                "
+        res, col = get_dba(sql_cmd=sql, db_name='diablo_test')
+        data_df = pd.DataFrame(res)
+        if data_df.empty:
+            pass
+        else:
+            # print(data_df)
+            group_name = data_df['plan_name'].to_list()
+            name_res = list(set(group_name))
+            group_nickname = data_df['nickname'].to_list()
+            nickname_res = list(set(group_nickname))
+        return name_res, nickname_res
+
+    def post(self, request):
+        result = {}
+        serializer = PlanNameSerializer(data=request.data)
+        if serializer.is_valid():
+            name_res, nickname_res = self.process(request.data)
+            result['plan_name'] = name_res
+            result['nick_name'] = nickname_res
+        return Response(result)
+
+
+
 
 
 class GetSearchResponseV3View(APIView):
@@ -683,17 +724,15 @@ class GetSearchResponseV3View(APIView):
                 print('組sql語法時間 : {}'.format(com_sql_t2 - com_sql_t1))
 
                 qs_sql_t1 = time.perf_counter()
-                subscriberecords_qs, headers = get_dba(sql, "default")
-
+                subscriberecords_qs, headers = get_dba(sql, "diablo_test")
 
                 qs_sql_t2 = time.perf_counter()
                 print('sql查詢時間 : {}'.format(qs_sql_t2 - qs_sql_t1))
                 print(len(subscriberecords_qs))
-                print(subscriberecords_qs[0])
+                # print(subscriberecords_qs[0])
                 rb_sql_t1 = time.perf_counter()
 
                 result["status"] = 'OK'
-                # result['datas'] = fd
                 rb_sql_t2 = time.perf_counter()
                 print('組完資料輸出時間 : {}'.format(rb_sql_t2 - rb_sql_t1))
 
@@ -708,36 +747,15 @@ class GetSearchResponseV3View(APIView):
 
     def process(self, params, request):
         result = {'status':'NG'}
-
         if params.get('lbtype') == 'L':
-            lbkey_sub = SubscribeLkeys
             self.sql_select_db = 'L'
             self.json_lbtype = 'land'
         else:
-            lbkey_sub = SubscribeBkeys
             self.sql_select_db = 'B'
             self.json_lbtype = 'build'
 
-
-        # package_id = None
-
-        # self.package_lbkey_list = [] # 總包id
-        # self.p_id = []
-
-        # if package_id:
-        #     if isinstance(package_id[0], int):
-        #         # print('有指定')
-        #         self.p_id = package_id
-        # else:
-        #     # print('無指定')
-        #     package_id_qs = SubscribeRecords.objects.filter(user_id=self.user)
-        #     self.p_id = [x.id for x in package_id_qs]
-
-        # if self.p_id:
         qs_msg = self.clean_data_sql(params)
         result.update(qs_msg)
-        # else:
-        #     result['msg'] = '查無使用者訂閱包'
 
         return result
 
