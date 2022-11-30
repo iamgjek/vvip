@@ -66,6 +66,21 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+# drf-spectacular API網頁顯示設定
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'vvip',
+    'DESCRIPTION': 'vvip',
+    'VERSION': '0.0.1',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'], # 預設權限
+    # OTHER SETTINGS
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -212,6 +227,14 @@ CACHES = {
 }
 
 
+BIGDATA_HOST = 'https://104.yeshome.net.tw'
+
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 
 LOG_LEVEL = 'INFO'
 if DEBUG == True:
@@ -282,7 +305,3 @@ LOGGING = {
 
 
 
-try:
-    from local_settings import *
-except ImportError:
-    pass
