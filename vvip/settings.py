@@ -10,12 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from decouple import config, Csv
 import ast
-from pathlib import Path
 import os
-import ast
+from pathlib import Path
 
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+40=cx1=%@eo4w-1v663)&kp$+-^cd20#ki0r2%l5uur2_ln)5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool, default=True)
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -64,6 +63,21 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# drf-spectacular API網頁顯示設定
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'vvip',
+    'DESCRIPTION': 'vvip',
+    'VERSION': '0.0.1',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'], # 預設權限
+    # OTHER SETTINGS
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
 }
 
 MIDDLEWARE = [
@@ -115,7 +129,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 ACCOUNT_LOGOUT_ON_GET = True
 
-ACCOUNT_ADAPTER = 'user.forms.NoNewUsersAccountAdapter'
+ACCOUNT_ADAPTER = 'users.forms.NoNewUsersAccountAdapter'
 
 WSGI_APPLICATION = 'vvip.wsgi.application'
 
@@ -212,6 +226,14 @@ CACHES = {
 }
 
 
+BIGDATA_HOST = 'https://104.yeshome.net.tw'
+
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 
 LOG_LEVEL = 'INFO'
 if DEBUG == True:
@@ -282,7 +304,3 @@ LOGGING = {
 
 
 
-try:
-    from local_settings import *
-except ImportError:
-    pass
