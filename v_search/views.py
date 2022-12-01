@@ -47,6 +47,13 @@ class IndexView(TemplateView):
         context['debug'] = debug
         return context
 
+class LandDevView(View):
+    TAG = '[LandDevView]'
+    template_name = 'land_dev.html'
+
+    def get(self, request, **kwargs):
+        return render(request, self.template_name)
+
 class GetPlanNameView(APIView):
     authentication_classes = [authentication.SessionAuthentication]  #authentication.TokenAuthentication, 
     permission_classes = [permissions.AllowAny] # permissions.IsAuthenticated

@@ -1,0 +1,1256 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <!--meta content="width=device-width, initial-scale=1" name="viewport"-->
+    <title></title>
+    <link rel="icon" type="image/ico" href="/static/favicon.ico">
+    <link rel="shortcut icon" type="image/ico" href="/static/favicon.ico">
+    <!-- sunnylogin -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery-peeper.css">
+    <link href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/index.css">
+
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-submenu/3.0.1/js/bootstrap-submenu.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
+    <script src="/static/js/index.js"></script>
+    {% endblock %}
+</head>
+
+<body>
+    {% block body %}
+    <div id="vue_app" class="cont">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand logo1" href="#"></a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item bi"><a href="#">土地開發</a></li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="dropdown">
+                <a class="btn dropdown-toggle w-150" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    uswe name<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                        <path
+                            d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z">
+                        </path>
+                    </svg>
+                </a>
+
+                <div class="dropdown-menu bn1" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="#"><img src="/static/images/返回.png"
+                            style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出</a></a>
+                </div>
+            </div>
+        </nav>
+        <div class="container wrap">
+            <nav aria-label="breadcrumb" class="bb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">首頁</a></li>
+                    <li class="breadcrumb-item"><a href="#">土地開發</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">搜尋結果</li>
+                </ol>
+            </nav>
+            <div class="row r1">
+                <div class="row">
+                    <label class="col-form-label w-80 text-center1" for="edit-text-name-id">搜尋</label>
+                    <div class="w-200">
+                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                            aria-label="Default select example">
+                            <option value="" selected>縣市</option>
+                            <option value="">縣市縣市</option>
+                            <option value="">縣市</option>
+                        </select>
+                    </div>
+                    <div class="w-200">
+                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                            aria-label="Default select example">
+                            <option value="DF" selected>行政區</option>
+                            <option value="LG">行政區行政區</option>
+                            <option value="SM">行政區</option>
+                        </select>
+                    </div>
+                    <div class="w-200">
+                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                            aria-label="Default select example">
+                            <option value="DF" selected>段小段</option>
+                            <option value="LG">段小段段小段段小段</option>
+                            <option value="SM">段小段</option>
+                        </select>
+                    </div>
+                    <div class="w-200">
+                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                            aria-label="Default select example">
+                            <option value="DF" selected>計劃案</option>
+                            <option value="LG">計劃案計劃案計劃案</option>
+                            <option value="SM">計劃案</option>
+                        </select>
+                    </div>
+                    <div class="w-200">
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle  custom-select left" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                地號
+                            </button>
+                            <div class="dropdown-menu">
+                                <form class="px-4 py-3 row pp">
+                                    <div class="form-group col-sm-6">
+                                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                                            aria-label="Default select example">
+                                            <option value="DF" selected>單筆</option>
+                                            <option value="LG">單筆</option>
+                                            <option value="SM">單筆</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-6 pp1">
+                                        <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                                        <label class="form-check-label" for="dropdownCheck">包含失效資料</label>
+                                    </div>
+                                    <div class="form-check col-sm-12 pp2">
+                                        <input type="" class="form-control" id="exampleDropdownFormPassword1"
+                                            placeholder="地號">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-200">
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle custom-select on on1 left" type="button"
+                                data-toggle="dropdown" data-submenu>
+                                使用分區
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown dropright dropdown-submenu">
+                                    <button class="dropdown-item" type="button">不拘</button>
+                                </div>
+                                <div class="dropdown dropright dropdown-submenu">
+                                    <button class="dropdown-item dropdown-toggle" type="button">都內</button>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">住宅區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">工業區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">商業區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">農業區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">風景區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">別墅區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">林業區</button>
+                                        <button class="dropdown-item" type="button"><input type="checkbox"
+                                                class="form-check-input" id="exampleCheck1">其他依字母排序</button>
+                                    </div>
+                                </div>
+                                <div class="dropdown dropright dropdown-submenu">
+                                    <button class="dropdown-item dropdown-toggle" type="button">都外</button>
+                                    <div class="dropdown-menu">
+                                        <div class="dropdown dropright dropdown-submenu">
+                                            <button class="dropdown-item dropdown-toggle" type="button">都外</button>
+                                            <div class="dropdown-menu">
+                                                <button class="dropdown-item" type="button"><input type="checkbox"
+                                                        class="form-check-input" id="exampleCheck1">依字母排序</button>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown dropright dropdown-submenu">
+                                            <button class="dropdown-item dropdown-toggle" type="button">都內</button>
+                                            <div class="dropdown-menu">
+                                                <button class="dropdown-item" type="button"><input type="checkbox"
+                                                        class="form-check-input" id="exampleCheck1">依字母排序</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="w-200">
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle custom-select on1 left" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                土地面積
+                            </button>
+                            <div class="dropdown-menu">
+                                <form class="p3 pp row">
+                                    <div class="col-sm-6">
+                                        <select id="bs-size-name-id" class="form-control custom-select col-sm-12 w-10"
+                                            aria-label="Default select example">
+                                            <option value="" selected>總面積</option>
+                                            <option value="">總面積</option>
+                                            <option value="">總面積</option>
+                                        </select>
+                                    </div>
+                                    <div class="row v4">
+                                        <input type="" class="form-control col-sm-3 v2"
+                                            id="exampleDropdownFormPassword1" placeholder="0">
+                                        <label class="col-form-label la1" for="edit-text-name-id">坪-</label>
+                                        <input type="" class="form-control col-sm-3 v2"
+                                            id="exampleDropdownFormPassword1" placeholder="0">
+                                        <label class="col-form-label la1" for="edit-text-name-id">坪</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="w-80 float-end">
+                        <button class="btn btn-secondary btn1" data-toggle="collapse" href="#collapseExample"
+                            role="button" aria-expanded="false" aria-controls="collapseExample">
+                            進階
+                        </button>
+                    </div>
+                    <div class="w-125 float-end">
+                        <button type="button" class="btn btn-primary">
+                            <svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24"
+                                width="24px" fill="#FFFFFF">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                            </svg>搜尋
+                        </button>
+                    </div>
+                </div>
+
+                <div class="collapse r2" id="collapseExample">
+                    <div class="card card-body">
+                        <div class="row row1">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
+                            <div class="w-200">
+
+                                <select id="bs1" multiple="multiple" class="form-select  custom-select">
+                                    <option value="">自然人</option>
+                                    <option value="">私法人</option>
+                                    <option value="">公法人</option>
+                                    <option value="">非公有</option>
+                                    <option value="">部分公有</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+
+                                <select id="bs2" class="f1 form-select custom-select">
+                                    <option value="DF">公有共有</option>
+                                    <option value="DF">不拘</option>
+                                    <option value="LG">排除</option>
+                                    <option value="SM">只有</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+
+                                <select id="enable" multiple="multiple" class="form-select form-control">
+                                    <option value="">不拘</option>
+                                    <option value="">繼承</option>
+                                    <option value="">贈與</option>
+                                    <option value="">買賣</option>
+                                    <option value="">...</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+
+                                <div class="dropdown on1">
+                                    <button class="btn dropdown-toggle custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        持有年限
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp row">
+                                            <div class="col-sm-6">
+                                                <select id="bs-size-name-id"
+                                                    class="form-control custom-select col-sm-12"
+                                                    aria-label="Default select example">
+                                                    <option value="" selected>半年內</option>
+                                                    <option value="">半年內</option>
+                                                    <option value="">半年內</option>
+                                                </select>
+                                            </div>
+                                            <div class="row v4">
+                                                <input type="" class="form-control col-sm-3 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">年-</label>
+                                                <input type="" class="form-control col-sm-3 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">年</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="w-200 on1">
+
+                                <select id="bs3" multiple="multiple" class="form-select form-control col ">
+                                    <option value="">不拘</option>
+                                    <option value="">國一</option>
+                                    <option value="">國二</option>
+                                    <option value="">國三</option>
+                                    <option value="">...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row row-cols-auto row1">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">面積價值</label>
+                            <div class="w-200">
+
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle  custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        公告現值
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp">
+                                            <div class="row pp2">
+                                                <input type="" class="form-control col-sm-2 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
+                                                <input type="" class="form-control col-sm-2 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">萬</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="w-200">
+
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle  custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        個人持分總值
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp">
+                                            <div class="pp2 row">
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">萬</label>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="w-200">
+
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle  custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        個人持分總面積
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp">
+                                            <div class="pp2 row">
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">坪-</label>
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">坪</label>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row row-cols-auto row1">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">所有權人</label>
+                            <div class="w-200">
+                                <script type="text/javascript">
+                                    $('#example-single').multiselect();
+                                </script>
+                                <select id="example-single" class="form-select custom-select">
+                                    <option value="DF" selected>年齡區間</option>
+                                    <option value="LG">民國前</option>
+                                    <option value="SM">民國20年以前</option>
+                                    <option value="SM">民國21~30年以前</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+
+                                <select id="example-getting-started" multiple="multiple"
+                                    class="form-select custom-select">
+                                    <option value="LG">不拘</option>
+                                    <option value="SM">台灣</option>
+                                    <option value="SM">越南</option>
+                                    <option value="SM">印尼</option>
+                                    <option value="SM">中國</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle  custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        所有權人數
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp">
+                                            <div class="pp2 row">
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">人-</label>
+                                                <input type="" class="form-control col-sm-2"
+                                                    id="exampleDropdownFormPassword1" placeholder="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">人</label>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row row-cols-auto row1">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">其他設定</label>
+                            <div class="w-200">
+                                <select id="" class="form-select custom-select" aria-label="Default select example">
+                                    <option value="DF" selected>他項標記</option>
+                                    <option value="LG">他項標記</option>
+                                    <option value="SM">他項標記</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+                                <select id="bs-size-name-id" class="form-select custom-select"
+                                    aria-label="Default select example">
+                                    <option value="DF" selected>限制登記</option>
+                                    <option value="LG">限制登記</option>
+                                    <option value="SM">限制登記</option>
+                                </select>
+                            </div>
+                            <div class="w-200">
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle  custom-select left" type="button"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        lbkey
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <form class="p3 pp row">
+                                            <div class="col-sm-6">
+                                                <select id="bs-size-name-id"
+                                                    class="form-control custom-select col-sm-12 w-10"
+                                                    aria-label="Default select example">
+                                                    <option value="DF" selected>區間</option>
+                                                    <option value="LG">區間</option>
+                                                    <option value="SM">區間</option>
+                                                </select>
+                                            </div>
+                                            <div class="row v4">
+                                                <input type="" class="form-control col-sm-5 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="起">
+                                                <label class="col-form-label la1" for="edit-text-name-id">～</label>
+                                                <input type="" class="form-control col-sm-5 v2"
+                                                    id="exampleDropdownFormPassword1" placeholder="迄">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <ul class="nav nav-pills mb-3 p-tab" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                        aria-controls="pills-home" aria-selected="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                            fill="#FFFFFF">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                        aria-controls="pills-profile" aria-selected="false">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                            fill="#FFFFFF">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+                    <div class="h3">桃園市<span class="grey">+</span>桃園區<span class="grey">+</span>和平段<span
+                            class="grey">+</span>商業區<span class="grey">+</span>總面積20-30坪</div>
+                    <div class="row" style="display: block;max-height: 50rem;overflow-y: auto;">
+                        <table class="table1 table-hover table-expandable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">縣市</th>
+                                    <th scope="col">行政區</th>
+                                    <th scope="col">段小段</th>
+                                    <th scope="col">地號</th>
+                                    <th scope="col">國土分區</th>
+                                    <th scope="col">使用分區</th>
+                                    <th scope="col">使用地類別</th>
+                                    <th scope="col">土地面積</th>
+                                    <th scope="col">公告現值</th>
+                                    <th scope="col">總公告(萬)</th>
+                                    <th scope="col">地上建物</th>
+                                    <th scope="col">權屬種類</th>
+                                    <th scope="col">所有權人</th>
+                                    <th scope="col">他項權利人</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                <tr data-node="treetable-1">
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p><a href="#demo" data-toggle="collapse">0061-0002</a></p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                                <tr id="demo" class="collapse cell-1 row-child">
+                                    <td colspan="15">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>登記次序</th>
+                                                    <th>登記日期</th>
+                                                    <th>登記原因</th>
+                                                    <th>所有權人</th>
+                                                    <th>統一編號</th>
+                                                    <th>住址</th>
+                                                    <th>出生日期</th>
+                                                    <th>權利範圍</th>
+                                                    <th>持分面積</th>
+                                                    <th>持分坪數</th>
+                                                    <th>持分現值(萬)</th>
+                                                    <th>他項權利(其他註記)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>1987年09月09日</td>
+                                                    <td>分割繼承</td>
+                                                    <td>呂＊＊</td>
+                                                    <td>H120*****0</td>
+                                                    <td>桃園市桃園區莊敬里１５鄰同安街８５１巷２號</td>
+                                                    <td></td>
+                                                    <td>3分之1</td>
+                                                    <td>741</td>
+                                                    <td>224.15</td>
+                                                    <td>16.61</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>1987年09月09日</td>
+                                                    <td>分割繼承</td>
+                                                    <td>呂＊＊</td>
+                                                    <td>H120*****0</td>
+                                                    <td>桃園市桃園區莊敬里１５鄰同安街８５１巷２號</td>
+                                                    <td></td>
+                                                    <td>3分之1</td>
+                                                    <td>741</td>
+                                                    <td>224.15</td>
+                                                    <td>16.61</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>1987年09月09日</td>
+                                                    <td>分割繼承</td>
+                                                    <td>呂＊＊</td>
+                                                    <td>H120*****0</td>
+                                                    <td>桃園市桃園區莊敬里１５鄰同安街８５１巷２號</td>
+                                                    <td></td>
+                                                    <td>3分之1</td>
+                                                    <td>741</td>
+                                                    <td>224.15</td>
+                                                    <td>16.61</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p>0061-000</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p>0061-000</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p>0061-000</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p>0061-000</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>桃園市(H)</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園區(01)</p>
+                                    </td>
+                                    <td>
+                                        <p>和平段(0015)</p>
+                                    </td>
+                                    <td>
+                                        <p>0061-000</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>(空白)</p>
+                                    </td>
+                                    <td>
+                                        <p>495</p>
+                                    </td>
+                                    <td>
+                                        <p>97,000</p>
+                                    </td>
+                                    <td>
+                                        <p>4,802</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>自然人</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>1</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="footer1">
+                        <div class="row">
+                            <div class="col-sm">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        <li class="page-item">
+                                            <span class="page-link">上一頁</span>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="h3">桃園市<span class="grey">+</span>桃園區<span class="grey">+</span>和平段<span
+                            class="grey">+</span>商業區<span class="grey">+</span>總面積20-30坪</div>
+                    <div class="row" style="display: block;max-height: 50rem;overflow-y: auto;">
+                        <table class="table1 table-hover table-expandable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">所有權人</th>
+                                    <th scope="col">統一編號</th>
+                                    <th scope="col">戶籍地址</th>
+                                    <th scope="col">出生日期</th>
+                                    <th scope="col">土地總比數</th>
+                                    <th scope="col">持分總評數</th>
+                                    <th scope="col">持分總現值(萬)</th>
+                                    <th scope="col">建物總比數</th>
+                                    <th scope="col">電話</th>
+                                    <th scope="col">所有權註記</th>
+                                    <th scope="col">身份標籤</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                <tr data-node="treetable-1">
+                                    <td>
+                                        <p><a href="#demo1" data-toggle="collapse">魏坤勝</a></p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                                <tr id="demo1" class="collapse cell-1 row-child">
+                                    <td colspan="15">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>縣市</th>
+                                                    <th>行政區</th>
+                                                    <th>段小段</th>
+                                                    <th>地號</th>
+                                                    <th>登記次序</th>
+                                                    <th>登記日期</th>
+                                                    <th>登記原因</th>
+                                                    <th>土地面積</th>
+                                                    <th>公告現值</th>
+                                                    <th>權利範圍</th>
+                                                    <th>持分坪數</th>
+                                                    <th>持分現值(萬)</th>
+                                                    <th>他項權利(其他註記)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>桃園市</td>
+                                                    <td>龜山區</td>
+                                                    <td>體大段</td>
+                                                    <td>0164-0000</td>
+                                                    <td>3</td>
+                                                    <td>1965年09月29日</td>
+                                                    <td>買賣</td>
+                                                    <td>1,644</td>
+                                                    <td>3,600</td>
+                                                    <td>3分之1</td>
+                                                    <td>0.2</td>
+                                                    <td>0</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>桃園市</td>
+                                                    <td>龜山區</td>
+                                                    <td>體大段</td>
+                                                    <td>0164-0000</td>
+                                                    <td>3</td>
+                                                    <td>1965年09月29日</td>
+                                                    <td>買賣</td>
+                                                    <td>1,644</td>
+                                                    <td>3,600</td>
+                                                    <td>3分之1</td>
+                                                    <td>0.2</td>
+                                                    <td>0</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>桃園市</td>
+                                                    <td>龜山區</td>
+                                                    <td>體大段</td>
+                                                    <td>0164-0000</td>
+                                                    <td>3</td>
+                                                    <td>1965年09月29日</td>
+                                                    <td>買賣</td>
+                                                    <td>1,644</td>
+                                                    <td>3,600</td>
+                                                    <td>3分之1</td>
+                                                    <td>0.2</td>
+                                                    <td>0</td>
+                                                    <td>1) 合庫 109-04-30 最高 345萬元</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>魏坤勝</p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>魏坤勝</p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>魏坤勝</p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>魏坤勝</p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>魏坤勝</p>
+                                    </td>
+                                    <td>
+                                        <p>H101670068</p>
+                                    </td>
+                                    <td>
+                                        <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
+                                    </td>
+                                    <td>
+                                        <p>A0270410</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>497.37</p>
+                                    </td>
+                                    <td>
+                                        <p>591.91</p>
+                                    </td>
+                                    <td>
+                                        <p>2</p>
+                                    </td>
+                                    <td>
+                                        <p>0933-123456</p>
+                                    </td>
+                                    <td>
+                                        <p></p>
+                                    </td>
+                                    <td>
+                                        <p>外國人</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="footer1">
+                        <div class="row">
+                            <div class="col-sm">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination">
+                                        <li class="page-item">
+                                            <span class="page-link">上一頁</span>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">下一頁</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="col-12 text-md-center footer">
+        <p>COPYRIGHT © 2022元宏創新服務股份有限公司</p>
+    </footer>
+    {% endblock %}
+    {% block script %}
+    <script>
+        const baseapp = Vue.createApp({
+            delimiters: ['((', '))'],
+            data() {
+                return {
+                }
+            },
+            methods: {},
+            mounted(){},
+            created(){},
+            updated(){},
+            beforeUpdate(){},
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>
