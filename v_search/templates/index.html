@@ -1,36 +1,99 @@
+{% extends 'base.html' %}
 <!DOCTYPE html>
-<html lang="zh-TW">
-{% load static %}
+<html lang="zh-Hant-TW">
 
 <head>
-    <meta charset='utf-8'>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>{% block title %}VVIP加值服務平台{% endblock %}</title>
-    <link rel="shortcut icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Lora|Nunito" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="https://malsup.github.io/jquery.blockUI.js"></script>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title></title>
+    <link rel="icon" type="image/ico" href="/static/favicon.ico">
+    <link rel="shortcut icon" type="image/ico" href="/static/favicon.ico">
+    <!-- sunnylogin -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery-peeper.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/jquery-peeper.js"></script>
+    <script>
+        $(function () {
+            $("#password1").peeper({
+                mask: false,
+                showPasswordCss: 'fa fa-eye',
+                showCopyBtn: false
+            });
+        });
+    </script>
+    <style>
+        body {
+            background: url(/static/images/bg.jpg);
+        }
+    </style>
+    {% endblock %}
 </head>
 
 <body>
-    <!-- Wrapper -->
+    {% block body %}
+    <div id="vue_app" class="cont">
+        <div class="wrap">
+            <form class="form row">
+                <div class="logo text-center"><img src="/static/images/logo.png"></div>
+                <h5 class="text-center">Feature name</h5>
+                <div class="form-group">
+                    <div class="col">
+                        <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.accountID">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col">
+                        <input id="password1" type="password" class="form-control" name="password" placeholder="請輸入密碼" v-model="loginData.accountPW" >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col">
+                        <button type="button" class="btn btn-primary" @click="login()">登入</button>
+                    </div>
+                </div>
 
-    <div id="wrapper">
-        <div id="main_container">
-            index page
+                <p class="text-secondary text-center"><a href="#">忘記密碼</a></p>
+            </form>
         </div>
     </div>
-
-    <!-- Wrapper / End -->
-
-
+    <footer class="col-12 text-md-center footer">
+        <p>COPYRIGHT © 2022元宏創新服務股份有限公司</p>
+    </footer>
+    {% endblock %}
+    {% block script %}
+    <script>
+        const baseapp = Vue.createApp({
+            delimiters: ['((', '))'],
+            data() {
+                return {
+                    loginData: {
+                        accountID: "",
+                        accountPW: "",
+                    }
+                }
+            },
+            methods: {
+                login(){
+                    new HTTPreq("", "fd").posta(this.loginData).then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                    });
+                }
+            },
+            mounted(){},
+            created(){},
+            updated(){},
+            beforeUpdate(){},
+        });
+    </script>
+    {% endblock %}
 </body>
-<script>
-</script>
+
 </html>

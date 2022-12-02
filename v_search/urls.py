@@ -10,6 +10,7 @@ from v_search import views
 
 
 urlpatterns = [
+    re_path(r'^land_dev/$', views.LandDevView.as_view(), name='land_dev'),
     re_path(r'^get_search_responseV3/$', views.GetSearchResponseV3View.as_view(), name='get_search_responseV3'),
     re_path(r'^get_plan_name/$', views.GetPlanNameView.as_view(), name='get_plan_name'),
 ]
