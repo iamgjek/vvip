@@ -56,8 +56,8 @@ class LandDevView(View):
         return render(request, self.template_name)
 
 class GetPlanNameView(APIView):
-    authentication_classes = [authentication.SessionAuthentication]  #authentication.TokenAuthentication, 
-    permission_classes = [permissions.AllowAny] # permissions.IsAuthenticated
+    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def process(self, datas):
         name_res, nickname_res = [], []
