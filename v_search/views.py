@@ -1,32 +1,33 @@
 import json
 import logging
-import requests
 import time
-import pandas as pd
 from datetime import date, datetime, timedelta
 
+import pandas as pd
+import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
+from drf_spectacular.utils import (OpenApiCallback, OpenApiExample,
+                                   OpenApiParameter, OpenApiResponse,
+                                   Serializer, extend_schema,
+                                   inline_serializer)
 from rest_framework import authentication, permissions, serializers
-from rest_framework.views import APIView
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from v_search.serializers import PlanNameSerializer
-
-from v_search.util import CustomJsonEncoder, get_dba
 from t_search.models import info_config
+from v_search.serializers import PlanNameSerializer, GetSearchSerializer
+from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
 
 class IndexView(TemplateView):
     template_name = 'index.html'
-
-    
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         if self.request.GET.get('next'):
@@ -69,11 +70,23 @@ class GetPlanNameView(APIView):
             group_nickname = data_df['nickname'].to_list()
             nickname_res = list(set(group_nickname))
         return name_res, nickname_res
-
+    
+    @extend_schema(
+        summary='取 計劃案名',
+        description='''''',
+        request=PlanNameSerializer,
+        responses={
+            200: OpenApiResponse(description='處理成功'),
+            401: OpenApiResponse(description='身分認證失敗'),
+            },
+        )
     def post(self, request):
         result = {}
         serializer = PlanNameSerializer(data=request.data)
-        if serializer.is_valid():
+        
+        if not serializer.is_valid():
+            raise ParseError('格式錯誤')
+        else:
             name_res, nickname_res = self.process(request.data)
             result['plan_name'] = name_res
             result['nick_name'] = nickname_res
@@ -87,7 +100,7 @@ class GetSearchResponseV3View(APIView):
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    TAG = "[GetSearchResponseV3View]"
+    # TAG = "[GetSearchResponseV3View]"
 
     ownership_dict = {
         "natural": 1, 
@@ -171,6 +184,140 @@ class GetSearchResponseV3View(APIView):
                             br_str = '{}-0000'.format(b01)
                             result_list.append(br_str)
         return result_list, star_list
+
+    def yearsagoV2(self, years, from_date=None):
+        if years:
+
+            if from_date is None:
+                from_date = datetime.now()
+            try:
+                from_date = from_date.replace(year=from_date.year - years)
+                from_date_str = from_date.strftime("%Y-%m-%d")
+                return from_date_str
+            except ValueError:
+                # Must be 2/29!
+                assert from_date.month == 2 and from_date.day == 29 # can be removed
+                from_date = from_date.replace(month=2, day=28, year=from_date.year-years)
+                from_date_str = from_date.strftime("%Y-%m-%d")
+                # print(from_date_str)
+                return from_date_str
+        else:
+            return None
+
+    def use_zone_re(self, use_zone_str):
+        new_str = use_zone_str
+        need_str = ['其他使用', '甲種', '乙種', '丙種', '丁種', '古蹟', '生態', '保安', '特定事業', '特定目的', '體育', '運動']
+        if use_zone_str:
+            new_str = use_zone_str.replace('用地', '').replace('區', '')
+            for need in need_str:
+                if need in new_str:
+                    new_str = need
+        return new_str
+
+    def sql_str_combin(self, condition_list):
+        # base sql
+                    # {col}
+        sql_str =  "\
+                    SELECT {col} \
+                    {math_s} \
+                    FROM \
+                    diablo.{tr1} T1 \
+                    left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
+                    WHERE {where_sql} {having} limit 500000 \
+                    "
+
+        condition = ''
+        if condition_list:
+            for ind, i in enumerate(condition_list):
+                if ind == 0:
+                    i = i.replace('and', '')
+                condition += f' {i}'
+
+        qs_F = ''
+        hav = ''
+        if self.math_str:
+            qs_F = self.math_str[0]
+            hav = self.math_str[1]
+
+        # 欄位後面要空格 換行要加斜線
+        if self.json_lbtype == 'land':
+            select_colunm = "\
+                            T1.id, T1.regno, T1.remove_time, T1.property_type, \
+                            T2.plan_name, T2.land_zone, T2.urban_name, 2.land_notice_value, \
+                            T2.build_num, T2.land_area, T2.other_remark, T2.national_land_zone, \
+                            T1.reg_reason_str, T1.reg_date_str, T1.name, T1.uid, T1.address_re, T1.right_str, T1.shared_size, \
+                            T1.creditors_rights, T1.is_valid \
+                            "
+        # 欄位後面要空格 換行要加斜線
+        else:
+            select_colunm = "\
+                            T1.id, T1.regno, T1.remove_time, T1.property_type, \
+                            T2.road_name_re, T2.community_name, T2.door, T2.main_purpose, T2.finish_day, T2.total_level, T2.build_size, \
+                            T1.reg_reason_str, T1.reg_date_str, T1.name, T1.uid, \
+                            T1.address_re, T1.right_str, T1.shared_size, \
+                            T1.creditors_rights, T1.is_valid \
+                            "
+
+        sql = sql_str.format(
+                            col=select_colunm,
+                            math_s = qs_F,
+                            tr1 = self.t_s_regno_tbname,
+                            t2 = self.t_s_mark_tbname,
+                            lbk = self.col_set_lbkey,
+                            where_sql = condition,
+                            having = hav,
+                            limit = self.data_limit)
+        print(sql)
+        return sql
+
+    def set_sql_db(self, lbtype, sb='sr'):
+        if lbtype == 'L':
+            if sb == 'pack':
+                t_s_pack_tbname = 't_search_packs'
+                t_s_regno_pack_tbname = 't_search_packlkeysregnos'
+                t_s_pack_tbname = 't_search_packlkeys'
+            else:
+                t_s_pack_tbname = ''
+                t_s_regno_pack_tbname = ''
+
+            t_s_mark_tbname = 't_search_lmlandlist'
+            t_s_regno_tbname = 't_search_lkeyregnolist'
+            t_s_sc_tbname = 't_search_subscribelkeys'
+            t_s_sc_reg_tbname = 't_search_subscribelkeysregnos'
+            col_set_lbkey = 'lkey'            
+        else:
+            if sb == 'pack':
+                t_s_pack_tbname = 't_search_packs'
+                t_s_regno_pack_tbname = 't_search_packbkeysregnos'
+                t_s_pack_tbname = 't_search_packbkeys'
+            else:
+                t_s_pack_tbname = ''
+                t_s_regno_pack_tbname = ''
+
+            t_s_mark_tbname = 't_search_bmbuildlist'
+            t_s_regno_tbname = 't_search_bkeyregnolist'
+            t_s_sc_tbname = 't_search_subscribebkeys'
+            t_s_sc_reg_tbname = 't_search_subscribebkeysregnos'
+            col_set_lbkey = 'bkey'
+
+        return (t_s_mark_tbname, t_s_regno_tbname, 
+                t_s_sc_tbname, t_s_sc_reg_tbname, 
+                col_set_lbkey, 
+                t_s_pack_tbname, t_s_regno_pack_tbname)
+
+    def format_data_layout(self, data):
+        result = {}
+        if data:
+            df = pd.DataFrame(data)
+            try:
+                df_group = df.groupby(['region_name', 'lno'])
+                for gp_index in list(df_group.size().index):
+                    dict_key = f'{gp_index[0]}_{gp_index[1]}'
+                    group_data = df_group.get_group(gp_index).to_dict('records')
+                    result[dict_key] = group_data
+            except Exception as e:
+                print(e)
+        return result
 
     def clean_land_data(self, land_data, base_condition, base_other):
         # 總清單
@@ -490,283 +637,171 @@ class GetSearchResponseV3View(APIView):
                     build_qs_list.append('and build_type = {}'.format(build_type))
         return build_qs_list
 
-    def yearsagoV2(self, years, from_date=None):
-        if years:
-
-            if from_date is None:
-                from_date = datetime.now()
-            try:
-                from_date = from_date.replace(year=from_date.year - years)
-                from_date_str = from_date.strftime("%Y-%m-%d")
-                return from_date_str
-            except ValueError:
-                # Must be 2/29!
-                assert from_date.month == 2 and from_date.day == 29 # can be removed
-                from_date = from_date.replace(month=2, day=28, year=from_date.year-years)
-                from_date_str = from_date.strftime("%Y-%m-%d")
-                # print(from_date_str)
-                return from_date_str
-        else:
-            return None
-
-    def use_zone_re(self, use_zone_str):
-        new_str = use_zone_str
-        need_str = ['其他使用', '甲種', '乙種', '丙種', '丁種', '古蹟', '生態', '保安', '特定事業', '特定目的', '體育', '運動']
-        if use_zone_str:
-            new_str = use_zone_str.replace('用地', '').replace('區', '')
-            for need in need_str:
-                if need in new_str:
-                    new_str = need
-        return new_str
-
-    def sql_str_combin(self, condition_list):
-        # base sql
-                    # {col}
-        sql_str =  "\
-                    SELECT {col} \
-                    {math_s} \
-                    FROM \
-                    diablo.{tr1} T1 \
-                    left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} {having} limit 500000 \
-                    "
-
-        condition = ''
-        if condition_list:
-            for ind, i in enumerate(condition_list):
-                if ind == 0:
-                    i = i.replace('and', '')
-                condition += f' {i}'
-
-        qs_F = ''
-        hav = ''
-        if self.math_str:
-            qs_F = self.math_str[0]
-            hav = self.math_str[1]
-
-        # 欄位後面要空格 換行要加斜線
-        if self.json_lbtype == 'land':
-            select_colunm = "\
-                            T1.id, T1.regno, T1.remove_time, T1.property_type, \
-                            T2.plan_name, T2.land_zone, T2.urban_name, 2.land_notice_value, \
-                            T2.build_num, T2.land_area, T2.other_remark, T2.national_land_zone, \
-                            T1.reg_reason_str, T1.reg_date_str, T1.name, T1.uid, T1.address_re, T1.right_str, T1.shared_size, \
-                            T1.creditors_rights, T1.is_valid \
-                            "
-        # 欄位後面要空格 換行要加斜線
-        else:
-            select_colunm = "\
-                            T1.id, T1.regno, T1.remove_time, T1.property_type, \
-                            T2.road_name_re, T2.community_name, T2.door, T2.main_purpose, T2.finish_day, T2.total_level, T2.build_size, \
-                            T1.reg_reason_str, T1.reg_date_str, T1.name, T1.uid, \
-                            T1.address_re, T1.right_str, T1.shared_size, \
-                            T1.creditors_rights, T1.is_valid \
-                            "
-
-        sql = sql_str.format(
-                            col=select_colunm,
-                            math_s = qs_F,
-                            tr1 = self.t_s_regno_tbname,
-                            t2 = self.t_s_mark_tbname,
-                            lbk = self.col_set_lbkey,
-                            where_sql = condition,
-                            having = hav,
-                            limit = self.data_limit)
-        print(sql)
-        return sql
-
-    def set_sql_db(self, lbtype, sb='sr'):
-        if lbtype == 'L':
-            if sb == 'pack':
-                t_s_pack_tbname = 't_search_packs'
-                t_s_regno_pack_tbname = 't_search_packlkeysregnos'
-                t_s_pack_tbname = 't_search_packlkeys'
-            else:
-                t_s_pack_tbname = ''
-                t_s_regno_pack_tbname = ''
-
-            t_s_mark_tbname = 't_search_lmlandlist'
-            t_s_regno_tbname = 't_search_lkeyregnolist'
-            t_s_sc_tbname = 't_search_subscribelkeys'
-            t_s_sc_reg_tbname = 't_search_subscribelkeysregnos'
-            col_set_lbkey = 'lkey'            
-        else:
-            if sb == 'pack':
-                t_s_pack_tbname = 't_search_packs'
-                t_s_regno_pack_tbname = 't_search_packbkeysregnos'
-                t_s_pack_tbname = 't_search_packbkeys'
-            else:
-                t_s_pack_tbname = ''
-                t_s_regno_pack_tbname = ''
-
-            t_s_mark_tbname = 't_search_bmbuildlist'
-            t_s_regno_tbname = 't_search_bkeyregnolist'
-            t_s_sc_tbname = 't_search_subscribebkeys'
-            t_s_sc_reg_tbname = 't_search_subscribebkeysregnos'
-            col_set_lbkey = 'bkey'
-
-        return (t_s_mark_tbname, t_s_regno_tbname, 
-                t_s_sc_tbname, t_s_sc_reg_tbname, 
-                col_set_lbkey, 
-                t_s_pack_tbname, t_s_regno_pack_tbname)
-
     def clean_data_sql(self, data):
         result = {'status':'NG', 'msg':''}
-        if data:
+        js_data = data.get('searchForm')
+        try:
+            com_sql_t1 = time.perf_counter()
+            query_list = []
+            lbtype = data.get('lbtype')
+            self.sb_range = data.get('data_type', 'sr')
+            json_lb_data = js_data.get(self.json_lbtype)
+
+            (self.t_s_mark_tbname, self.t_s_regno_tbname, 
+            self.t_s_sc_tbname, self.t_s_sc_reg_tbname, 
+            self.col_set_lbkey,
+            self.t_s_pack_tbname, 
+            self.t_s_regno_pack_tbname)= self.set_sql_db(self.sql_select_db, sb=self.sb_range)
+            
+            # base condition=================================================================
+            base_region = json_lb_data.get('region', {})
+            base_condition = json_lb_data.get('condition', {})
+            base_other = json_lb_data.get('other', {})
+            self.math_str = None
+
+            # 登記原因
+            registerReason = self.check_int(base_condition.get('registerReason'))
+            if isinstance(registerReason, int) == True:
+                if registerReason == 0:
+                    pass
+                else:
+                    query_list.append('and T1.reg_reason = {}'.format(str(registerReason)))
+
+            # 權屬樣態
+            ownership = base_condition.get('ownership')
+            if ownership:
+                oqs = [x for x, y in ownership.items() if y != 0]
+                os_list = []
+                for i in oqs:
+                    j = self.ownership_dict.get(i)
+                    if j:
+                        os_list.append(j)
+                if os_list:
+                    query_list.append('and T2.owner_type in ({})'.format(','.join([str(x) for x in os_list])))
+
+            # 權利範圍型態 (公同共有)
+            ownershipType = self.check_int(base_condition.get('ownershipType'))
+            if ownershipType:
+                if ownershipType == 0:
+                    pass
+                elif ownershipType == 1:
+                    query_list.append('and T1.right_type in (0,1,2)')
+                elif ownershipType == 2:
+                    query_list.append('and T1.right_type = 3')
+
+            # 所有權人數
+            o_num_low = self.check_int(base_condition.get('ownershipNumLowerLimit'))
+            o_num_up = self.check_int(base_condition.get('ownershipNumUpperLimit'))
+            if o_num_low == 0 and o_num_up == 0:
+                pass
+            else:
+                if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
+                    query_list.append('and T2.owners_num <= {num_max} and T2.owners_num >= {num_min}'.format(num_max=o_num_up, num_min=o_num_low))
+                elif isinstance(o_num_low, int) == True:
+                    query_list.append('and T2.owners_num >= {num_min}'.format(num_min=o_num_low))
+                elif isinstance(o_num_up, int) == True:
+                    query_list.append('and T2.owners_num <= {num_max}'.format(num_max=o_num_up))
+
+            # 他項設定:他項標記
+            cast_type = self.check_int(base_other.get('otherRemark', None))
+            if cast_type == 0:
+                pass
+            else:
+                query_list.append('and T1.case_type = {}'.format(cast_type))
+
+            # 他項設定:限制登記
+            restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
+            if restricted_type == 0:
+                pass
+            else:
+                query_list.append('and T1.restricted_type = {}'.format(restricted_type))
+            
+            # 土建分開條件
+            if lbtype == 'L':
+                qs_merge = self.clean_land_data(base_region, base_condition, base_other)
+                # print(qs_merge)
+            else:
+                qs_merge = self.clean_build_data(base_region, base_condition, base_other)
+                # print(qs_merge)
+            
+            if qs_merge:
+                query_list.extend(qs_merge)
+            
+            # 資料筆數限制
             try:
-                js_data = json.loads(data.get('searchForm'))
+                max_data = info_config.objects.get(lbtype='Max')
+                self.max_int = int(max_data.last_info_id)
+                self.data_limit = 'LIMIT {}'.format(self.max_int)
             except Exception as e:
                 print(e)
-                result['msg'] = '請確認 key "searchForm" 型態是否正確'
-                js_data = {}
-                return result
+                self.max_int = 99999
+                self.data_limit = 'LIMIT {}'.format(self.max_int)
 
-            try:
-                com_sql_t1 = time.perf_counter()
-                query_list = []
-                lbtype = data.get('lbtype')
-                self.sb_range = data.get('data_type', 'sr')
-                json_lb_data = js_data.get(self.json_lbtype)
+            sql = self.sql_str_combin(query_list)
+            com_sql_t2 = time.perf_counter()
+            print('組sql語法時間 : {}'.format(com_sql_t2 - com_sql_t1))
 
-                (self.t_s_mark_tbname, self.t_s_regno_tbname, 
-                self.t_s_sc_tbname, self.t_s_sc_reg_tbname, 
-                self.col_set_lbkey,
-                self.t_s_pack_tbname, 
-                self.t_s_regno_pack_tbname)= self.set_sql_db(self.sql_select_db, sb=self.sb_range)
-                
-                # base condition=================================================================
-                base_region = json_lb_data.get('region', {})
-                base_condition = json_lb_data.get('condition', {})
-                base_other = json_lb_data.get('other', {})
-                self.math_str = None
-
-                # 登記原因
-                registerReason = self.check_int(base_condition.get('registerReason'))
-                if isinstance(registerReason, int) == True:
-                    if registerReason == 0:
-                        pass
-                    else:
-                        query_list.append('and T1.reg_reason = {}'.format(str(registerReason)))
-
-                # 權屬樣態
-                ownership = base_condition.get('ownership')
-                if ownership:
-                    oqs = [x for x, y in ownership.items() if y != 0]
-                    os_list = []
-                    for i in oqs:
-                        j = self.ownership_dict.get(i)
-                        if j:
-                            os_list.append(j)
-                    if os_list:
-                        query_list.append('and T2.owner_type in ({})'.format(','.join([str(x) for x in os_list])))
-
-                # 權利範圍型態 (公同共有)
-                ownershipType = self.check_int(base_condition.get('ownershipType'))
-                if ownershipType:
-                    if ownershipType == 0:
-                        pass
-                    elif ownershipType == 1:
-                        query_list.append('and T1.right_type in (0,1,2)')
-                    elif ownershipType == 2:
-                        query_list.append('and T1.right_type = 3')
-
-                # 所有權人數
-                o_num_low = self.check_int(base_condition.get('ownershipNumLowerLimit'))
-                o_num_up = self.check_int(base_condition.get('ownershipNumUpperLimit'))
-                if o_num_low == 0 and o_num_up == 0:
-                    pass
-                else:
-                    if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                        query_list.append('and T2.owners_num <= {num_max} and T2.owners_num >= {num_min}'.format(num_max=o_num_up, num_min=o_num_low))
-                    elif isinstance(o_num_low, int) == True:
-                        query_list.append('and T2.owners_num >= {num_min}'.format(num_min=o_num_low))
-                    elif isinstance(o_num_up, int) == True:
-                        query_list.append('and T2.owners_num <= {num_max}'.format(num_max=o_num_up))
-
-                # 他項設定:他項標記
-                cast_type = self.check_int(base_other.get('otherRemark', None))
-                if cast_type == 0:
-                    pass
-                else:
-                    query_list.append('and T1.case_type = {}'.format(cast_type))
-
-                # 他項設定:限制登記
-                restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
-                if restricted_type == 0:
-                    pass
-                else:
-                    query_list.append('and T1.restricted_type = {}'.format(restricted_type))
-                
-                # 土建分開條件
-                if lbtype == 'L':
-                    qs_merge = self.clean_land_data(base_region, base_condition, base_other)
-                    # print(qs_merge)
-                else:
-                    qs_merge = self.clean_build_data(base_region, base_condition, base_other)
-                    # print(qs_merge)
-                
-                if qs_merge:
-                    query_list.extend(qs_merge)
-                
-                # 資料筆數限制
-                try:
-                    max_data = info_config.objects.get(lbtype='Max')
-                    self.max_int = int(max_data.last_info_id)
-                    self.data_limit = 'LIMIT {}'.format(self.max_int) # self.max_int
-                except Exception as e:
-                    print(e)
-                    self.max_int = 99999
-                    self.data_limit = 'LIMIT {}'.format(self.max_int)
-
-                sql = self.sql_str_combin(query_list)
-
-                com_sql_t2 = time.perf_counter()
-                print('組sql語法時間 : {}'.format(com_sql_t2 - com_sql_t1))
-
-                qs_sql_t1 = time.perf_counter()
+            qs_sql_t1 = time.perf_counter()
+            if self.fake_data:
+                sql = 'SELECT \
+                        T2.city_name, T2.area_name, T2.region_name, T2.lno, \
+                        T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
+                        T2.build_num, T2.owner_type, \
+                        T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
+                        T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
+                        T1.is_valid, T1.remove_time \
+                        FROM \
+                        diablo.t_search_lkeyregnolist T1 \
+                        left join diablo.t_search_lmlandlist T2 on T1.lbkey =  T2.lkey \
+                        WHERE T1.lbkey like "H_01_0001%" and T1.remove_time is null limit 50 \
+                        '
+                subscriberecords_qs, headers = get_dba(sql, "diablo_test")
+            else:
                 subscriberecords_qs, headers = get_dba(sql, "diablo_test")
 
-                qs_sql_t2 = time.perf_counter()
-                print('sql查詢時間 : {}'.format(qs_sql_t2 - qs_sql_t1))
-                print(len(subscriberecords_qs))
-                # print(subscriberecords_qs[0])
-                rb_sql_t1 = time.perf_counter()
+            qs_sql_t2 = time.perf_counter()
+            print('sql查詢時間 : {}'.format(qs_sql_t2 - qs_sql_t1))
+            result = self.format_data_layout(subscriberecords_qs)
 
-                result["status"] = 'OK'
-                rb_sql_t2 = time.perf_counter()
-                print('組完資料輸出時間 : {}'.format(rb_sql_t2 - rb_sql_t1))
-
-            except Exception as e:
-                result['msg'] = e
-                print(e)
-                return result
-        else:
-            result['msg'] = '請輸入 data'
+        except Exception as e:
+            result['msg'] = e
+            print(e)
+            return result
         return result
 
-
-    def process(self, params, request):
-        result = {'status':'NG'}
-        if params.get('lbtype') == 'L':
-            self.sql_select_db = 'L'
-            self.json_lbtype = 'land'
-        else:
-            self.sql_select_db = 'B'
-            self.json_lbtype = 'build'
-
-        qs_msg = self.clean_data_sql(params)
-        result.update(qs_msg)
-
-        return result
-
+    @extend_schema(
+        summary='搜尋',
+        description='''''',
+        request=GetSearchSerializer,
+        responses={
+            200: OpenApiResponse(description='處理成功'),
+            401: OpenApiResponse(description='身分認證失敗'),
+            },
+        )
     def post(self, request, *args, **kwargs):
-        params = request.POST.copy()
+        result = {}
         # self.user = User.objects.get(username=request.user.get_username()).id
-        self.user = 664
-        print(f'使用者id: {self.user}')
-        st1 = time.perf_counter()
-        result = self.process(params, request)
-        en1 = time.perf_counter()
-        print('查詢總時間 : {}'.format(en1 - st1))
-        return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+        # print(f'使用者id: {self.user}')
 
+        serializer = GetSearchSerializer(data=request.data)
+        if not serializer.is_valid():
+            raise ParseError('格式錯誤')
+        else:
+            # 預設參數
+            
+            if serializer.data.get('lbtype') == 'L':
+                self.sql_select_db = 'L'
+                self.json_lbtype = 'land'
+            else:
+                self.sql_select_db = 'B'
+                self.json_lbtype = 'build'
+            self.fake_data = serializer.data.get('fake_data')
+
+            qt1 = time.perf_counter()
+            qs_msg = self.clean_data_sql(serializer.data)
+            result.update(qs_msg)
+            qt2 = time.perf_counter()
+
+            print('查詢總時間 : {}'.format(qt2 - qt1))
+        # return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+        return Response(result)
