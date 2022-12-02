@@ -22,25 +22,25 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
         UserProfile.objects.create(user=instance)
 
-class RestfulApiView(LoginRequiredMixin, SpectacularSwaggerView):
-    TAG = '[RestfulApiView]'
+# class RestfulApiView(LoginRequiredMixin, SpectacularSwaggerView):
+#     TAG = '[RestfulApiView]'
 
-    def get(self, request, *args, **kwargs):
-        check = request.user.is_superuser
-        if check:
-            return Response(
-                data={
-                    'title': self.title,
-                    'dist': self._swagger_ui_dist(),
-                    'favicon_href': self._swagger_ui_favicon(),
-                    'schema_url': self._get_schema_url(request),
-                    'settings': self._dump(spectacular_settings.SWAGGER_UI_SETTINGS),
-                    'oauth2_config': self._dump(spectacular_settings.SWAGGER_UI_OAUTH2_CONFIG),
-                    'template_name_js': self.template_name_js,
-                    'csrf_header_name': self._get_csrf_header_name(),
-                    'schema_auth_names': self._dump(self._get_schema_auth_names()),
-                },
-                template_name=self.template_name,
-            )
-        else:
-            return redirect('/')
+#     def get(self, request, *args, **kwargs):
+#         check = request.user.is_superuser
+#         if check:
+#             return Response(
+#                 data={
+#                     'title': self.title,
+#                     'dist': self._swagger_ui_dist(),
+#                     'favicon_href': self._swagger_ui_favicon(),
+#                     'schema_url': self._get_schema_url(request),
+#                     'settings': self._dump(spectacular_settings.SWAGGER_UI_SETTINGS),
+#                     'oauth2_config': self._dump(spectacular_settings.SWAGGER_UI_OAUTH2_CONFIG),
+#                     'template_name_js': self.template_name_js,
+#                     'csrf_header_name': self._get_csrf_header_name(),
+#                     'schema_auth_names': self._dump(self._get_schema_auth_names()),
+#                 },
+#                 template_name=self.template_name,
+#             )
+#         else:
+#             return redirect('/')
