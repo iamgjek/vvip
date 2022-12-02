@@ -109,6 +109,7 @@ TEMPLATES = [
     },
 ]
 
+# SITE_ID = 1996
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
