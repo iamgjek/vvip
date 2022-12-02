@@ -97,11 +97,12 @@ class supfnc{
     }
 
     static createElement(tagName, options){
-        var el = document.createElement(tagName);
+        var el = document.createElement(tagName), tmp;
         for(var i in options){
             if(i == "class"){
-                if(Array.isArray(options.class)) for(var j in options.class) el.classList.add(options.class[j]);
-                else if(typeof options.class == "string")el.classList.add(options.class);
+                tmp = options.class;
+                if(typeof options.class == "string") tmp = tmp.split(" ");
+                if(Array.isArray(options.class)) for(var j in tmp) el.classList.add(tmp[j]);
             }
             else if(i == "style"){
                 for(var j in options.style){
@@ -225,7 +226,7 @@ class supfnc{
             ele[i].style.fontFamily = "SourceHanSansCN-Normal"
         }
         var doc = new jspdf.jsPDF('p','pt','a4');
-        doc.addFont("/system/font/SourceHanSansCN-Normal.ttf", "SourceHanSansCN-Normal", "normal");
+        doc.addFont("/static/font/SourceHanSansCN-Normal.ttf", "SourceHanSansCN-Normal", "normal");
         doc.setFont("SourceHanSansCN-Normal", "normal");
         doc.html(target, {
             callback: function (pdf) {
