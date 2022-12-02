@@ -82,31 +82,30 @@
                 <div class="row">
                     <label class="col-form-label col col-width" for="edit-text-name-id">搜尋</label>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.city">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.region.city">
                             <option :value="null" selected>縣市</option>
                             <option :value="key" v-for="(value, key) in cityList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.area">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.region.area">
                             <option :value="null" selected>行政區</option>
                             <option :value="key" v-for="(value, key) in areaList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.section">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.region.section">
                             <option :value="null" selected>段小段</option>
                             <option :value="key" v-for="(value, key) in sectionList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.plan_name">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.region.plan">
                             <option :value="null" selected>計劃案</option>
                             <option :value="key" v-for="(value, key) in planList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-
                         <div class="dropdown">
                             <button class="btn dropdown-toggle  custom-select left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -115,6 +114,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 <form class="px-4 py-3 row pp">
+                                    <!-- @@@@ -->
                                     <div class="form-group col-sm-6">
                                         <select class="form-control custom-select col-sm-12 w-10">
                                             <option value="DF" selected>單筆</option>
@@ -123,11 +123,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 pp1">
-                                        <input type="checkbox" class="form-check-input" id="dropdownCheck" v-model="searchForm.land_number_include">
+                                        <input type="checkbox" class="form-check-input" id="dropdownCheck" v-model="searchForm.region.includeInvalid">
                                         <label class="form-check-label" for="dropdownCheck">包含失效資料</label>
                                     </div>
                                     <div class="form-check col-sm-12 pp2">
-                                        <input type="password" class="form-control" placeholder="地號" v-model="searchForm.land_number">
+                                        <input type="password" class="form-control" placeholder="地號" v-model="searchForm.region.land_number">
                                     </div>
                                 </form>
                             </div>
@@ -204,9 +204,9 @@
                                         </select>
                                     </div>
                                     <div class="row v4">
-                                        <input type="" class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land_area_lower">
+                                        <input type="" class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.condition.landAreaLowerLimit">
                                         <label class="col-form-label la1" for="edit-text-name-id">坪-</label>
-                                        <input type="" class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land_area_upper">
+                                        <input type="" class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.condition.landAreaUpperLimit">
                                         <label class="col-form-label la1" for="edit-text-name-id">坪</label>
                                     </div>
                                 </form>
@@ -239,7 +239,7 @@
                                         });
                                     });
                                 </script>
-                                <select id="bs1" multiple="multiple" class="form-select  custom-select col-sm-12 w-10" v-model="searchForm.ownership">
+                                <select id="bs1" multiple="multiple" class="form-select  custom-select col-sm-12 w-10" v-model="searchForm.condition.ownership">
                                     <option value="">自然人</option>
                                     <option value="">私法人</option>
                                     <option value="">公法人</option>
@@ -248,11 +248,11 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <select id="bs2" class="f1 form-select custom-select col-sm-12 w-10" v-model="searchForm.owned">
-                                    <option :value="0">公有共有</option>
-                                    <option :value="1">不拘</option>
-                                    <option :value="2">排除</option>
-                                    <option :value="3">只有</option>
+                                <select id="bs2" class="f1 form-select custom-select col-sm-12 w-10" v-model="searchForm.condition.ownershipType">
+                                    <option :value="null">公有共有</option>
+                                    <option :value="0">不拘</option>
+                                    <option :value="1">排除</option>
+                                    <option :value="2">只有</option>
                                 </select>
                             </div>
                             <div class="col">
@@ -265,7 +265,7 @@
                                         });
                                     });
                                 </script>
-                                <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.register_reason">
+                                <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.condition.registerReason">
                                     <option value="">不拘</option>
                                     <option value="">繼承</option>
                                     <option value="">贈與</option>
@@ -283,11 +283,12 @@
                                     <div class="dropdown-menu">
                                         <form class="p3 pp row">
                                             <div class="col-sm-6">
-                                                <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.holding_period">
+                                                <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.other.holding_period">
                                                     <option value="">半年內</option>
                                                 </select>
                                             </div>
                                             <div class="row v4">
+                                                <!-- @@@@ -->
                                                 <input type="" class="form-control col-sm-3 v2" placeholder="0">
                                                 <label class="col-form-label la1" for="edit-text-name-id">年-</label>
                                                 <input type="" class="form-control col-sm-3 v2" placeholder="0">
@@ -307,7 +308,7 @@
                                         });
                                     });
                                 </script>
-                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.territory">
+                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.region.national_land_zone">
                                     <option value="">不拘</option>
                                     <option value="">國一</option>
                                     <option value="">國二</option>
@@ -328,9 +329,9 @@
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
                                             <div class="row pp2">
-                                                <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.present_value_lower">
+                                                <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.condition.presentLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
-                                                <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.present_value_upper">
+                                                <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.condition.presentUpperLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬</label>
                                             </div>
                                         </form>
@@ -348,9 +349,9 @@
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
                                             <div class="pp2 row">
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.private_value_lower">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.other.p_part_valueLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.private_value_upper">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.other.p_part_valueUpperLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬</label>
 
                                             </div>
@@ -369,9 +370,9 @@
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
                                             <div class="pp2 row">
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.private_area_lower">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.other.p_part_areaLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">坪-</label>
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.private_area_upper">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.other.p_part_areaUpperLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">坪</label>
                                             </div>
                                         </form>
@@ -386,11 +387,11 @@
                                 <script type="text/javascript">
                                     $('#example-single').multiselect();
                                 </script>
-                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.owner_age">
-                                    <option :value="0">年齡區間</option>
-                                    <option :value="1">民國前</option>
-                                    <option :value="2">民國20年以前</option>
-                                    <option :value="3">民國21~30年以前</option>
+                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.other.age_range">
+                                    <option :value="null">年齡區間</option>
+                                    <option :value="0">民國前</option>
+                                    <option :value="1">民國20年以前</option>
+                                    <option :value="2">民國21~30年以前</option>
                                 </select>
                             </div>
                             <div class="col">
@@ -403,7 +404,7 @@
                                     });
                                 </script>
                                 <select id="example-getting-started" multiple="multiple"
-                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.owner_country">
+                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.other.country">
                                     <option value="LG">不拘</option>
                                     <option value="SM">台灣</option>
                                     <option value="SM">越南</option>
@@ -422,9 +423,9 @@
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
                                             <div class="pp2 row">
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.owner_num_lower">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.condition.ownershipNumLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">人-</label>
-                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.owner_num_upper">
+                                                <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.condition.ownershipNumUpperLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">人</label>
                                             </div>
                                         </form>
@@ -436,14 +437,14 @@
                         <div class="row row-cols-auto row1">
                             <label class="col-form-label col col-width" for="edit-text-name-id">其他設定</label>
                             <div class="col">
-                                <select id="" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.other_remark">
+                                <select id="" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.other.otherRemark">
                                     <option :value="0">他項標記</option>
                                     <option :value="1">他項標記</option>
                                     <option :value="2">他項標記</option>
                                 </select>
                             </div>
                             <div class="col">
-                                <select class="form-select custom-select col-sm-12 w-10" v-model="searchForm.restrict_register">
+                                <select class="form-select custom-select col-sm-12 w-10" v-model="searchForm.other.restrictedRegistration">
                                     <option :value="0">限制登記</option>
                                     <option :value="1">限制登記</option>
                                     <option :value="2">限制登記</option>
@@ -510,7 +511,6 @@
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-    
                         <div class="h3">桃園市<span class="grey">+</span>桃園區<span class="grey">+</span>和平段<span
                                 class="grey">+</span>商業區<span class="grey">+</span>總面積20-30坪</div>
                         <div class="row" style="display: block;max-height: 50rem;overflow-y: auto;">
@@ -885,43 +885,86 @@
                     planList: {},
                     showResault: 0,
 
-                    searchForm: {
-                        city: null,
-                        area: null,
-                        section: null,
-                        plan_name: null,
-                        land_number_include: 0,
-                        land_number: "",
-                        use_zone: "",
-                        land_area_type: "",
-                        land_area_lower: "",
-                        land_area_upper: "",
+                    // searchForm: {
+                    //     city: null,
+                    //     area: null,
+                    //     section: null,
+                    //     plan_name: null,
+                    //     land_number_include: 0,
+                    //     land_number: "",
+                    //     use_zone: "",
+                    //     land_area_type: "",
+                    //     land_area_lower: "",
+                    //     land_area_upper: "",
 
-                        // use_situation
-                        ownership: "",
-                        owned: 0,
-                        register_reason: "",
-                        holding_period: "",
-                        territory: "",
+                    //     // use_situation
+                    //     ownership: "",
+                    //     owned: 0,
+                    //     register_reason: "",
+                    //     holding_period: "",
+                    //     territory: "",
 
-                        // area value
-                        present_value_lower: 0,
-                        present_value_upper: 0,
-                        private_value_lower: 0,
-                        private_value_upper: 0,
-                        private_area_lower: 0,
-                        private_area_upper: 0,
+                    //     // area value
+                    //     present_value_lower: 0,
+                    //     present_value_upper: 0,
+                    //     private_value_lower: 0,
+                    //     private_value_upper: 0,
+                    //     private_area_lower: 0,
+                    //     private_area_upper: 0,
 
-                        // owner
-                        owner_age: 0,
-                        owner_country: "",
-                        owner_num_lower: "",
-                        owner_num_upper: "",
+                    //     // owner
+                    //     owner_age: 0,
+                    //     owner_country: "",
+                    //     owner_num_lower: "",
+                    //     owner_num_upper: "",
 
-                        // other
-                        other_remark: 0,
-                        restrict_register: 0,
-                        lbkey: "",
+                    //     // other
+                    //     other_remark: 0,
+                    //     restrict_register: 0,
+                    //     lbkey: "",
+                    // },
+                    searchForm:{
+                        "region": {
+                            "city": null,
+                            "area": null,
+                            "plan": null,
+                            "section": null,
+                            "includeInvalid": 0,
+                            "landNumber": "", // new
+                            "national_land_zone": "", // 國土分區
+                        },
+                        "condition": {
+                            "registerReason": 0,
+                            "ownership": {
+                                "natural": 0,
+                                "private": 0,
+                                "public": 0,
+                                "non_public": 0,
+                                "partially_public": 0
+                            },
+                            "ownershipType": 0,
+                            "ownershipNumLowerLimit": 0,
+                            "ownershipNumUpperLimit": 0,
+                            "areaType": 0,
+                            "landAreaLowerLimit": 0,
+                            "landAreaUpperLimit": 0,
+                            "inCity": [],
+                            "outCity": [],
+                            "outCity2": {},
+                            "presentLowerLimit": 0,
+                            "presentUpperLimit": 0,
+                        },
+                        "other": {
+                            "otherRemark": 0,
+                            "restrictedRegistration": 0, 
+                            "age_range": null,    // 年齡範圍
+                            "country": "",      // 國籍
+                            "p_part_valueLowerLimit": "", // 個人持分總值 #new
+                            "p_part_valueUpperLimit": "", // 個人持分總值 #new
+                            "p_part_areaLowerLimit": "",   // 個人持分總面積 #new
+                            "p_part_areaUpperLimit": "",   // 個人持分總面積 #new
+                            "holding_period": "" // 持有年限
+                        }
                     }
                 }
             },
@@ -965,6 +1008,12 @@
             updated(){},
             beforeUpdate(){},
         });
+
+        // test
+        // new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: vm.searchForm, fake_data: true}).then((rcv) => {
+        //     var res = supfnc.toJSON(rcv.result);
+        //     console.log(res);
+        // });
     </script>
     {% endblock %}
 </body>
