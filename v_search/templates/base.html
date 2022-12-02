@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
+    {% block head %}{% endblock %}
+    <script src="/static/js/lodash.js"></script>
+    <script src="/static/js/HTTPreq.js"></script>
+    <script src="/static/js/supportFnc.js"></script>
+    <script src="/static/js/objectExtend.js"></script>
+</head>
+    <body>
+        {% block body %}{% endblock %}
+        {% block script %}{% endblock %}
+        <script>
+            if(typeof baseapp == undefined) {
+                const baseapp = Vue.createApp({
+                    delimiters: ['((', '))'],
+                    data() {
+                        return {}
+                    },
+                    methods: {},
+                    mounted(){},
+                    created(){},
+                    updated(){},
+                    beforeUpdate(){},
+                });
+            }
+        </script>
+        <script src="/static/js/vDirective.js"></script>
+        <script>
+            const vm = baseapp.mount("#vue_app");
+        </script>
+    </body>
+</html>
