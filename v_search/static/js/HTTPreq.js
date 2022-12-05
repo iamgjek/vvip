@@ -57,13 +57,15 @@ class HTTPreq{
         }
 
         Xreq.onreadystatechange = function () {
-            T.status = Xreq.status;
-            T.result = Xreq.responseText;
-            T.resultLength = Xreq.responseText.length;
-            
-            setTimeout(()=>{
-                T.readyState = 4;
-            }, Math.log10(T.resultLength) * 10);
+            if(Xreq.readyState == 4){
+                T.status = Xreq.status;
+                T.result = Xreq.responseText;
+                T.resultLength = Xreq.responseText.length;
+                
+                setTimeout(()=>{
+                    T.readyState = 4;
+                }, Math.log10(T.resultLength) * 10);
+            }
         }
 
         if(this.dataType == "txt"){
