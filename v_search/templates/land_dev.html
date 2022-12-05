@@ -82,27 +82,27 @@
                 <div class="row">
                     <label class="col-form-label col col-width" for="edit-text-name-id">搜尋</label>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.city">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.city" @change="getArea(searchForm.land.region.city)">
                             <option :value="null" selected>縣市</option>
                             <option :value="key" v-for="(value, key) in cityList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.area">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.area" @change="getSection(searchForm.land.region.area), getPlan(searchForm.land.region.area)">
                             <option :value="null" selected>行政區</option>
-                            <option :value="key" v-for="(value, key) in areaList"> ((value)) </option>
+                            <option :value="key" v-for="(value, key) in areaList[searchForm.land.region.city]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.section">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.section" @change="searchForm.land.region.plan=null">
                             <option :value="null" selected>段小段</option>
-                            <option :value="key" v-for="(value, key) in sectionList"> ((value)) </option>
+                            <option :value="key" v-for="(value, key) in sectionList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.plan">
+                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.plan" @change="searchForm.land.region.section=null">
                             <option :value="null" selected>計劃案</option>
-                            <option :value="key" v-for="(value, key) in planList"> ((value)) </option>
+                            <option :value="key" v-for="(value, key) in planList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col-sm-auto">
@@ -534,88 +534,90 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
-                                    <tr data-node="treetable-1" v-for="(data, dataKey) in searchRes">
-                                        <td data="縣市">
-                                            <p>(( data[0].city_name ))</p>
-                                        </td>
-                                        <td data="行政區">
-                                            <p>(( data[0].area_name ))</p>
-                                        </td>
-                                        <td data="段小段">
-                                            <p>(( data[0].region_name ))</p>
-                                        </td>
-                                        <td data="地號">
-                                            <p><a :href="'#' + dataKey" data-toggle="collapse">(( dataKey.split('_').last() ))</a></p>
-                                        </td>
-                                        <td data="國土分區">
-                                            <p>(( data[0].national_land_zone || '(空白)' ))</p>
-                                        </td>
-                                        <td data="使用分區">
-                                            <p>(( data[0].使用分區 || '(空白)' ))</p>
-                                        </td>
-                                        <td data="使用地類別">
-                                            <p>(( data[0].使用地類別 || '(空白)' ))</p>
-                                        </td>
-                                        <td data="土地面積">
-                                            <p>(( data[0].land_area ))</p>
-                                        </td>
-                                        <td data="公告現值">
-                                            <p>(( data[0].land_notice_value ))</p>
-                                        </td>
-                                        <td data="總公告(萬)">
-                                            <p>(( data[0].總公告 ))</p>
-                                        </td>
-                                        <td data="地上建物">
-                                            <p>(( data[0].build_num ))</p>
-                                        </td>
-                                        <td data="權屬種類">
-                                            <p>(( data[0].權屬種類 ))</p>
-                                        </td>
-                                        <td data="所有權人">
-                                            <p>(( data[0].所有權人 ))</p>
-                                        </td>
-                                        <td data="他項權利人">
-                                            <p>(( data[0].他項權利人 ))</p>
-                                        </td>
-                                    </tr>
-                                    <tr id="demo" class="collapse cell-1 row-child">
-                                        <td colspan="15">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>登記次序</th>
-                                                        <th>登記日期</th>
-                                                        <th>登記原因</th>
-                                                        <th>所有權人</th>
-                                                        <th>統一編號</th>
-                                                        <th>住址</th>
-                                                        <th>出生日期</th>
-                                                        <th>權利範圍</th>
-                                                        <th>持分面積</th>
-                                                        <th>持分坪數</th>
-                                                        <th>持分現值(萬)</th>
-                                                        <th>他項權利(其他註記)</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr v-for="line in data">
-                                                        <td data="登記次序">(( line.登記次序 ))</td>
-                                                        <td data="登記日期">(( line.reg_date_str ))</td>
-                                                        <td data="登記原因">(( line.reg_reason_str ))</td>
-                                                        <td data="所有權人">(( line.name ))</td>
-                                                        <td data="統一編號">(( line.uid ))</td>
-                                                        <td data="住址">(( line.address_re ))</td>
-                                                        <td data="出生日期">(( line.出生日期 ))</td>
-                                                        <td data="權利範圍">(( line.right_str ))</td>
-                                                        <td data="持分面積">(( line.shared_size * 3.30579 ))</td>
-                                                        <td data="持分坪數">(( line.shared_size ))</td>
-                                                        <td data="持分現值(萬)">(( line.持分現值 ))</td>
-                                                        <td data="他項權利(其他註記)">(( line.他項權利 ))</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
+                                    <template v-for="(data, dataKey) in searchRes">
+                                        <tr data-node="treetable-1">
+                                            <td data="縣市">
+                                                <p>(( data[0].city_name ))</p>
+                                            </td>
+                                            <td data="行政區">
+                                                <p>(( data[0].area_name ))</p>
+                                            </td>
+                                            <td data="段小段">
+                                                <p>(( data[0].region_name ))</p>
+                                            </td>
+                                            <td data="地號">
+                                                <p><a :href="'#' + dataKey" data-toggle="collapse">(( dataKey.split('_').last() ))</a></p>
+                                            </td>
+                                            <td data="國土分區">
+                                                <p>(( data[0].national_land_zone || '(空白)' ))</p>
+                                            </td>
+                                            <td data="使用分區">
+                                                <p>(( data[0].使用分區 || '(空白)' ))</p>
+                                            </td>
+                                            <td data="使用地類別">
+                                                <p>(( data[0].使用地類別 || '(空白)' ))</p>
+                                            </td>
+                                            <td data="土地面積">
+                                                <p>(( data[0].land_area ))</p>
+                                            </td>
+                                            <td data="公告現值">
+                                                <p>(( data[0].land_notice_value ))</p>
+                                            </td>
+                                            <td data="總公告(萬)">
+                                                <p>(( data[0].總公告 ))</p>
+                                            </td>
+                                            <td data="地上建物">
+                                                <p>(( data[0].build_num ))</p>
+                                            </td>
+                                            <td data="權屬種類">
+                                                <p>(( data[0].權屬種類 ))</p>
+                                            </td>
+                                            <td data="所有權人">
+                                                <p>(( data[0].所有權人 ))</p>
+                                            </td>
+                                            <td data="他項權利人">
+                                                <p>(( data[0].他項權利人 ))</p>
+                                            </td>
+                                        </tr>
+                                        <tr :id="dataKey" class="collapse cell-1 row-child">
+                                            <td colspan="15">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>登記次序</th>
+                                                            <th>登記日期</th>
+                                                            <th>登記原因</th>
+                                                            <th>所有權人</th>
+                                                            <th>統一編號</th>
+                                                            <th>住址</th>
+                                                            <th>出生日期</th>
+                                                            <th>權利範圍</th>
+                                                            <th>持分面積</th>
+                                                            <th>持分坪數</th>
+                                                            <th>持分現值(萬)</th>
+                                                            <th>他項權利(其他註記)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="line in data">
+                                                            <td data="登記次序">(( line.登記次序 ))</td>
+                                                            <td data="登記日期">(( line.reg_date_str ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str ))</td>
+                                                            <td data="所有權人">(( line.name ))</td>
+                                                            <td data="統一編號">(( line.uid ))</td>
+                                                            <td data="住址">(( line.address_re ))</td>
+                                                            <td data="出生日期">(( line.出生日期 ))</td>
+                                                            <td data="權利範圍">(( line.right_str ))</td>
+                                                            <td data="持分面積">(( line.shared_size * 3.30579 ))</td>
+                                                            <td data="持分坪數">(( line.shared_size ))</td>
+                                                            <td data="持分現值(萬)">(( line.持分現值 ))</td>
+                                                            <td data="他項權利(其他註記)">(( line.他項權利 ))</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
@@ -909,29 +911,34 @@
                 getArea(city){
                     var T = this;
                     if(this.areaList[city]) return;
-                    new HTTPreq("/home/get_name/", "fd").posta({ type: "area", value: city }).then((rcv) => {
-                        var res = supfnc.toJSON(rcv.result);
-                        T.areaList[city] = res;
+                    new HTTPreq("https://lbor.wsos.com.tw/common/car/get_area/?city=" + city).geta().then((rcv) => {
+                        var res = supfnc.toJSON(rcv.result), data = {};
+                        for(var i in res){
+                            data[city + "_" + res[i].area_code] = res[i].area_name;
+                        }
+                        T.areaList[city] = data;
                     });
                 },
                 getSection(area){
                     var T = this;
-                    if(this.sectionList[area] || this.planList[area]) return;
-                    new HTTPreq("/home/get_name/", "fd").posta(this.searchForm).then((rcv) => {
-                        var res = supfnc.toJSON(rcv.result);
-                        T.sectionList[area] = {};
-                        T.planList[area] = [];
+                    if(this.sectionList[area]) return;
+                    new HTTPreq("https://lbor.wsos.com.tw/common/car/get_region/?area=" + area.slice(2,4)+ "&city=" + area[0]).geta().then((rcv) => {
+                        var res = supfnc.toJSON(rcv.result), data = {};
+                        for(var i in res){
+                            data[res[i].car_code] = res[i].region_name;
+                        }
+                        T.sectionList[area] = data;
+                    });
+                },
+                getPlan(area){
+                    var T = this;
+                    if(this.planList[area]) return;
+                    new HTTPreq("/v_search/get_plan_name/", "fd").posta({area:area}).then((rcv) => {
+                        var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res.plan_name){
-                            if(res.plan_name[i]){
-                                T.planList[area].push(res.plan_name[i]);
-                            }
+                            data[res.plan_name[i]] = res.nick_name;
                         }
-                        for(var i in res.region){
-                            if(res.region[i]) {
-                                res.region[i] = res.region[i].split("_");
-                                T.sectionList[area + "_" + res.region[i][0]] = res.region[i][1];
-                            }
-                        }
+                        T.planList[area] = data;
                     });
                 },
                 serverSearch(){
