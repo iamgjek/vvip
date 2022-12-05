@@ -79,8 +79,12 @@ class GetPlanNameView(APIView):
         return name_res, nickname_res
     
     @extend_schema(
-        summary='取 計劃案名',
-        description='''''',
+        summary='取 縣市/行政區/計劃案名',
+        description='''
+                    縣市:   https://lbor.wsos.com.tw/common/car/get_city/
+                    行政區: https://lbor.wsos.com.tw/common/car/get_area/?city=A
+                    段小段: https://lbor.wsos.com.tw/common/car/get_region/?area=01&city=A
+                    ''',
         request=PlanNameSerializer,
         responses={
             200: OpenApiResponse(description='處理成功'),
@@ -645,7 +649,7 @@ class GetSearchResponseV3View(APIView):
         return build_qs_list
 
     def clean_data_sql(self, data):
-        result = {'status':'NG', 'msg':''}
+        result = {}
         js_data = data.get('searchForm')
         try:
             com_sql_t1 = time.perf_counter()
@@ -659,96 +663,14 @@ class GetSearchResponseV3View(APIView):
             self.col_set_lbkey,
             self.t_s_pack_tbname, 
             self.t_s_regno_pack_tbname)= self.set_sql_db(self.sql_select_db, sb=self.sb_range)
-            
+
+            base_region = json_lb_data.get('region', {})
             # base condition=================================================================
             base_region = json_lb_data.get('region', {})
             base_condition = json_lb_data.get('condition', {})
             base_other = json_lb_data.get('other', {})
             self.math_str = None
 
-            # 登記原因
-            registerReason = self.check_int(base_condition.get('registerReason'))
-            if isinstance(registerReason, int) == True:
-                if registerReason == 0:
-                    pass
-                else:
-                    query_list.append('and T1.reg_reason = {}'.format(str(registerReason)))
-
-            # 權屬樣態
-            ownership = base_condition.get('ownership')
-            if ownership:
-                oqs = [x for x, y in ownership.items() if y != 0]
-                os_list = []
-                for i in oqs:
-                    j = self.ownership_dict.get(i)
-                    if j:
-                        os_list.append(j)
-                if os_list:
-                    query_list.append('and T2.owner_type in ({})'.format(','.join([str(x) for x in os_list])))
-
-            # 權利範圍型態 (公同共有)
-            ownershipType = self.check_int(base_condition.get('ownershipType'))
-            if ownershipType:
-                if ownershipType == 0:
-                    pass
-                elif ownershipType == 1:
-                    query_list.append('and T1.right_type in (0,1,2)')
-                elif ownershipType == 2:
-                    query_list.append('and T1.right_type = 3')
-
-            # 所有權人數
-            o_num_low = self.check_int(base_condition.get('ownershipNumLowerLimit'))
-            o_num_up = self.check_int(base_condition.get('ownershipNumUpperLimit'))
-            if o_num_low == 0 and o_num_up == 0:
-                pass
-            else:
-                if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                    query_list.append('and T2.owners_num <= {num_max} and T2.owners_num >= {num_min}'.format(num_max=o_num_up, num_min=o_num_low))
-                elif isinstance(o_num_low, int) == True:
-                    query_list.append('and T2.owners_num >= {num_min}'.format(num_min=o_num_low))
-                elif isinstance(o_num_up, int) == True:
-                    query_list.append('and T2.owners_num <= {num_max}'.format(num_max=o_num_up))
-
-            # 他項設定:他項標記
-            cast_type = self.check_int(base_other.get('otherRemark', None))
-            if cast_type == 0:
-                pass
-            else:
-                query_list.append('and T1.case_type = {}'.format(cast_type))
-
-            # 他項設定:限制登記
-            restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
-            if restricted_type == 0:
-                pass
-            else:
-                query_list.append('and T1.restricted_type = {}'.format(restricted_type))
-            
-            # 土建分開條件
-            if lbtype == 'L':
-                qs_merge = self.clean_land_data(base_region, base_condition, base_other)
-                # print(qs_merge)
-            else:
-                qs_merge = self.clean_build_data(base_region, base_condition, base_other)
-                # print(qs_merge)
-            
-            if qs_merge:
-                query_list.extend(qs_merge)
-            
-            # 資料筆數限制
-            try:
-                max_data = info_config.objects.get(lbtype='Max')
-                self.max_int = int(max_data.last_info_id)
-                self.data_limit = 'LIMIT {}'.format(self.max_int)
-            except Exception as e:
-                print(e)
-                self.max_int = 99999
-                self.data_limit = 'LIMIT {}'.format(self.max_int)
-
-            sql = self.sql_str_combin(query_list)
-            com_sql_t2 = time.perf_counter()
-            print('組sql語法時間 : {}'.format(com_sql_t2 - com_sql_t1))
-
-            qs_sql_t1 = time.perf_counter()
             if self.fake_data:
                 sql = 'SELECT \
                         T2.city_name, T2.area_name, T2.region_name, T2.lno, \
@@ -762,14 +684,96 @@ class GetSearchResponseV3View(APIView):
                         left join diablo.t_search_lmlandlist T2 on T1.lbkey =  T2.lkey \
                         WHERE T1.lbkey like "H_01_0001%" and T1.remove_time is null limit 50 \
                         '
+                print('測試資料')
                 subscriberecords_qs, headers = get_dba(sql, "diablo_test")
             else:
+                # 登記原因
+                registerReason = self.check_int(base_condition.get('registerReason'))
+                if isinstance(registerReason, int) == True:
+                    if registerReason == 0:
+                        pass
+                    else:
+                        query_list.append('and T1.reg_reason = {}'.format(str(registerReason)))
+
+                # 權屬樣態
+                ownership = base_condition.get('ownership')
+                if ownership:
+                    oqs = [x for x, y in ownership.items() if y != 0]
+                    os_list = []
+                    for i in oqs:
+                        j = self.ownership_dict.get(i)
+                        if j:
+                            os_list.append(j)
+                    if os_list:
+                        query_list.append('and T2.owner_type in ({})'.format(','.join([str(x) for x in os_list])))
+
+                # 權利範圍型態 (公同共有)
+                ownershipType = self.check_int(base_condition.get('ownershipType'))
+                if ownershipType:
+                    if ownershipType == 0:
+                        pass
+                    elif ownershipType == 1:
+                        query_list.append('and T1.right_type in (0,1,2)')
+                    elif ownershipType == 2:
+                        query_list.append('and T1.right_type = 3')
+
+                # 所有權人數
+                o_num_low = self.check_int(base_condition.get('ownershipNumLowerLimit'))
+                o_num_up = self.check_int(base_condition.get('ownershipNumUpperLimit'))
+                if o_num_low == 0 and o_num_up == 0:
+                    pass
+                else:
+                    if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
+                        query_list.append('and T2.owners_num <= {num_max} and T2.owners_num >= {num_min}'.format(num_max=o_num_up, num_min=o_num_low))
+                    elif isinstance(o_num_low, int) == True:
+                        query_list.append('and T2.owners_num >= {num_min}'.format(num_min=o_num_low))
+                    elif isinstance(o_num_up, int) == True:
+                        query_list.append('and T2.owners_num <= {num_max}'.format(num_max=o_num_up))
+
+                # 他項設定:他項標記
+                cast_type = self.check_int(base_other.get('otherRemark', None))
+                if cast_type == 0:
+                    pass
+                else:
+                    query_list.append('and T1.case_type = {}'.format(cast_type))
+
+                # 他項設定:限制登記
+                restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
+                if restricted_type == 0:
+                    pass
+                else:
+                    query_list.append('and T1.restricted_type = {}'.format(restricted_type))
+                
+                # 土建分開條件
+                if lbtype == 'L':
+                    qs_merge = self.clean_land_data(base_region, base_condition, base_other)
+                    # print(qs_merge)
+                else:
+                    qs_merge = self.clean_build_data(base_region, base_condition, base_other)
+                    # print(qs_merge)
+                
+                if qs_merge:
+                    query_list.extend(qs_merge)
+                
+                # 資料筆數限制
+                try:
+                    max_data = info_config.objects.get(lbtype='Max')
+                    self.max_int = int(max_data.last_info_id)
+                    self.data_limit = 'LIMIT {}'.format(self.max_int)
+                except Exception as e:
+                    print(e)
+                    self.max_int = 99999
+                    self.data_limit = 'LIMIT {}'.format(self.max_int)
+
+                sql = self.sql_str_combin(query_list)
+                com_sql_t2 = time.perf_counter()
+                print('組sql語法時間 : {}'.format(com_sql_t2 - com_sql_t1))
+                qs_sql_t1 = time.perf_counter()
                 subscriberecords_qs, headers = get_dba(sql, "diablo_test")
+                qs_sql_t2 = time.perf_counter()
+                print('sql查詢時間 : {}'.format(qs_sql_t2 - qs_sql_t1))
 
-            qs_sql_t2 = time.perf_counter()
-            print('sql查詢時間 : {}'.format(qs_sql_t2 - qs_sql_t1))
             result = self.format_data_layout(subscriberecords_qs)
-
         except Exception as e:
             result['msg'] = e
             print(e)
