@@ -508,6 +508,48 @@ Object.defineProperty(
         }
     }
 );
+
+Object.defineProperty(
+    Number.prototype,
+    'round',
+    {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function (n) {
+            n = parseInt(n);
+            return Math.round(this * 10**n) / 10**n;
+        }
+    }
+);
+
+Object.defineProperty(
+    Number.prototype,
+    'floor',
+    {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function (n) {
+            n = parseInt(n);
+            return Math.floor(this * 10**n) / 10**n;
+        }
+    }
+);
+
+Object.defineProperty(
+    Number.prototype,
+    'ceil',
+    {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function (n) {
+            n = parseInt(n);
+            return Math.ceil(this * 10**n) / 10**n;
+        }
+    }
+);
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // String @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
