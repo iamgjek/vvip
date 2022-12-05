@@ -20,10 +20,31 @@ class supfnc{
     static toJSON = (arg, option) => {
         try{
             arg = arg.replace(RegExp(option, 'g'),"");
-            return JSON.parse(arg.replace(/\&amp;/g, "&").replace(/\&\#39;/g, "\"").replace(/\'/g, "\""));
+            return JSON.parse(arg.replace(/\&amp;/g, "&").replace(/\&\#39;/g, "\""));
         }
-        catch(e){ console.log(arg, e)
-            return {};
+        catch(e){
+            try{
+                var ch = {}, tmp, m=1;
+                while((m=arg.match(/(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])/))){
+                    tmp = "@"+supfnc.randAlphabet(10);
+                    ch[tmp] = m[0];
+                    arg = arg.replace(m[0], tmp);
+                }
+                while(arg.match(/(?<=(([:,{^\\])\s*))\'/)){ //  前'
+                    arg = arg.replace(/(?<=(([:,{]|[^\\])\s*))\'/, "\"");
+                }
+                while(arg.match(/(?<=[^\\])\'(?=(\s*([:,}])))/)){ // 後'
+                    arg = arg.replace(/(?<=[^\\])\'(?=(\s*([:,}])))/, "\"");
+                }
+                for(var i in ch){
+                    arg = arg.replace(i, ch[i]);
+                }
+                return JSON.parse(arg.replace(/\&amp;/g, "&").replace(/\&\#39;/g, "\""));
+            }
+            catch(e){
+                console.log(arg, e);
+                return {};
+            }
         }
     }
 

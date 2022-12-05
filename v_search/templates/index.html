@@ -20,6 +20,8 @@
     <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/jquery-peeper.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js" crossorigin="anonymous"></script>
     <script>
         $(function () {
             $("#password1").peeper({
@@ -39,19 +41,19 @@
 
 <body>
     {% block body %}
-    <div id="vue_app" class="cont">
+    <div id="vue_app" class="cont" style="min-height: 100vh;">
         <div class="wrap">
             <form class="form row">
                 <div class="logo text-center"><img src="/static/images/logo.png"></div>
                 <h5 class="text-center">Feature name</h5>
                 <div class="form-group">
                     <div class="col">
-                        <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.accountID">
+                        <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.accountID" minlength="6">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col">
-                        <input id="password1" type="password" class="form-control" name="password" placeholder="請輸入密碼" v-model="loginData.accountPW" >
+                        <input id="password1" type="password" class="form-control" :class="(focus.accountPW && loginData.accountPW.length<6)?'alert-danger':''" name="password" :placeholder="(focus.accountPW && loginData.accountPW.length<6)?'密碼長度最少6字元':'請輸入密碼'" v-model="loginData.accountPW" @blur="focus.accountPW=1">
                     </div>
                 </div>
                 <div class="form-group">
@@ -77,11 +79,19 @@
                     loginData: {
                         accountID: "",
                         accountPW: "",
+                    },
+                    focus:{
+                        accountID: 0,
+                        accountPW: 0,
                     }
                 }
             },
             methods: {
                 login(){
+                    if(this.loginData.accountPW.length < 6){
+                        Swal.fire("密碼長度過短，最少6字元");
+                        return;
+                    }
                     new HTTPreq("", "fd").posta(this.loginData).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                     });
