@@ -93,13 +93,13 @@
                             <option :value="key" v-for="(value, key) in areaList[searchForm.land.region.city]"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto">
+                    <div class="col-sm-auto" style="width:121px;">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.section" @change="searchForm.land.region.plan=null">
                             <option :value="null" selected>段小段</option>
                             <option :value="key" v-for="(value, key) in sectionList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto">
+                    <div class="col-sm-auto" style="width:121px;">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.plan" @change="searchForm.land.region.section=null">
                             <option :value="null" selected>計劃案</option>
                             <option :value="key" v-for="(value, key) in planList[searchForm.land.region.area]"> ((value)) </option>
@@ -910,7 +910,10 @@
             methods: {
                 getArea(city){
                     var T = this;
-                    if(this.areaList[city]) return;
+                    this.searchForm.land.region.area = null;
+                    this.searchForm.land.region.plan = null;
+                    this.searchForm.land.region.section = null;
+                    if(!city || this.areaList[city]) return;
                     new HTTPreq("https://lbor.wsos.com.tw/common/car/get_area/?city=" + city).geta().then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res){
@@ -921,7 +924,8 @@
                 },
                 getSection(area){
                     var T = this;
-                    if(this.sectionList[area]) return;
+                    this.searchForm.land.region.section = null;
+                    if(!area || this.sectionList[area]) return;
                     new HTTPreq("https://lbor.wsos.com.tw/common/car/get_region/?area=" + area.slice(2,4)+ "&city=" + area[0]).geta().then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res){
@@ -932,11 +936,12 @@
                 },
                 getPlan(area){
                     var T = this;
-                    if(this.planList[area]) return;
+                    this.searchForm.land.region.plan = null;
+                    if(!area || this.planList[area]) return;
                     new HTTPreq("/v_search/get_plan_name/", "fd").posta({area:area}).then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res.plan_name){
-                            data[res.plan_name[i]] = res.nick_name;
+                            data[res.plan_name[i]] = res.nick_name[i];
                         }
                         T.planList[area] = data;
                     });
