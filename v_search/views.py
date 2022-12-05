@@ -79,8 +79,12 @@ class GetPlanNameView(APIView):
         return name_res, nickname_res
     
     @extend_schema(
-        summary='取 計劃案名',
-        description='''''',
+        summary='取 縣市/行政區/計劃案名',
+        description='''
+                    縣市:   https://lbor.wsos.com.tw/common/car/get_city/
+                    行政區: https://lbor.wsos.com.tw/common/car/get_area/?city=A
+                    段小段: https://lbor.wsos.com.tw/common/car/get_region/?area=01&city=A
+                    ''',
         request=PlanNameSerializer,
         responses={
             200: OpenApiResponse(description='處理成功'),
