@@ -75,7 +75,8 @@
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">土地開發</li>
+                    <li class="breadcrumb-item" :class="{active: !showResault}">土地開發</li>
+                    <li class="breadcrumb-item active" v-if="showResault">搜尋結果</li>
                 </ol>
             </nav>
             <div class="row r1">
@@ -534,7 +535,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
-                                    <template v-for="(data, dataKey) in searchRes">
+                                    <template v-for="(data, dataIdx) in searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="縣市">
                                                 <p>(( data[0].city_name ))</p>
@@ -546,7 +547,7 @@
                                                 <p>(( data[0].region_name ))</p>
                                             </td>
                                             <td data="地號">
-                                                <p><a :href="'#' + dataKey" data-toggle="collapse">(( dataKey.split('_').last() ))</a></p>
+                                                <p><a :href="'#' + data.region_name + data._lbnum" data-toggle="collapse">(( data._lbnum ))</a></p>
                                             </td>
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
@@ -573,13 +574,13 @@
                                                 <p>(( data[0].權屬種類 ))</p>
                                             </td>
                                             <td data="所有權人">
-                                                <p>(( data[0].所有權人 ))</p>
+                                                <p>(( data[0].name ))</p>
                                             </td>
                                             <td data="他項權利人">
                                                 <p>(( data[0].他項權利人 ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="dataKey" class="collapse cell-1 row-child">
+                                        <tr :id="data.region_name + data._lbnum" class="collapse cell-1 row-child">
                                             <td colspan="15">
                                                 <table>
                                                     <thead>
@@ -627,15 +628,13 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
-                                                <span class="page-link">上一頁</span>
+                                                <span class="page-link" @click="nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active" aria-current="page">
-                                                <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 3..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
+                                                <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
                                             <li class="page-item">
-                                                <a class="page-link" href="#">下一頁</a>
+                                                <span class="page-link" @click="nowPage++">下一頁</span>
                                             </li>
                                         </ul>
                                     </nav>
@@ -658,118 +657,90 @@
                                         <th scope="col">土地總比數</th>
                                         <th scope="col">持分總評數</th>
                                         <th scope="col">持分總現值(萬)</th>
-                                        <th scope="col">建物總比數</th>
+                                        <th scope="col">建物總筆數</th>
                                         <th scope="col">電話</th>
                                         <th scope="col">所有權註記</th>
                                         <th scope="col">身份標籤</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
-                                    <tr data-node="treetable-1">
-                                        <td>
-                                            <p><a href="#demo1" data-toggle="collapse">魏坤勝</a></p>
-                                        </td>
-                                        <td>
-                                            <p>H101670068</p>
-                                        </td>
-                                        <td>
-                                            <p>桃園縣蘆竹鄉蘆竹村10鄰蘆竹51號</p>
-                                        </td>
-                                        <td>
-                                            <p>A0270410</p>
-                                        </td>
-                                        <td>
-                                            <p>2</p>
-                                        </td>
-                                        <td>
-                                            <p>497.37</p>
-                                        </td>
-                                        <td>
-                                            <p>591.91</p>
-                                        </td>
-                                        <td>
-                                            <p>2</p>
-                                        </td>
-                                        <td>
-                                            <p>0933-123456</p>
-                                        </td>
-                                        <td>
-                                            <p></p>
-                                        </td>
-                                        <td>
-                                            <p>外國人</p>
-                                        </td>
-                                    </tr>
-                                    <tr id="demo1" class="collapse cell-1 row-child">
-                                        <td colspan="15">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>縣市</th>
-                                                        <th>行政區</th>
-                                                        <th>段小段</th>
-                                                        <th>地號</th>
-                                                        <th>登記次序</th>
-                                                        <th>登記日期</th>
-                                                        <th>登記原因</th>
-                                                        <th>土地面積</th>
-                                                        <th>公告現值</th>
-                                                        <th>權利範圍</th>
-                                                        <th>持分坪數</th>
-                                                        <th>持分現值(萬)</th>
-                                                        <th>他項權利(其他註記)</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>桃園市</td>
-                                                        <td>龜山區</td>
-                                                        <td>體大段</td>
-                                                        <td>0164-0000</td>
-                                                        <td>3</td>
-                                                        <td>1965年09月29日</td>
-                                                        <td>買賣</td>
-                                                        <td>1,644</td>
-                                                        <td>3,600</td>
-                                                        <td>3分之1</td>
-                                                        <td>0.2</td>
-                                                        <td>0</td>
-                                                        <td>1) 合庫 109-04-30 最高 345萬元</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>桃園市</td>
-                                                        <td>龜山區</td>
-                                                        <td>體大段</td>
-                                                        <td>0164-0000</td>
-                                                        <td>3</td>
-                                                        <td>1965年09月29日</td>
-                                                        <td>買賣</td>
-                                                        <td>1,644</td>
-                                                        <td>3,600</td>
-                                                        <td>3分之1</td>
-                                                        <td>0.2</td>
-                                                        <td>0</td>
-                                                        <td>1) 合庫 109-04-30 最高 345萬元</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>桃園市</td>
-                                                        <td>龜山區</td>
-                                                        <td>體大段</td>
-                                                        <td>0164-0000</td>
-                                                        <td>3</td>
-                                                        <td>1965年09月29日</td>
-                                                        <td>買賣</td>
-                                                        <td>1,644</td>
-                                                        <td>3,600</td>
-                                                        <td>3分之1</td>
-                                                        <td>0.2</td>
-                                                        <td>0</td>
-                                                        <td>1) 合庫 109-04-30 最高 345萬元</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
+                                    <template v-for="(data, dataIdx) in person_searchResBox">
+                                        <tr data-node="treetable-1">
+                                            <td data="所有權人">
+                                                <p><a :href="'#'+data._key" data-toggle="collapse">(( data.name ))</a></p>
+                                            </td>
+                                            <td data="統一編號">
+                                                <p>(( data.uid ))</p>
+                                            </td>
+                                            <td data="戶籍地址">
+                                                <p>(( data.戶籍地址 ))</p>
+                                            </td>
+                                            <td data="出生日期">
+                                                <p>(( data.出生日期 ))</p>
+                                            </td>
+                                            <td data="土地總比數">
+                                                <p>(( data.土地總比數 ))</p>
+                                            </td>
+                                            <td data="持分總評數">
+                                                <p>(( data.持分總評數 ))</p>
+                                            </td>
+                                            <td data="持分總現值(萬)">
+                                                <p>(( data.持分總現值 ))</p>
+                                            </td>
+                                            <td data="建物總筆數">
+                                                <p>(( data.建物總筆數 ))</p>
+                                            </td>
+                                            <td data="電話">
+                                                <p>(( data.電話 ))</p>
+                                            </td>
+                                            <td data="所有權註記">
+                                                <p>(( data.所有權註記 ))</p>
+                                            </td>
+                                            <td data="身份標籤">
+                                                <p>(( data.身份標籤 ))</p>
+                                            </td>
+                                        </tr>
+                                        <tr :id="data._key" class="collapse cell-1 row-child">
+                                            <td colspan="15">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>縣市</th>
+                                                            <th>行政區</th>
+                                                            <th>段小段</th>
+                                                            <th>地號</th>
+                                                            <th>登記次序</th>
+                                                            <th>登記日期</th>
+                                                            <th>登記原因</th>
+                                                            <th>土地面積</th>
+                                                            <th>公告現值</th>
+                                                            <th>權利範圍</th>
+                                                            <th>持分坪數</th>
+                                                            <th>持分現值(萬)</th>
+                                                            <th>他項權利(其他註記)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td data="縣市">(( data.city_name ))</td>
+                                                            <td data="行政區">(( data.area_name ))</td>
+                                                            <td data="段小段">(( data.region_name ))</td>
+                                                            <td data="地號">(( data._lbnum ))</td>
+                                                            <td data="登記次序">(( data.登記次序 ))</td>
+                                                            <td data="登記日期">(( data.reg_date_str ))</td>
+                                                            <td data="登記原因">(( data.reg_reason_str ))</td>
+                                                            <td data="土地面積">(( data.land_area ))</td>
+                                                            <td data="公告現值">(( data.land_notice_value ))</td>
+                                                            <td data="權利範圍">(( data.right_str ))</td>
+                                                            <td data="持分坪數">(( data.shared_size ))</td>
+                                                            <td data="持分現值">(( data.持分現值 ))</td>
+                                                            <td data="他項權利">(( data.他項權利 ))</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
@@ -779,15 +750,13 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
-                                                <span class="page-link">上一頁</span>
+                                                <span class="page-link" @click="person_nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active" aria-current="page">
-                                                <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                            <li class="page-item" :class="{active:person_nowPage==person_startPageBtn+i}" v-for="i in 3..minmax(1,person_totalPage)" @click="person_nowPage=person_startPageBtn+i">
+                                                <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
                                             <li class="page-item">
-                                                <a class="page-link" href="#">下一頁</a>
+                                                <span class="page-link" @click="person_nowPage++">下一頁</span>
                                             </li>
                                         </ul>
                                     </nav>
@@ -859,6 +828,20 @@
                     planList: {},
                     showResault: 0,
 
+                    onepageNum: 20,
+                    startPageBtn: 0,
+                    nowPage: 0,
+                    totalPage: 1,
+                    searchRes: [],
+                    searchResBox: [],
+
+                    person_onepageNum: 20,
+                    person_startPageBtn: 0,
+                    person_nowPage: 0,
+                    person_totalPage: 1,
+                    person_searchRes: [],
+                    person_searchResBox: [],
+
                     searchForm:{
                         land:{
                             "region": {
@@ -904,7 +887,6 @@
                             }
                         }
                     },
-                    searchRes: {},
                 }
             },
             methods: {
@@ -951,7 +933,30 @@
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: this.searchForm, fake_data: true}).then((rcv) => {
                         var res = supfnc.toJSON(rcv.result);
                         console.log(res)
-                        T.searchRes = res;
+
+                        T.searchRes = [];
+                        for(var i in res){
+                            for(var j in res[i])res[i][j]._lbnum = i.split("_").last();
+                            T.searchRes.push(res[i]);
+                        }
+                        T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
+                        T.nowPage = 0;
+                        Vue.nextTick(()=>{T.nowPage = 1;});
+
+                        var tmp = {};
+                        T.person_searchRes = [];
+                        for(var i in res){
+                            for(var j in res[i]){
+                                if(!res[i][j].name || !res[i][j].uid) continue;
+                                res[i][j]._key = (res[i][j].name + res[i][j].uid).replace(/[\*]/g, "＊");
+                                tmp[res[i][j].name + res[i][j].uid] = res[i][j];
+                            }
+                        }
+                        for(var i in tmp) T.person_searchRes.push(tmp[i]);
+                        T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
+                        T.person_nowPage = 0;
+                        Vue.nextTick(()=>{T.person_nowPage = 1;});
+
                         T.showResault = 1;
                     });
                 }
@@ -960,6 +965,34 @@
             created(){},
             updated(){},
             beforeUpdate(){},
+            watch:{
+                nowPage:{
+                    handler(nV, oV){
+                        var data;
+                        this.nowPage = nV.minmax(1, this.totalPage);
+                        this.startPageBtn = (this.nowPage-1).minmax(1, Math.max(this.totalPage-2, 1)) - 1;
+                        this.searchResBox.length = 0;
+                        for(var i=0; i<this.onepageNum; i++){
+                            data = this.searchRes[(nV-1) * this.onepageNum + i];
+                            if(!data) break;
+                            this.searchResBox.push(data);
+                        }
+                    }
+                },
+                person_nowPage:{
+                    handler(nV, oV){
+                        var data;
+                        this.person_nowPage = nV.minmax(1, this.person_totalPage);
+                        this.person_startPageBtn = (this.person_nowPage-1).minmax(1, Math.max(this.person_totalPage-2, 1)) - 1;
+                        this.person_searchResBox.length = 0;
+                        for(var i=0; i<this.person_onepageNum; i++){
+                            data = this.person_searchRes[(nV-1) * this.person_onepageNum + i];
+                            if(!data) break;
+                            this.person_searchResBox.push(data);
+                        }
+                    }
+                }
+            }
         });
 
         // test
