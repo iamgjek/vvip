@@ -75,7 +75,8 @@
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">土地開發</li>
+                    <li class="breadcrumb-item" :class="{active: !showResault}">土地開發</li>
+                    <li class="breadcrumb-item active" v-if="showResault">搜尋結果</li>
                 </ol>
             </nav>
             <div class="row r1">
@@ -534,7 +535,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
-                                    <template v-for="(data, dataKey) in searchRes">
+                                    <template v-for="(data, dataIdx) in searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="縣市">
                                                 <p>(( data[0].city_name ))</p>
@@ -546,7 +547,7 @@
                                                 <p>(( data[0].region_name ))</p>
                                             </td>
                                             <td data="地號">
-                                                <p><a :href="'#' + dataKey" data-toggle="collapse">(( dataKey.split('_').last() ))</a></p>
+                                                <p><a :href="'#' + data.region_name + data.lbnum" data-toggle="collapse">(( data.lbnum ))</a></p>
                                             </td>
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
@@ -579,7 +580,7 @@
                                                 <p>(( data[0].他項權利人 ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="dataKey" class="collapse cell-1 row-child">
+                                        <tr :id="data.region_name + data.lbnum" class="collapse cell-1 row-child">
                                             <td colspan="15">
                                                 <table>
                                                     <thead>
@@ -627,15 +628,13 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
-                                                <span class="page-link">上一頁</span>
+                                                <span class="page-link" @click="nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active" aria-current="page">
-                                                <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 3..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
+                                                <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
                                             <li class="page-item">
-                                                <a class="page-link" href="#">下一頁</a>
+                                                <span class="page-link" @click="nowPage++">下一頁</span>
                                             </li>
                                         </ul>
                                     </nav>
@@ -779,15 +778,13 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
-                                                <span class="page-link">上一頁</span>
+                                                <span class="page-link" @click="nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active" aria-current="page">
-                                                <span class="page-link">2<span class="sr-only">(current)</span></span>
+                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 3..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
+                                                <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
                                             <li class="page-item">
-                                                <a class="page-link" href="#">下一頁</a>
+                                                <span class="page-link" @click="nowPage++">下一頁</span>
                                             </li>
                                         </ul>
                                     </nav>
@@ -858,6 +855,10 @@
                     sectionList:{},
                     planList: {},
                     showResault: 0,
+                    onepageNum: 20,
+                    startPageBtn: 0,
+                    nowPage: 0,
+                    totalPage: 1,
 
                     searchForm:{
                         land:{
@@ -904,7 +905,8 @@
                             }
                         }
                     },
-                    searchRes: {},
+                    searchRes: [],
+                    searchResBox: [],
                 }
             },
             methods: {
@@ -951,7 +953,14 @@
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: this.searchForm, fake_data: true}).then((rcv) => {
                         var res = supfnc.toJSON(rcv.result);
                         console.log(res)
-                        T.searchRes = res;
+                        T.searchRes = [];
+                        for(var i in res){
+                            res[i].lbnum = i.split("_").last();
+                            T.searchRes.push(res[i]);
+                        }
+                        T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
+                        T.nowPage = 0;
+                        Vue.nextTick(()=>{T.nowPage = 1;});
                         T.showResault = 1;
                     });
                 }
@@ -960,6 +969,21 @@
             created(){},
             updated(){},
             beforeUpdate(){},
+            watch:{
+                nowPage:{
+                    handler(nV, oV){
+                        var data;
+                        this.nowPage = nV.minmax(1, this.totalPage);
+                        this.startPageBtn = (this.nowPage-1).minmax(1, Math.max(this.totalPage-2, 1)) - 1;
+                        this.searchResBox.length = 0;
+                        for(var i=0; i<this.onepageNum; i++){
+                            data = this.searchRes[(nV-1) * this.onepageNum + i];
+                            if(!data) break;
+                            this.searchResBox.push(data);
+                        }
+                    }
+                }
+            }
         });
 
         // test

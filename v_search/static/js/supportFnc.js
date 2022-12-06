@@ -77,12 +77,17 @@ class supfnc{
     }
 
     static clickCopy = (el) => {
-        var range = document.createRange();
-        range.selectNode(el);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        document.execCommand("copy");
-        window.getSelection().removeAllRanges();
+        try{
+            navigator.clipboard?.writeText && navigator.clipboard.writeText(el.innerText);
+        }
+        catch{
+            var range = document.createRange();
+            range.selectNode(el);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+        }
     }
 
     static getZindex = (el) => {
