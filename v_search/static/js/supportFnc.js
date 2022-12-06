@@ -24,18 +24,13 @@ class supfnc{
         }
         catch(e){
             try{
-                var ch = {}, tmp, m=1;
-                while((m=arg.match(/(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])/))){
-                    tmp = "@"+supfnc.randAlphabet(10);
-                    ch[tmp] = m[0];
-                    arg = arg.replace(m[0], tmp);
-                }
-                while(arg.match(/(?<=(([:,{^\\])\s*))\'/)){ //  前'
-                    arg = arg.replace(/(?<=(([:,{]|[^\\])\s*))\'/, "\"");
-                }
-                while(arg.match(/(?<=[^\\])\'(?=(\s*([:,}])))/)){ // 後'
-                    arg = arg.replace(/(?<=[^\\])\'(?=(\s*([:,}])))/, "\"");
-                }
+                var ch = {}, tmp;
+                arg = arg.replace(/(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])/g, (x) => {
+                    tmp = "@"+this.randAlphabet(10);
+                    ch[tmp] = x;
+                    return tmp;
+                });
+                arg = arg.replace(/(?<=(([:,{]|[^\\])\s*))\'|(?<=[^\\])\'(?=(\s*([:,}])))/g, "\"");
                 for(var i in ch){
                     arg = arg.replace(i, ch[i]);
                 }
