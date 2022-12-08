@@ -149,82 +149,10 @@
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
                                     <div class="dropdown-menu">
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">住宅區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">工業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">商業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">農業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">風景區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">別墅區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">林業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">文教區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">水岸發展區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">水域</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">行水區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">行政區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">防風林區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">其他使用分區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">服務區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">河川區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">保存區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">保護區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">活動區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">倉庫區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">旅館區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">海濱浴場區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">動植物園區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">國家公園區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">眺望區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">野餐區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">魚塭區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">景觀區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">溫泉區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">葬儀業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">遊樂區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">遊憩區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">漁業區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">營區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">露營區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">體育運動區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">鹽田區區</button>
-                                        <button class="dropdown-item" type="button"><input type="checkbox"
-                                                class="form-check-input" id="exampleCheck1">觀光農場區</button>
+                                        <button class="dropdown-item" type="button" v-for="(i, idx) in inCity" @click.stop>
+                                            <input type="checkbox" class="form-check-input" :id="'inCity' + idx">
+                                            <label class="m-0 w-100" :for="'inCity' + idx">(( i ))</label>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
@@ -233,41 +161,19 @@
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用分區</button>
                                             <div class="dropdown-menu">
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">特定農業區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">一般農業區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">工業區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">鄉村區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">森林區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">山坡地保護區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">風景區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">國家公園區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">河川區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">海域區</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">其他使用區或特定專區</button>
+                                                <button class="dropdown-item" type="button" v-for="(i, idx) in outCity" @click.stop>
+                                                    <input type="checkbox" class="form-check-input" :id="'outCity' + idx">
+                                                    <label class="m-0 w-100" :for="'outCity' + idx">(( i ))</label>
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用地類別</button>
                                             <div class="dropdown-menu">
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">甲種建築用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">乙種建築用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">丙種建築用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">丁種建築用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">牧農用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">林業用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">養殖用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">鹽業用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">礦業用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">窯業用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">交通用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">水利用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">遊憩用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">古蹟保存用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">生態保護用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">國土保安用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">殯葬用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">海域用地</button>
-                                                <button class="dropdown-item" type="button"><input type="checkbox" class="form-check-input" id="exampleCheck1">特定目的事業用地</button>
+                                                <button class="dropdown-item" type="button" v-for="(i, idx) in outCity2" @click.stop>
+                                                    <input type="checkbox" class="form-check-input" :id="'outCity2' + idx">
+                                                    <label class="m-0 w-100" :for="'outCity2' + idx"p>(( i ))</label>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -321,19 +227,20 @@
                                 <script type="text/javascript">
                                     $(document).ready(function () {
                                         $('#bs1').multiselect({
-                                            enableHTML: true,
+                                            // enableHTML: true,
                                             nonSelectedText: '權屬',
-                                            buttonWidth: '150px',
-                                            numberDisplayed: 2
+                                            buttonWidth: '170px',
+                                            numberDisplayed: 2,
+                                            onChange:(q,w)=>{ms[0]("searchForm.land.condition.ownership." + q[0].value, w)}
                                         });
                                     });
                                 </script>
-                                <select id="bs1" multiple="multiple" class="form-select  custom-select col-sm-12 w-10" v-model="searchForm.land.condition.ownership">
-                                    <option value="">自然人</option>
-                                    <option value="">私法人</option>
-                                    <option value="">公法人</option>
-                                    <option value="">非公有</option>
-                                    <option value="">部分公有</option>
+                                <select id="bs1" multiple="multiple" class="form-select  custom-select col-sm-12 w-10" v-model="searchForm.land.condition.ownership" @change="cc(123)">
+                                    <option value="natural">自然人</option>
+                                    <option value="private">私法人</option>
+                                    <option value="public">公法人</option>
+                                    <option value="non_public">非公有</option>
+                                    <option value="partially_public">部分公有</option>
                                 </select>
                             </div>
                             <div class="col">
@@ -346,11 +253,13 @@
                             </div>
                             <div class="col">
                                 <script type="text/javascript">
+                                    // @@@@
                                     $(document).ready(function () {
                                         $('#enable').multiselect({
                                             nonSelectedText: '登記原因',
-                                            buttonWidth: '150px',
-                                            numberDisplayed: 6
+                                            buttonWidth: '170px',
+                                            numberDisplayed: 6,
+                                            onChange:(q,w)=>{ms[0]("searchForm.land.condition.registerReason." + q[0].value, w)}
                                         });
                                     });
                                 </script>
@@ -406,31 +315,14 @@
                                     $(document).ready(function () {
                                         $('#bs3').multiselect({
                                             nonSelectedText: '國土區分',
-                                            numberDisplayed: 6
+                                            numberDisplayed: 6,
+                                            buttonWidth: '170px',
+                                            onChange:(q,w)=>{ms[0]("searchForm.land.region.national_land_zone." + q[0].value, w)}
                                         });
                                     });
                                 </script>
                                 <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone">
-                                    <option value="">不拘</option>
-                                    <option value="">城一</option>
-                                    <option value="">城二之一</option>
-                                    <option value="">城二之二</option>
-                                    <option value="">城二之三</option>
-                                    <option value="">城三</option>
-                                    <option value="">農一</option>
-                                    <option value="">農二</option>
-                                    <option value="">農三</option>
-                                    <option value="">農四</option>
-                                    <option value="">國一</option>
-                                    <option value="">國二</option>
-                                    <option value="">國三</option>
-                                    <option value="">國四</option>
-                                    <option value="">海一之一</option>
-                                    <option value="">海一之二</option>
-                                    <option value="">海一之三</option>
-                                    <option value="">海二</option>
-                                    <option value="">海三</option>
-                                    <option value="">未分類</option>
+                                    <option :value="idx" v-for="(i ,idx) in national_land_zone">(( i ))</option>
                                 </select>
                             </div>
                         </div>
@@ -518,16 +410,18 @@
                                         $('#example-getting-started').multiselect({
                                             enableHTML: true,
                                             nonSelectedText: '國籍',
+                                            buttonWidth: '170px',
+                                            onChange:(q,w)=>{ms[0]("searchForm.land.other.country." + q[0].value, w)}
                                         });
                                     });
                                 </script>
                                 <select id="example-getting-started" multiple="multiple"
                                     class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country">
-                                    <option value="LG">不拘</option>
-                                    <option value="SM">台灣</option>
-                                    <option value="SM">越南</option>
-                                    <option value="SM">印尼</option>
-                                    <option value="SM">中國</option>
+                                    <option :value="null">不拘</option>
+                                    <option value="TW">台灣</option>
+                                    <option value="VN">越南</option>
+                                    <option value="IN">印尼</option>
+                                    <option value="CH">中國</option>
                                 </select>
                             </div>
 
@@ -891,24 +785,35 @@
 
             <div v-if="!showResault">
                 <div class="row bg1">
-                    <div class="col-sm-7">
-                        <h5>Feature slogon</h5>
-                        <p>Feature slogonFeature slogonFeature slogonFeature slogonFeature slogonFeature slogonFeature
-                            slogonFeature slogonFeature slogonFeature slogon</p>
+                    <div class="col-sm-7 d-flex">
+                        <div class="align-self-center">
+                            <h1 class="font-weight-bold mb-3">輕鬆幫您找出土地持有人</h1>
+                            <h4 class="">搜尋土地開發範圍，輕鬆幫您找出土地持有人相關資訊
+                                幫助您精準鎖定關係人進一步推進成交！</h4>
+                        </div>
                     </div>
                     <div class="col-sm-5">
-                        <img src="/static/images/slogan.jpg">
+                        <img src="/static/images/slogan.svg">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <div class="bg2">Stap1</div>
+                        <div class="bg2 d-flex justify-content-between">
+                            <img class="align-self-start" src="/static/images/step0.svg">
+                            <span class="font-weight-bold align-self-center px-2">設定搜尋範圍 <span>&gt;</span></span>
+                        </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="bg2">Stap2</div>
+                        <div class="bg2 d-flex justify-content-between">
+                            <img class="align-self-start" src="/static/images/step1.svg">
+                            <span class="font-weight-bold align-self-center px-2">查看開發範圍 <span>&gt;</span></span>
+                        </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="bg2">Stap3</div>
+                        <div class="bg2 d-flex justify-content-between">
+                            <img class="align-self-start" src="/static/images/step2.svg">
+                            <span class="font-weight-bold align-self-center px-2">取得池有人情報</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -940,10 +845,15 @@
         });
     </script>
     <script>
+        var ms = [];
         const baseapp = Vue.createApp({
             delimiters: ['((', '))'],
             data() {
                 return {
+                    inCity: ['住宅區', '工業區', '商業區', '農業區', '風景區', '別墅區', '林業區', '文教區', '水岸發展區', '水域', '行水區', '行政區', '防風林區', '其他使用分區', '服務區', '河川區', '保存區', '保護區', '活動區', '倉庫區', '旅館區', '海濱浴場區', '動植物園區', '國家公園區', '眺望區', '野餐區', '魚塭區', '景觀區', '溫泉區', '葬儀業區', '遊樂區', '遊憩區', '漁業區', '營區', '露營區', '體育運動區', '鹽田區區', '觀光農場區'],
+                    outCity: ['特定農業區', '一般農業區', '工業區', '鄉村區', '森林區', '山坡地保護區', '風景區', '國家公園區', '河川區', '海域區', '其他使用區或特定專區'],
+                    outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
+                    national_land_zone: ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類'],
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     areaList: {},
                     sectionList:{},
@@ -973,10 +883,12 @@
                                 "section": null,
                                 "includeInvalid": 0,
                                 "landNumber": "",
-                                "national_land_zone": "", // 國土分區
+                                "national_land_zone": [], // 國土分區
                             },
                             "condition": {
-                                "registerReason": 0,
+                                "registerReason": {
+
+                                },
                                 "ownership": {
                                     "natural": 0,
                                     "private": 0,
@@ -1000,7 +912,7 @@
                                 "otherRemark": 0,
                                 "restrictedRegistration": 0, 
                                 "age_range": null,    // 年齡範圍
-                                "country": "",      // 國籍
+                                "country": {},      // 國籍
                                 "p_part_valueLowerLimit": "", // 個人持分總值
                                 "p_part_valueUpperLimit": "",
                                 "p_part_areaLowerLimit": "",   // 個人持分總面積
@@ -1081,9 +993,18 @@
 
                         T.showResault = 1;
                     });
+                },
+                multipleSelect: function(route, value){
+                    var tmp = route.split("."), T = this, d = this;
+                    for(var i=0; i<tmp.length-1; i++){
+                        if(d[tmp[i]]) d = d[tmp[i]];
+                    }
+                    d[tmp.last()] = value;
                 }
             },
-            mounted(){},
+            mounted(){
+                ms[0] = this.multipleSelect;
+            },
             created(){},
             updated(){},
             beforeUpdate(){},
