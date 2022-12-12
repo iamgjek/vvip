@@ -9,7 +9,7 @@ git pull
 # PROJECT 專案名稱 
 PROJECT=vvip
 # PY_VERSION python版本 
-PY_VERSION=3.10
+PY_VERSION=3.8
 
 cd ..
 VENV_DIR=venv_$PROJECT
