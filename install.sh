@@ -5,7 +5,7 @@
 # PROJECT 專案名稱 
 PROJECT=vvip
 # PY_VERSION python版本 
-PY_VERSION=3.10
+PY_VERSION=3.8
 
 cd ..
 VENV_DIR=venv_$PROJECT
@@ -43,11 +43,11 @@ pip install -r requirements.txt
 # 安裝程式
 # sudo apt install memcached -y
 # sudo apt install rabbitmq-server -y
-sudo apt install redis -y
+# sudo apt install redis -y
 
-# 資料表更新
-python manage.py makemigrations
-python manage.py migrate
+# 資料表更新 => 開發環境不執行
+# python manage.py makemigrations
+# python manage.py migrate
 
 # # 第一次 makemigrations 的動作 ！！
 # python manage.py makemigrations user

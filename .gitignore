@@ -25,4 +25,4 @@ __pycache__/
 
 celerybeat-schedule
 uwsgi.sock
-nginx.conf
+# nginx.conf
