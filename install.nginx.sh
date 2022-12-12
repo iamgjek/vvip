@@ -40,7 +40,8 @@ cd $PROJECT
 # 進入虛擬環境
 . ../$VENV_DIR/bin/activate
 # 安裝套件
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip wheel
+pip install setuptools==57.5.0
 pip install -r requirements.txt
 # ~~~~~~~~~~~~~~結束~~~~~~~~~~~~~~
 

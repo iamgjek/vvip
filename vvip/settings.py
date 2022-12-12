@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from cloghandler import ConcurrentRotatingFileHandler
 import ast
 import os
 from pathlib import Path
@@ -244,65 +245,48 @@ if DEBUG == True:
 if not os.path.exists('logs'):
     os.makedirs('logs')
 
+LOG_PATH = os.path.join(BASE_DIR, 'logs/server.log')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'normal': {
-            'format': '[%(levelname)s] %(asctime)s | %(name)s:%(lineno)d | %(message)s'
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s][%(name)s:%(lineno)d] - %(message)s'
         },
     },
     'handlers': {
         'console': {
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
-            'formatter': 'normal',  # use the above "normal" formatter
-            # 'rich_tracebacks': True,  # 錯誤訊息框架
-            # 'filters': ['require_debug_true'],  # add filters
+            'formatter': 'standard',
         },
         'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/main.log',
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.ConcurrentRotatingFileHandler',
+            'filename': LOG_PATH,
             'maxBytes': 1024*1024*10,
             'backupCount': 10,
-            'formatter': 'normal',
+            'formatter': 'standard',
         }
-
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
+            'propagate': False,
         },
-        'v_search': {  # means "root logger"
-            'handlers': ['console', 'file'],  # use the above "console" handler
-            'level': LOG_LEVEL,  # logging level
+        'common': {
+            'handlers': ['console', 'file'],
+            'level': LOG_LEVEL,
+            'propagate': False,
         },
-        # 'common': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
-        # 'land': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
-        # 'user': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
-        # 'extra_building': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
-        # 'extra_common': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
-        # 'extra_land': {  # means "root logger"
-        #     'handlers': ['console', 'file'],  # use the above "console" handler
-        #     'level': LOG_LEVEL,  # logging level
-        # },
+        'v_search': {
+            'handlers': ['console', 'file'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
     },
 }
-
 
 
