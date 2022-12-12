@@ -43,11 +43,11 @@ pip install -r requirements.txt
 # 安裝程式
 # sudo apt install memcached -y
 # sudo apt install rabbitmq-server -y
-sudo apt install redis -y
+# sudo apt install redis -y
 
-# 資料表更新
-python manage.py makemigrations
-python manage.py migrate
+# 資料表更新 => 開發環境不執行
+# python manage.py makemigrations
+# python manage.py migrate
 
 # # 第一次 makemigrations 的動作 ！！
 # python manage.py makemigrations user
