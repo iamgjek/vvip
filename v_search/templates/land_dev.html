@@ -964,7 +964,11 @@
                 },
                 serverSearch(){
                     var T = this;
-                    new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: this.searchForm, fake_data: true}).then((rcv) => {
+                    if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
+                        Swal.fire("請選擇至段小段或計劃案")
+                        return;
+                    }
+                    new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         var res = supfnc.toJSON(rcv.result);
                         console.log(res)
 
