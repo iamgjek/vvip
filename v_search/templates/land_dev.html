@@ -938,7 +938,7 @@
                     var T = this;
                     this.searchForm.land.region.plan = null;
                     if(!area || this.planList[area]) return;
-                    new HTTPreq("/v_search/get_plan_name/", "fd").posta({area:area}).then((rcv) => {
+                    new HTTPreq("/v_search/get_plan_name/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({area:area}).then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res.plan_name){
                             data[res.plan_name[i]] = res.nick_name[i];
