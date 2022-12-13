@@ -820,7 +820,7 @@ baseapp.directive('relativepos', {
 // ------------------------------------------------------------------------------------- //
 function vnumber(el, binding){
     var numfy = binding.modifiers.float ? parseFloat : parseInt;
-    var range = (binding.value || "").split(","), min = numfy(range[0] || "-1"), max =  numfy(range[1] || "-1");
+    var range = (binding.value.toString() || "").split(","), min = numfy(range[0] || "-1"), max =  numfy(range[1] || "-1");
 
     el.removeEventListener("input", el.inputE_number);
     el.inputE_number = () => {
