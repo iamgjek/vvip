@@ -550,10 +550,10 @@
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
                                             </td>
                                             <td data="使用分區">
-                                                <p>(( data[0].使用分區 || '(空白)' ))</p>
+                                                <p>(( data[0].land_zone || '(空白)' ))</p>
                                             </td>
                                             <td data="使用地類別">
-                                                <p>(( data[0].使用地類別 || '(空白)' ))</p>
+                                                <p>(( data[0].urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
                                                 <p>(( data[0].land_area ))</p>
@@ -568,13 +568,13 @@
                                                 <p>(( data[0].build_num ))</p>
                                             </td>
                                             <td data="權屬種類">
-                                                <p>(( data[0].權屬種類 ))</p>
+                                                <p>(( data[0].owner_type ))</p>
                                             </td>
                                             <td data="所有權人">
                                                 <p>(( data[0].name ))</p>
                                             </td>
                                             <td data="他項權利人">
-                                                <p>(( data[0].他項權利人 ))</p>
+                                                <p>(( data[0].creditors_rights ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data.region_name + data._lbnum" class="collapse cell-1 row-child">
