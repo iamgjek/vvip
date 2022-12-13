@@ -115,20 +115,14 @@
                             </button>
                             <div class="dropdown-menu">
                                 <form class="px-4 py-3 row pp">
-                                    <!-- @@@@ -->
+                                    <div class="form-check col-sm-12 pp2">
+                                        <input class="form-control" :class="{'is-invalid': !landbuildNumberFix(searchForm.land.region.land_number, 'l').ok}" placeholder="地號" v-model="searchForm.land.region.land_number">
+                                    </div>
                                     <div class="form-group col-sm-6">
-                                        <select class="form-control custom-select col-sm-12 w-10">
-                                            <option value="DF" selected>單筆</option>
-                                            <option value="LG">多筆</option>
-                                            <option value="SM">區間</option>
-                                        </select>
                                     </div>
                                     <div class="form-group col-sm-6 pp1">
                                         <input type="checkbox" class="form-check-input" id="dropdownCheck" v-model="searchForm.land.region.includeInvalid">
                                         <label class="form-check-label" for="dropdownCheck">包含失效資料</label>
-                                    </div>
-                                    <div class="form-check col-sm-12 pp2">
-                                        <input type="password" class="form-control" placeholder="地號" v-model="searchForm.land.region.land_number">
                                     </div>
                                 </form>
                             </div>
@@ -136,7 +130,6 @@
                     </div>
 
                     <div class="col-sm-auto">
-                        <!-- @@@@ -->
                         <div class="dropdown">
                             <button class="btn dropdown-toggle custom-select on on1 left" type="button"
                                 data-toggle="dropdown" data-submenu>
@@ -253,7 +246,6 @@
                             </div>
                             <div class="col">
                                 <script type="text/javascript">
-                                    // @@@@
                                     $(document).ready(function () {
                                         $('#enable').multiselect({
                                             nonSelectedText: '登記原因',
@@ -264,23 +256,12 @@
                                     });
                                 </script>
                                 <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.land.condition.registerReason">
-                                    <option value="">不拘</option>
-                                    <option value="">繼承</option>
-                                    <option value="">贈與</option>
-                                    <option value="">買賣</option>
-                                    <option value="">交換</option>
-                                    <option value="">重劃</option>
-                                    <option value="">總登記</option>
-                                    <option value="">分割</option>
-                                    <option value="">調解</option>
-                                    <option value="">拍賣</option>
-                                    <option value="">信託</option>
-                                    <option value="">合併</option>
-                                    <option value="">其他</option>
+                                    <option :value="idx" v-for="(i, idx) in registerReason">(( i))</option>
                                 </select>
                             </div>
 
                             <div class="col">
+                                <!-- @@@@ -->
                                 <div class="dropdown on1">
                                     <button class="btn dropdown-toggle custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -291,18 +272,18 @@
                                         <form class="p3 pp row">
                                             <div class="col-sm-6">
                                                 <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.other.holding_period">
-                                                    <option value="" selected>半年內</option>
-                                                    <option value="">1年內</option>
-                                                    <option value="">3 ~ 5年內</option>
-                                                    <option value="">5 ~ 10年內</option>
-                                                    <option value="">10 年以上</option>
+                                                    <option :value="'[' + (searchForm.land.other.holding_period_l*12) + ',' + (searchForm.land.other.holding_period_u*12) + ']'">自訂</option>
+                                                    <option value="[0,6]">半年內</option>
+                                                    <option value="[0,12]">1年內</option>
+                                                    <option value="[36,60]">3 ~ 5年內</option>
+                                                    <option value="v">5 ~ 10年內</option>
+                                                    <option value="e">10 年以上</option>
                                                 </select>
                                             </div>
                                             <div class="row v4">
-                                                <!-- @@@@ -->
-                                                <input type="" class="form-control col-sm-3 v2" placeholder="0">
+                                                <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_l" v-number="0">
                                                 <label class="col-form-label la1" for="edit-text-name-id">年-</label>
-                                                <input type="" class="form-control col-sm-3 v2" placeholder="0">
+                                                <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_u" v-number="0">
                                                 <label class="col-form-label la1" for="edit-text-name-id">年</label>
                                             </div>
                                         </form>
@@ -467,7 +448,7 @@
                                     <option :value="5">其他依法律所為禁止處分登記</option>
                                 </select>
                             </div>
-                            <div class="col">
+                            <div class="col d-none">
                                 <!-- @@@@ -->
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
@@ -854,6 +835,7 @@
                     outCity: ['特定農業區', '一般農業區', '工業區', '鄉村區', '森林區', '山坡地保護區', '風景區', '國家公園區', '河川區', '海域區', '其他使用區或特定專區'],
                     outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
                     national_land_zone: ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類'],
+                    registerReason: ["繼承", "贈與", "買賣", "交換", "重劃", "總登記", "分割", "調解", "拍賣", "信託", "合併", "其他"],
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     areaList: {},
                     sectionList:{},
@@ -882,7 +864,7 @@
                                 "plan": null,
                                 "section": null,
                                 "includeInvalid": 0,
-                                "landNumber": "",
+                                "land_number": "",
                                 "national_land_zone": [], // 國土分區
                             },
                             "condition": {
@@ -917,7 +899,9 @@
                                 "p_part_valueUpperLimit": "",
                                 "p_part_areaLowerLimit": "",   // 個人持分總面積
                                 "p_part_areaUpperLimit": "",
-                                "holding_period": "" // 持有年限
+                                "holding_period": "", // 持有年限
+                                "holding_period_l": 0,
+                                "holding_period_u": 0,
                             }
                         }
                     },
@@ -998,6 +982,43 @@
                         T.showResault = 1;
                     });
                 },
+                landbuildNumberFix(str, lbtype){
+                    lb = ["b", "build"].includes(lbtype.toLowerCase()) ? [5, 3] : [4, 4];
+                    var lbnum = str.replace(/\s/g, "").split(","), sublbnum, tmp, next;
+                    var ok = true, res = [];
+                    for(var i in lbnum){
+                        next = false;
+                        sublbnum = lbnum[i].split("~");
+                        if(!lbnum[i]) continue;
+                        if(sublbnum.length > 2) {
+                            ok = false;
+                            continue;
+                        }
+                        for(var j in sublbnum){
+                            if(sublbnum[j].match(new RegExp(`^\\d{1,${lb[0]}}(-\\d{0,${lb[1]}})?$`))){
+                                
+                                tmp = sublbnum[j].split("-");
+                                if(tmp.length > 2) {
+                                    ok = false;
+                                    next = true;
+                                    break;
+                                }
+                                tmp[0] = parseInt(tmp[0]).zfill(lb[0]);
+                                tmp[1] = parseInt(tmp[1] || 0).zfill(lb[1]);
+                                res.push(tmp.join("-"));
+                            }
+                            else {
+                                ok = false;
+                                next = true;
+                            }
+                        }
+                        if(sublbnum.length == 2 && !next){
+                            tmp = res.pop();
+                            res[res.length - 1] = [res.last(), tmp].join("~");
+                        }
+                    }
+                    return {ok: ok, res: res};
+                },
                 multipleSelect: function(route, value){
                     var tmp = route.split("."), T = this, d = this;
                     for(var i=0; i<tmp.length-1; i++){
@@ -1037,8 +1058,19 @@
                             if(!data) break;
                             this.person_searchResBox.push(data);
                         }
+                    },
+                },
+                "searchForm.land.other.holding_period_l":{
+                    handler(nV, oV){
+                        this.searchForm.land.other.holding_period = `[${nV*12},${this.searchForm.land.other.holding_period_u*12}]`;
+                    },
+                    immediate: true,
+                },
+                "searchForm.land.other.holding_period_u":{
+                    handler(nV, oV){
+                        this.searchForm.land.other.holding_period = `[${this.searchForm.land.other.holding_period_l*12},${nV*12}]`;
                     }
-                }
+                },
             }
         });
 
