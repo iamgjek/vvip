@@ -335,6 +335,16 @@ class GetSearchResponseV3View(APIView):
         data = self.ownership_out.get(owner_type)
         return data
 
+    def apply_creditors_rights(self, creditors_rights):
+        data = []        
+        if creditors_rights in ['None', 'none', None, np.NaN, []]:
+            return data
+
+        if creditors_rights:
+            data = creditors_rights.replace('\'', '\"')
+            data = json.loads(data)
+        return data
+
     def sql_str_combin(self, condition_list):
         # base sql
                     # {col}
@@ -446,7 +456,7 @@ class GetSearchResponseV3View(APIView):
                     pass
 
             data['owner_type'] = data['owner_type'].apply(self.apply_owner_type)
-            
+            data['creditors_rights'] = data['creditors_rights'].apply(self.apply_creditors_rights)
             # group
             try:
                 df_group = data.groupby(['region_name', 'lno'])
