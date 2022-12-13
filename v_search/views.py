@@ -164,10 +164,10 @@ class GetPlanNameView(APIView):
         return Response(result)
 
 class GetSearchResponseV3View(APIView):
-    # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.AllowAny]
+    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.AllowAny]
 
     ownership_out = {
         1: "自然人", 
@@ -790,7 +790,6 @@ class GetSearchResponseV3View(APIView):
     def post(self, request, *args, **kwargs):
         result = {}
         serializer = GetSearchSerializer(data=request.data)
-        print(serializer.data)
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
         else:
