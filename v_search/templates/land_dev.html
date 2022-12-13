@@ -544,7 +544,7 @@
                                                 <p>(( data[0].region_name ))</p>
                                             </td>
                                             <td data="地號">
-                                                <p><a :href="'#' + data.region_name + data._lbnum" data-toggle="collapse">(( data._lbnum ))</a></p>
+                                                <p><a :href="'#' + data[0].region_name + data[0]._lbnum" data-toggle="collapse">(( data[0]._lbnum ))</a></p>
                                             </td>
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
@@ -574,10 +574,10 @@
                                                 <p>(( data[0].name ))</p>
                                             </td>
                                             <td data="他項權利人">
-                                                <p>(( data[0].creditors_rights ))</p>
+                                                <p v-for="person in data[0].creditors_rights">(( person ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="data.region_name + data._lbnum" class="collapse cell-1 row-child">
+                                        <tr :id="data[0].region_name + data[0]._lbnum" class="collapse cell-1 row-child">
                                             <td colspan="15">
                                                 <table>
                                                     <thead>
