@@ -22,6 +22,7 @@ from rest_framework import authentication, permissions, serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
 from t_search.models import info_config
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer
@@ -51,11 +52,27 @@ class IndexView(TemplateView):
         context['debug'] = debug
         return context
 
+class LandDevView(View):
+    TAG = '[LandDevView]'
+    template_name = 'land_dev.html'
+
+    def get(self, request, **kwargs):
+        return render(request, self.template_name)
+
 class LoginView(APIView):
 
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        summary='登入',
+        description='登入',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
     def post(self, request):
         result = {"status": "NG", "msg": 'not login'}
         try:
@@ -80,6 +97,15 @@ class GetCityListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]
 
+    @extend_schema(
+        summary='取縣市',
+        description='取縣市',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
     def get(self, request):
         res = {}
         url = f'{settings.LBOR_V3_HOST}/common/car/get_city/'
@@ -90,7 +116,15 @@ class GetCityListView(APIView):
 class GetAreaListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]
-
+    @extend_schema(
+        summary='取行政區',
+        description='取行政區',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
     def get(self, request):
         res = {}
         city_code = request.GET.get('city')
@@ -103,6 +137,15 @@ class GetRegionListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]
 
+    @extend_schema(
+        summary='取段小段',
+        description='取段小段',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
     def get(self, request):
         res = {}
         city_code = request.GET.get('city')
@@ -112,16 +155,7 @@ class GetRegionListView(APIView):
         res = json.loads(result.text)
         return Response(res)
 
-class LandDevView(View):
-    TAG = '[LandDevView]'
-    template_name = 'land_dev.html'
-
-    def get(self, request, **kwargs):
-        return render(request, self.template_name)
-
 class GetPlanNameView(APIView):
-    # authentication_classes = [authentication.SessionAuthentication]  #authentication.TokenAuthentication, 
-    # permission_classes = [permissions.AllowAny] # permissions.IsAuthenticated
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -516,11 +550,20 @@ class GetSearchResponseV3View(APIView):
 
     def clean_condition_data(self, base_condition):
         if base_condition:
-            # 登記原因
-            registerReason = self.check_int(base_condition.get('registerReason'))
-            if isinstance(registerReason, int) == True:
-                if registerReason != 0:
-                    self.total_df = self.total_df[self.total_df['reg_reason'] == registerReason]
+            # 登記原因 (改多筆)
+            registerReason = base_condition.get('registerReason')
+            if isinstance(registerReason, dict) == True:
+                reg_list = []
+                for x, v in registerReason.items():
+                    x = int(x)
+                    v = int(v)
+                    if v:
+                        if x == 11:
+                            reg_list.append(12)
+                        else:
+                            reg_list.append(x)
+                if reg_list:
+                    self.total_df = self.total_df[self.total_df['reg_reason'].isin(reg_list)]
 
             # 權屬樣態
             ownership = base_condition.get('ownership')
@@ -775,10 +818,9 @@ class GetSearchResponseV3View(APIView):
 
             self.total_df = pd.DataFrame(subscriberecords_qs)
             self.clean_region_data(base_region=base_region)
-            print(f'總筆數：{len(self.total_df)}')
             self.clean_condition_data(base_condition)
             self.clean_other_data(base_other=base_other)
-
+            print(f'總筆數：{len(self.total_df)}')
             result = self.format_data_layout(self.total_df)
         return result
 
@@ -797,7 +839,6 @@ class GetSearchResponseV3View(APIView):
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
         else:
-            print(serializer.data)
             # 預設參數
             self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type']
 
