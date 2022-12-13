@@ -914,7 +914,7 @@
                     this.searchForm.land.region.plan = null;
                     this.searchForm.land.region.section = null;
                     if(!city || this.areaList[city]) return;
-                    new HTTPreq("https://lbor.wsos.com.tw/common/car/get_area/?city=" + city).geta().then((rcv) => {
+                    new HTTPreq("/v_search/get_area/?city=" + city).geta().then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res){
                             data[city + "_" + res[i].area_code] = res[i].area_name;
@@ -926,7 +926,7 @@
                     var T = this;
                     this.searchForm.land.region.section = null;
                     if(!area || this.sectionList[area]) return;
-                    new HTTPreq("https://lbor.wsos.com.tw/common/car/get_region/?area=" + area.slice(2,4)+ "&city=" + area[0]).geta().then((rcv) => {
+                    new HTTPreq("/v_search/get_region/?area=" + area.slice(2,4)+ "&city=" + area[0]).geta().then((rcv) => {
                         var res = supfnc.toJSON(rcv.result), data = {};
                         for(var i in res){
                             data[res[i].car_code] = res[i].region_name;
