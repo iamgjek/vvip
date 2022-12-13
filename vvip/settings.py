@@ -230,7 +230,7 @@ CACHES = {
 
 
 BIGDATA_HOST = 'https://104.yeshome.net.tw'
-
+LBOR_V3_HOST = 'https://lbor.wsos.com.tw'
 
 try:
     from local_settings import *

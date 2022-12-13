@@ -3,12 +3,14 @@ import logging
 import time
 from datetime import date, datetime, timedelta
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import requests
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         JsonResponse)
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
@@ -22,9 +24,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from t_search.models import info_config
-from v_search.serializers import PlanNameSerializer, GetSearchSerializer
+from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,63 @@ class IndexView(TemplateView):
                 debug = True
         context['debug'] = debug
         return context
+
+class LoginView(TemplateView):
+    def post(self, request):
+        result = {"status": "NG", "msg": 'not login'}
+        try:
+            account = request.POST.get('login')
+            passwd = request.POST.get('password')
+            remember = request.POST.get('remember')
+            user = authenticate(username=account, password=passwd)
+            if user is not None:
+                login(request, user)
+                if remember !='true':
+                    request.session.set_expiry(0)
+                    request.session.modified = True
+                result = {"status": "OK", "msg": 'login'}
+                logger.debug(result)
+                return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
+        except Exception as error:
+            result['error'] = "{}".format(error)
+            logger.debug(result)
+        return HttpResponseBadRequest(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
+
+class GetCityListView(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        res = {}
+        url = f'{settings.LBOR_V3_HOST}/common/car/get_city/'
+        result = requests.get(url)
+        res = json.loads(result.text)
+        return Response(res)
+
+class GetAreaListView(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        res = {}
+        city_code = request.GET.get('city')
+        url = f'{settings.LBOR_V3_HOST}/common/car/get_area/?city={city_code}'
+        result = requests.get(url)
+        res = json.loads(result.text)
+        return Response(res)
+
+class GetRegionListView(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        res = {}
+        city_code = request.GET.get('city')
+        area_code = request.GET.get('area')
+        url = f'{settings.LBOR_V3_HOST}/common/car/get_region/?area={area_code}&city={city_code}'
+        result = requests.get(url)
+        res = json.loads(result.text)
+        return Response(res)
 
 class LandDevView(View):
     TAG = '[LandDevView]'
@@ -105,15 +163,12 @@ class GetPlanNameView(APIView):
             result['nick_name'] = nickname_res
         return Response(result)
 
-
-
-
-
 class GetSearchResponseV3View(APIView):
-    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.AllowAny]
 
-    # TAG = "[GetSearchResponseV3View]"
     ownership_out = {
         1: "自然人", 
         2: "私法人", 
@@ -714,13 +769,13 @@ class GetSearchResponseV3View(APIView):
                 return result
 
             self.total_df = pd.DataFrame(subscriberecords_qs)
+            print(self.total_df)
             self.clean_region_data(base_region=base_region)
             self.clean_condition_data(base_condition)
             self.clean_other_data(base_other=base_other)
 
-            # print(self.total_df)
             result = self.format_data_layout(self.total_df)
-
+            print(f'總筆數：{len(result)}')
         return result
 
     @extend_schema(
@@ -734,10 +789,8 @@ class GetSearchResponseV3View(APIView):
         )
     def post(self, request, *args, **kwargs):
         result = {}
-        # self.user = User.objects.get(username=request.user.get_username()).id
-        # print(f'使用者id: {self.user}')
-
         serializer = GetSearchSerializer(data=request.data)
+        print(serializer.data)
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
         else:
