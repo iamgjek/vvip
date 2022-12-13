@@ -51,7 +51,11 @@ class IndexView(TemplateView):
         context['debug'] = debug
         return context
 
-class LoginView(TemplateView):
+class LoginView(APIView):
+
+    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         result = {"status": "NG", "msg": 'not login'}
         try:
@@ -166,8 +170,6 @@ class GetPlanNameView(APIView):
 class GetSearchResponseV3View(APIView):
     authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    # authentication_classes = [authentication.SessionAuthentication]
-    # permission_classes = [permissions.AllowAny]
 
     ownership_out = {
         1: "自然人", 
@@ -428,13 +430,14 @@ class GetSearchResponseV3View(APIView):
                 # land_qs_list.append('and T2.plan_name like "%%{}%%"'.format(plan))
                 self.total_df = self.total_df[self.total_df['plan_name']==plan]
 
-            # 是否取用失效資料 打勾=1(不下條件)
-            is_valid = base_region.get('includeInvalid', None)
-            if is_valid == 1:
-                pass
-            else:                
-                # land_qs_list.append('and T1.remove_time is null')
-                self.total_df = self.total_df[self.total_df['remove_time']==np.nan]
+            # 是否取用失效資料 打勾=1(不下條件) 目前看起來沒有這個條件
+            # is_valid = base_region.get('includeInvalid', None)
+            # print(is_valid)
+            # if is_valid == 1:
+            #     pass
+            # else:                
+            #     # land_qs_list.append('and T1.remove_time is null')
+            #     self.total_df = self.total_df[self.total_df['remove_time']==np.nan]
 
             #!!!!! TODO 多筆單筆要調整!!!!!
             # 地號子母號
@@ -761,7 +764,7 @@ class GetSearchResponseV3View(APIView):
             elif area:
                 self.query_list.append('and T1.lbkey like "{}%"'.format(area))
             sql = self.sql_str_combin(self.query_list)
-            print(sql)
+            # print(sql)
             subscriberecords_qs, headers = get_dba(sql, "diablo_test")
             # ============================================================
             if not subscriberecords_qs:
@@ -769,13 +772,12 @@ class GetSearchResponseV3View(APIView):
                 return result
 
             self.total_df = pd.DataFrame(subscriberecords_qs)
-            print(self.total_df)
             self.clean_region_data(base_region=base_region)
+            print(f'總筆數：{len(self.total_df)}')
             self.clean_condition_data(base_condition)
             self.clean_other_data(base_other=base_other)
 
             result = self.format_data_layout(self.total_df)
-            print(f'總筆數：{len(result)}')
         return result
 
     @extend_schema(
@@ -793,6 +795,7 @@ class GetSearchResponseV3View(APIView):
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
         else:
+            print(serializer.data)
             # 預設參數
             self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type']
 
