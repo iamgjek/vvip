@@ -18,17 +18,22 @@ from drf_spectacular.utils import (OpenApiCallback, OpenApiExample,
                                    OpenApiParameter, OpenApiResponse,
                                    Serializer, extend_schema,
                                    inline_serializer)
-from rest_framework import authentication, permissions, serializers
+from rest_framework import authentication, generics, permissions, serializers
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import generics
 
 from t_search.models import info_config
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return None
 
 class IndexView(TemplateView):
     template_name = 'index.html'
@@ -57,22 +62,12 @@ class LandDevView(View):
     template_name = 'land_dev.html'
 
     def get(self, request, **kwargs):
-        return render(request, self.template_name)
+        user_token = Token.objects.get(user=request.user).key
+        context = {"user_token": user_token}
+        return render(request, self.template_name, context=context)
 
-class LoginView(APIView):
-
-    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    @extend_schema(
-        summary='登入',
-        description='登入',
-        request=None,
-        responses={
-            200: OpenApiResponse(description='ok'),
-            401: OpenApiResponse(description='身分認證失敗'),
-        },
-    )
+class LoginView(generics.GenericAPIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, )
     def post(self, request):
         result = {"status": "NG", "msg": 'not login'}
         try:
@@ -156,8 +151,7 @@ class GetRegionListView(APIView):
         return Response(res)
 
 class GetPlanNameView(APIView):
-    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = (CsrfExemptSessionAuthentication, )
 
     def process(self, datas):
         name_res, nickname_res = [], []
@@ -258,7 +252,7 @@ class GetSearchResponseV3View(APIView):
         for i in result:
             bd = {}
             bd[i[0]] = i[1]
-            base_list.append(bd)    
+            base_list.append(bd)
         for _ in base_list:
             for k,v in _.items():
                 dic.setdefault(k,[]).append(v)
