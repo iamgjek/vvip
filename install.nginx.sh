@@ -41,6 +41,7 @@ cd $PROJECT
 . ../$VENV_DIR/bin/activate
 # 安裝套件
 python -m pip install --upgrade pip wheel
+# pip install ConcurrentLogHandler, error in ConcurrentLogHandler setup command: use_2to3 is invalid
 pip install setuptools==57.5.0
 pip install -r requirements.txt
 # ~~~~~~~~~~~~~~結束~~~~~~~~~~~~~~
