@@ -66,8 +66,8 @@ class LandDevView(View):
         context = {"user_token": user_token}
         return render(request, self.template_name, context=context)
 
-class LoginView(generics.GenericAPIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, )
+class LoginView(View):
+    # authentication_classes = (CsrfExemptSessionAuthentication, )
     def post(self, request):
         result = {"status": "NG", "msg": 'not login'}
         try:
