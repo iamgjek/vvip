@@ -99,7 +99,7 @@
                         Swal.fire("密碼長度過短，最少6字元");
                         return;
                     }
-                    new HTTPreq("/v_search/login/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta(this.loginData).then(rcv => {
+                    new HTTPreq("/v_search/login/", "fd").posta(this.loginData).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
                             window.location.href = "/v_search/land_dev/";
