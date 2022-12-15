@@ -5,7 +5,7 @@
 <head>
     {% block head %}
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="width=device-width, initial-scale=1" name="viewport" maximum-scale=1.0, user-scalable=0”>
     <title></title>
     <link rel="icon" type="image/ico" href="/static/favicon.ico">
     <link rel="shortcut icon" type="image/ico" href="/static/favicon.ico">
@@ -99,8 +99,9 @@
                     </ol>
                 </nav>
             </div>
-            <form class="d-flex"><a href="#" type="button" class="dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false">uswe name</a>
+            <form class="d-flex"><a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown"
+                    aria-expanded="false">uswe name<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
+                </a></a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a href="/accounts/logout/" id="buttonForLogout" class="btn dropdown-item">
@@ -119,32 +120,32 @@
             </nav>
             <div class="row r1">
                 <div class="row">
-                    <label class="col-form-label col col-width" for="edit-text-name-id">搜尋</label>
-                    <div class="col-sm-auto">
+                    <label class="col-form-label w-80 text-center1" for="edit-text-name-id">搜尋</label>
+                    <div class="col w-200">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.city" @change="getArea(searchForm.land.region.city)">
                             <option :value="null" selected>縣市</option>
                             <option :value="key" v-for="(value, key) in cityList"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto">
+                    <div class="col w-200">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.area" @change="getSection(searchForm.land.region.area), getPlan(searchForm.land.region.area)">
                             <option :value="null" selected>行政區</option>
                             <option :value="key" v-for="(value, key) in areaList[searchForm.land.region.city]"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto" style="width:121px;">
+                    <div class="col w-200">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.section" @change="searchForm.land.region.plan=null">
                             <option :value="null" selected>段小段</option>
                             <option :value="key" v-for="(value, key) in sectionList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto" style="width:121px;">
+                    <div class="col w-200">
                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.plan" @change="searchForm.land.region.section=null">
                             <option :value="null" selected>計劃案</option>
                             <option :value="key" v-for="(value, key) in planList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
-                    <div class="col-sm-auto">
+                    <div class="col w-200">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle  custom-select left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -167,7 +168,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-auto">
+                    <div class="col w-200">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle custom-select on on1 left" type="button"
                                 data-toggle="dropdown" data-submenu>
@@ -213,7 +214,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-auto">
+                    <div class="col w-200">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle custom-select on1 left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -239,22 +240,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-auto">
+                    <div class="w-80 float-end">
                         <button class="btn btn-primary btn1" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
                         </button>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-primary" @click="serverSearch()">搜尋</button>
+                    <div class="cw-125 float-end">
+                        <button type="button" class="btn btn-primary" @click="serverSearch()"><svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                          </svg>搜尋</button>
                     </div>
                 </div>
 
-                <div class="collapse" id="collapseExample">
+                <div class="collapse r2" id="collapseExample">
                     <div class="card card-body">
                         <div class="row row-cols-auto row1">
-                            <label class="col-form-label col col-width" for="edit-text-name-id">使用狀況</label>
-                            <div class="col">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
+                            <div class="w-200">
                                 <script type="text/javascript">
                                     $(document).ready(function () {
                                         $('#bs1').multiselect({
@@ -270,7 +273,7 @@
                                     <option :value="k" v-for="(v, k) in ownerShopList">(( v ))</option>
                                 </select>
                             </div>
-                            <div class="col">
+                            <div class="w-200">
                                 <select id="bs2" class="f1 form-select custom-select col-sm-12 w-10" v-model="searchForm.land.condition.ownershipType">
                                     <option :value="null">公有共有</option>
                                     <option :value="0">不拘</option>
@@ -278,23 +281,13 @@
                                     <option :value="2">只有</option>
                                 </select>
                             </div>
-                            <div class="col">
-                                <script type="text/javascript">
-                                    $(document).ready(function () {
-                                        $('#enable').multiselect({
-                                            nonSelectedText: '登記原因',
-                                            buttonWidth: '170px',
-                                            numberDisplayed: 6,
-                                            onChange:(q,w)=>{ms[0]("searchForm.land.condition.registerReason." + q[0].value, w)}
-                                        });
-                                    });
-                                </script>
+                            <div class="w-200">
                                 <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.land.condition.registerReason">
                                     <option :value="idx" v-for="(i, idx) in registerReasonList">(( i))</option>
                                 </select>
                             </div>
 
-                            <div class="col">
+                            <div class="w-200">
                                 <!-- @@@@ -->
                                 <div class="dropdown on1">
                                     <button class="btn dropdown-toggle custom-select left" type="button"
@@ -325,17 +318,7 @@
                                 </div>
                             </div>
 
-                            <div class="col on1">
-                                <script type="text/javascript">
-                                    $(document).ready(function () {
-                                        $('#bs3').multiselect({
-                                            nonSelectedText: '國土區分',
-                                            numberDisplayed: 6,
-                                            buttonWidth: '170px',
-                                            onChange:(q,w)=>{ms[0]("searchForm.land.region.national_land_zone." + q[0].value, w)}
-                                        });
-                                    });
-                                </script>
+                            <div class="w-200">
                                 <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone">
                                     <option :value="idx" v-for="(i ,idx) in national_land_zoneList">(( i ))</option>
                                 </select>
@@ -343,8 +326,8 @@
                         </div>
 
                         <div class="row row-cols-auto row1">
-                            <label class="col-form-label col col-width" for="edit-text-name-id">面積價值</label>
-                            <div class="col">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">面積價值</label>
+                            <div class="w-200">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -364,7 +347,7 @@
                                 </div>
                             </div>
 
-                            <div class="col">
+                            <div class="w-200">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -385,7 +368,7 @@
                                 </div>
                             </div>
 
-                            <div class="col">
+                            <div class="w-200">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -407,8 +390,8 @@
                         </div>
 
                         <div class="row row-cols-auto row1">
-                            <label class="col-form-label col col-width" for="edit-text-name-id">所有權人</label>
-                            <div class="col">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">所有權人</label>
+                            <div class="w-200">
                                 <script type="text/javascript">
                                     $('#example-single').multiselect();
                                 </script>
@@ -419,17 +402,7 @@
                                     <option :value="2">民國21~30年以前</option>
                                 </select>
                             </div>
-                            <div class="col">
-                                <script type="text/javascript">
-                                    $(document).ready(function () {
-                                        $('#example-getting-started').multiselect({
-                                            enableHTML: true,
-                                            nonSelectedText: '國籍',
-                                            buttonWidth: '170px',
-                                            onChange:(q,w)=>{ms[0]("searchForm.land.other.country." + q[0].value, w)}
-                                        });
-                                    });
-                                </script>
+                            <div class="w-200">
                                 <select id="example-getting-started" multiple="multiple"
                                     class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country">
                                     <option value="ALL">不拘</option>
@@ -440,7 +413,7 @@
                                 </select>
                             </div>
 
-                            <div class="col">
+                            <div class="w-200">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -462,20 +435,20 @@
                         </div>
 
                         <div class="row row-cols-auto row1">
-                            <label class="col-form-label col col-width" for="edit-text-name-id">其他設定</label>
-                            <div class="col">
+                            <label class="col-form-label w-80 text-center1" for="edit-text-name-id">其他設定</label>
+                            <div class="w-200">
                                 <select id="" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.otherRemark">
                                     <option :value="null">他項標記</option>
                                     <option :value="idx" v-for="(i, idx) in otherRemarkList">(( i ))</option>
                                 </select>
                             </div>
-                            <div class="col">
+                            <div class="w-200">
                                 <select class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.restrictedRegistration">
                                     <option :value="null">限制登記</option>
                                     <option :value="idx" v-for="(i, idx) in restrictedRegistrationList">(( i ))</option>
                                 </select>
                             </div>
-                            <div class="col d-none">
+                            <div class="w-200">
                                 <!-- @@@@ -->
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
@@ -699,7 +672,7 @@
                                         <th scope="col">戶籍地址</th>
                                         <th scope="col">出生日期</th>
                                         <th scope="col">土地總比數</th>
-                                        <th scope="col">持分總評數</th>
+                                        <th scope="col">持分總“坪”數</th>
                                         <th scope="col">持分總現值(萬)</th>
                                         <th scope="col">建物總筆數</th>
                                         <th scope="col">電話</th>
@@ -826,10 +799,10 @@
 
             <div v-if="!showResult">
                 <div class="row bg1">
-                    <div class="col-sm-7 d-flex">
+                    <div class="col-sm-7 d-flex1">
                         <div class="align-self-center">
                             <h1 class="font-weight-bold mb-3">輕鬆幫您找出土地持有人</h1>
-                            <h4 class="">搜尋土地開發範圍，輕鬆幫您找出土地持有人相關資訊
+                            <h4 class="">搜尋土地開發範圍，輕鬆幫您找出土地持有人相關資訊</br>
                                 幫助您精準鎖定關係人進一步推進成交！</h4>
                         </div>
                     </div>
@@ -841,19 +814,19 @@
                     <div class="col-sm-4">
                         <div class="bg2 d-flex justify-content-between">
                             <img class="align-self-start" src="/static/images/step0.svg">
-                            <span class="font-weight-bold align-self-center px-2">設定搜尋範圍 <span>&gt;</span></span>
+                            <div class="align-self-center px-2">設定搜尋範圍 <span>&gt;</span></div>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="bg2 d-flex justify-content-between">
                             <img class="align-self-start" src="/static/images/step1.svg">
-                            <span class="font-weight-bold align-self-center px-2">查看開發範圍 <span>&gt;</span></span>
+                            <div class="align-self-center px-2">查看開發範圍 <span>&gt;</span></div>
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="bg2 d-flex justify-content-between">
                             <img class="align-self-start" src="/static/images/step2.svg">
-                            <span class="font-weight-bold align-self-center px-2">取得池有人情報</span>
+                            <div class="align-self-center px-2">取得池有人情報</div>
                         </div>
                     </div>
                 </div>

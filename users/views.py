@@ -14,7 +14,7 @@ from drf_spectacular.settings import spectacular_settings
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-
+#
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     # 建立帳號時 自動觸發
