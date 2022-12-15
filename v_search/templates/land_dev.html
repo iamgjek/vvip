@@ -46,6 +46,44 @@
             });
         });
     </script>
+    <style>
+        @keyframes spinning {
+            0% { transform: rotateZ(0deg);}
+            90% { transform: rotateZ(720deg);}
+            100% { transform: rotateZ(720deg);}
+        }
+        
+        .loadingData{
+            width: 50px;
+            height: 50px;
+            margin: auto;
+            position: relative;
+        }
+
+        .loadingData > span{
+            display: block;
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-width: 5px;
+            border-radius: 50%;
+            border-style: solid;
+            border-color: blue transparent transparent transparent;
+        }
+
+        .loadingData > span:nth-child(1){
+            animation: spinning 3s ease-in-out 0s infinite;
+        }
+        .loadingData > span:nth-child(2){
+            animation: spinning 3s ease-in-out 0.15s infinite;
+        }
+        .loadingData > span:nth-child(3){
+            animation: spinning 3s ease-in-out 0.3s infinite;
+        }
+        .loadingData > span:nth-child(4){
+            animation: spinning 3s ease-in-out 0.45s infinite;
+        }
+    </style>
     {% endblock %}
 </head>
 
@@ -471,8 +509,8 @@
                 </ul>
                 <div class="h3" style="width: calc(100% - 150px);">
                     (( cityList[searchForm.land.region.city] ))<span class="grey">+</span>
-                    (( areaList[searchForm.land.region.city][searchForm.land.region.area] ))<span class="grey">+</span>
-                    (( sectionList[searchForm.land.region.area][searchForm.land.region.section] || planList[searchForm.land.region.city][searchForm.land.region.plan] ))
+                    (( areaList[searchForm.land.region.city]?.[searchForm.land.region.area] ))<span class="grey">+</span>
+                    (( sectionList[searchForm.land.region.area]?.[searchForm.land.region.section] || planList[searchForm.land.region.city]?.[searchForm.land.region.plan] ))
                     <template v-for="op in getSearchOptions()">
                         <span class="grey">+</span> (( op ))
                     </template>
@@ -500,6 +538,19 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
+                                    <tr class="tab-content" v-if="loading">
+                                        <td class="p-4" colspan="14">
+                                            <div class="loadingData">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tab-content" v-else-if="!searchResBox.length">
+                                        <td class="p-4" colspan="14"><img style="height:300px;" src="/static/images/nodata.svg"></td>
+                                    </tr>
                                     <template v-for="(data, dataIdx) in searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="縣市">
@@ -512,7 +563,10 @@
                                                 <p>(( data[0].region_name ))</p>
                                             </td>
                                             <td data="地號">
-                                                <p><a :href="'#' + data[0].region_name + data[0]._lbnum" data-toggle="collapse">(( data[0]._lbnum ))</a></p>
+                                                <p>
+                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0]._lbnum" data-toggle="collapse">(( data[0]._lbnum ))</a>
+                                                    <span v-else>(( data[0]._lbnum ))</span>
+                                                </p>
                                             </td>
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
@@ -566,10 +620,10 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
-                                                            <td data="登記次序">(( line.登記次序 ))</td>
+                                                            <td data="登記次序">(( line.regno ))</td>
                                                             <td data="登記日期">(( line.reg_date_str ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str ))</td>
-                                                            <td data="所有權人">(( line.name ))</td>
+                                                            <td data="所有權人">(( line.所有權人 ))</td>
                                                             <td data="統一編號">(( line.uid ))</td>
                                                             <td data="住址">(( line.address_re ))</td>
                                                             <td data="出生日期">(( line.出生日期 ))</td>
@@ -627,6 +681,19 @@
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
+                                    <tr class="tab-content" v-if="loading">
+                                        <td class="p-4" colspan="11">
+                                            <div class="loadingData">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="tab-content" v-else-if="!person_searchResBox.length">
+                                        <td class="p-4" colspan="11"><img style="height:300px;" src="/static/images/nodata.svg"></td>
+                                    </tr>
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="所有權人">
@@ -824,15 +891,16 @@
                     sectionList:{},
                     planList: {},
                     showResult: 0,
+                    loading: 0,
 
-                    onepageNum: 20,
+                    onepageNum: 10,
                     startPageBtn: 0,
                     nowPage: 0,
                     totalPage: 1,
                     searchRes: [],
                     searchResBox: [],
 
-                    person_onepageNum: 20,
+                    person_onepageNum: 10,
                     person_startPageBtn: 0,
                     person_nowPage: 0,
                     person_totalPage: 1,
@@ -931,11 +999,14 @@
                 },
                 serverSearch(){
                     var T = this;
+                    this.loading = 1;
+                    this.showResult = 1;
                     if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
                         Swal.fire("請選擇至段小段或計劃案")
                         return;
                     }
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
+                        T.loading = 0;
                         var res = supfnc.toJSON(rcv.result);
                         console.log(res)
 
@@ -962,7 +1033,6 @@
                         T.person_nowPage = 0;
                         Vue.nextTick(()=>{T.person_nowPage = 1;});
 
-                        T.showResult = 1;
                     });
                 },
                 landbuildNumberFix(str, lbtype){
