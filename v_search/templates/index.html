@@ -48,12 +48,12 @@
                 <h5 class="text-center">Feature name</h5>
                 <div class="form-group">
                     <div class="col">
-                        <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.login" minlength="6">
+                        <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.login" @keydown.enter="login()">
                     </div>
                 </div>
                 <div class="form-group mb-0">
                     <div class="col">
-                        <input id="password1" type="password" class="form-control" :class="(focus.password && loginData.password.length<6)?'alert-danger':''" name="password" :placeholder="(focus.password && loginData.password.length<6)?'密碼長度最少6字元':'請輸入密碼'" v-model="loginData.password" @blur="focus.password=1">
+                        <input id="password1" type="password" class="form-control" name="password" placeholder="請輸入密碼" v-model="loginData.password" @keydown.enter="login()">
                     </div>
                 </div>
                 <div class="form-group">
@@ -86,20 +86,12 @@
                         login: "",
                         password: "",
                         remember: false
-                    },
-                    focus:{
-                        login: 0,
-                        password: 0,
                     }
                 }
             },
             methods: {
                 login(){
-                    if(this.loginData.password.length < 6){
-                        Swal.fire("密碼長度過短，最少6字元");
-                        return;
-                    }
-                    new HTTPreq("/v_search/login/", "fd").posta(this.loginData).then(rcv => {
+                    new HTTPreq("/v_search/login/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta(this.loginData).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
                             window.location.href = "/v_search/land_dev/";
