@@ -91,9 +91,11 @@ class LoginView(View):
 class LogoutView(View):
 
     def get(self, request):
-        auth.logout(request)
+        logout(request)
         result = {'status': 200, 'msg': '登出成功'}
-        return Response(result)
+        # return render(request, self.template_name)
+        # return Response(result)
+        return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 class GetCityListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
