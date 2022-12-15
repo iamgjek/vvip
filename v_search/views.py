@@ -92,7 +92,7 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        result = {'status': 200, 'msg': '登出成功'}
+        result = {'status': 'OK', 'msg': 'logout'}
         # return render(request, self.template_name)
         # return Response(result)
         return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
