@@ -88,6 +88,13 @@ class LoginView(View):
             logger.debug(result)
         return HttpResponseBadRequest(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
+class LogoutView(View):
+
+    def get(self, request):
+        auth.logout(request)
+        result = {'status': 200, 'msg': '登出成功'}
+        return Response(result)
+
 class GetCityListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [permissions.AllowAny]
@@ -463,6 +470,8 @@ class GetSearchResponseV3View(APIView):
         return result
 
     def clean_region_data(self, base_region):
+        self.total_df = self.total_df[self.total_df['is_valid']!=0]
+        self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
         if base_region:
             # 計畫區
             plan = base_region.get('plan', None)
@@ -734,11 +743,11 @@ class GetSearchResponseV3View(APIView):
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
 
-
     def clean_other_data(self, base_other):
+
         # 他項設定:他項標記
-        cast_type = self.check_int(base_other.get('otherRemark', None))
-        if cast_type == 0:
+        cast_type = self.check_int(base_other.get('otherRemark', 0))
+        if cast_type in [0, None, 'None', 'null']:
             pass
         else:
             # common_query.append('and T1.case_type = {}'.format(cast_type))
@@ -746,7 +755,7 @@ class GetSearchResponseV3View(APIView):
 
         # 他項設定:限制登記
         restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
-        if restricted_type == 0:
+        if restricted_type in [0, None, 'None', 'null']:
             pass
         else:
             # common_query.append('and T1.restricted_type = {}'.format(restricted_type))
@@ -802,7 +811,7 @@ class GetSearchResponseV3View(APIView):
                     WHERE T1.lbkey like "H_01_0001%" and T1.remove_time is null limit 50 \
                     '
             print('測試資料')
-            subscriberecords_qs, headers = get_dba(sql, "diablo_test")
+            subscriberecords_qs, headers = get_dba(sql, "diablo")
             result = self.format_data_layout_fake_data(subscriberecords_qs)
         else:
             # vvip 搜尋優化 條件只下行政區====================================
@@ -821,6 +830,7 @@ class GetSearchResponseV3View(APIView):
                 return result
 
             self.total_df = pd.DataFrame(subscriberecords_qs)
+            print(len(self.total_df))
             self.clean_region_data(base_region=base_region)
             self.clean_condition_data(base_condition)
             self.clean_other_data(base_other=base_other)
