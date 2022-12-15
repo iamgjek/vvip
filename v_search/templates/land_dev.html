@@ -99,16 +99,19 @@
                     </ol>
                 </nav>
             </div>
-            <form class="d-flex"><a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown"
-                    aria-expanded="false">uswe name<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
-                </a></a>
+            <div class="d-flex">
+                <a href="#" type="button" class="btn dropdown-toggle w-150" data-toggle="dropdown" aria-expanded="false">
+                    uswe name
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a href="/accounts/logout/" id="buttonForLogout" class="btn dropdown-item">
-                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出</a>
+                        <a href="#" id="buttonForLogout" class="btn dropdown-item" @click="logout()">
+                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出
+                        </a>
                     </li>
                 </ul>
-            </form>
+            </div>
         </nav>
         <div class="container wrap">
             <nav aria-label="breadcrumb" class="bb">
@@ -959,6 +962,14 @@
                 }
             },
             methods: {
+                logout(){
+                    new HTTPreq("/v_search/logout/", "fd").geta().then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                        if(res.status == "OK"){
+                            window.location.href = "/";
+                        }
+                    });
+                },
                 getArea(city){
                     var T = this;
                     this.searchForm.land.region.area = null;
