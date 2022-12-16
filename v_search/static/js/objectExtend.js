@@ -591,6 +591,32 @@ Object.defineProperty(
 
 Object.defineProperty(
     String.prototype,
+    'format',
+    {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function () {
+            return parseFloat(this).format();
+        }
+    }
+);
+
+Object.defineProperty(
+    String.prototype,
+    'chUnit',
+    {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function () {
+            return parseFloat(this).chUnit();
+        }
+    }
+);
+
+Object.defineProperty(
+    String.prototype,
     'splice',
     {
         configurable: true,
