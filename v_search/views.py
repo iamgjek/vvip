@@ -8,10 +8,11 @@ import pandas as pd
 import requests
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          JsonResponse)
-from django.shortcuts import render
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 from drf_spectacular.utils import (OpenApiCallback, OpenApiExample,
@@ -35,10 +36,11 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
 
-class IndexView(TemplateView):
-    template_name = 'index.html'
+class NormalTemplateView(TemplateView):
+    TAG = '[NormalTemplateView]'
+
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super(NormalTemplateView, self).get_context_data(**kwargs)
         if self.request.GET.get('next'):
             logger.debug('I see next!!!')
             context['next'] = self.request.GET.get('next')
@@ -49,21 +51,31 @@ class IndexView(TemplateView):
         if not self.request.user.is_anonymous:
             context['first_name'] = self.request.user.first_name if len(self.request.user.first_name) > 0 else None
             context['user_name'] = self.request.user.username
-            if self.request.user.username:
-                user = User.objects.get(username=self.request.user.username)
-                uid = user.id
             if settings.DEBUG == True:
                 debug = True
+            user_token = Token.objects.get(user=self.request.user).key
+            context = {"user_token": user_token}
         context['debug'] = debug
         return context
 
-class LandDevView(View):
+class IndexView(NormalTemplateView):
+    TAG = '[IndexView]'
+    template_name = 'index.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if not self.request.user.is_anonymous:
+            return redirect('/v_search/land_dev/')
+        return render(request, self.template_name, context=context)
+
+class LandDevView(NormalTemplateView):
     TAG = '[LandDevView]'
     template_name = 'land_dev.html'
 
-    def get(self, request, **kwargs):
-        user_token = Token.objects.get(user=request.user).key
-        context = {"user_token": user_token}
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
         return render(request, self.template_name, context=context)
 
 class LoginView(View):
