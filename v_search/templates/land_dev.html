@@ -178,8 +178,8 @@
                                 使用分區
                             </button>
                             <div class="dropdown-menu">
-                                <div class="dropdown dropright dropdown-submenu">
-                                    <button class="dropdown-item" type="button">不拘</button>
+                                <div class="dropdown dropright">
+                                    <button class="dropdown-item" type="button" @click.stop="clearInOutCitty()">不拘</button>
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
@@ -541,11 +541,8 @@
                     </li>
                 </ul>
                 <div class="h3" style="width: calc(100% - 150px);">
-                    (( cityList[searchForm.land.region.city] ))<span class="grey">+</span>
-                    (( areaList[searchForm.land.region.city]?.[searchForm.land.region.area] ))<span class="grey">+</span>
-                    (( sectionList[searchForm.land.region.area]?.[searchForm.land.region.section] || planList[searchForm.land.region.city]?.[searchForm.land.region.plan] ))
-                    <template v-for="op in getSearchOptionsList">
-                        <span class="grey">+</span> (( op ))
+                    <template v-for="(op, opIdx) in getSearchOptionsList">
+                        <span class="grey" v-if="opIdx">+</span> (( op ))
                     </template>
                 </div>
                 <div class="tab-content" id="pills-tabContent">
@@ -657,7 +654,7 @@
                                                             <td data="住址">(( line.address_re || '(空白)' ))</td>
                                                             <td data="出生日期">(( line.bday || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分面積">(( line.shared_size * 3.30579 || '(空白)' ))</td>
+                                                            <td data="持分面積">(( (line.shared_size * 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="持分坪數">(( line.shared_size || '(空白)' ))</td>
                                                             <td data="持分現值(萬)">(( line.持分現值 || '(空白)' ))</td>
                                                             <td data="他項權利(其他註記)">
@@ -1045,13 +1042,17 @@
                         Swal.fire("請選擇至段小段或計劃案")
                         return;
                     }
+                    T.searchRes = [];
+                    T.person_searchRes = [];
+                    T.searchResBox = [];
+                    T.person_searchResBox = [];
+
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
                         var res = supfnc.toJSON(rcv.result);
                         console.log(res);
                         var land_data = res.land_data, owner_data = res.owner_data;
 
-                        T.searchRes = [];
                         for(var i in land_data){
                             for(var j in land_data[i]) land_data[i][j]._lbnum = i.split("_").last();
                             T.searchRes.push(land_data[i]);
@@ -1061,7 +1062,6 @@
                         Vue.nextTick(()=>{T.nowPage = 1;});
 
                         var tmp = {};
-                        T.person_searchRes = [];
                         for(var i in owner_data){
                             for(var j in owner_data[i]){
                                 if(!owner_data[i][j].name || !owner_data[i][j].uid) continue;
@@ -1121,13 +1121,24 @@
                     }
                     d[tmp.last()] = value;
                 },
+                clearInOutCitty(){
+                    this.searchForm.land.condition.inCity = {};
+                    this.searchForm.land.condition.outCity = {};
+                    this.searchForm.land.condition.outCity2 = {};
+                },
                 getSearchOptions(){
-                    var r = [], tmp;
+                    var r = [
+                        this.cityList[this.searchForm.land.region.city],
+                        this.areaList[this.searchForm.land.region.city]?.[this.searchForm.land.region.area],
+                        this.sectionList[this.searchForm.land.region.area]?.[this.searchForm.land.region.section] || this.planList[this.searchForm.land.region.city]?.[this.searchForm.land.region.plan]
+                    ], tmp;
+                    
+                    
                     // 地號
                     if(this.searchForm.land.region.land_number) r.push("地號" + (this.searchForm.land.region.includeInvalid ? " (包含失效資料)" : "") + this.searchForm.land.region.land_number);
                     // 權屬
                     tmp = this.searchForm.land.condition.ownership.reduce((a,e,i) => {if(e) a.push(this.ownerShopList[i]); return a;}, []);
-                    r.push(tmp.join(" "));
+                    if(tmp.length) r.push(tmp.join(" "));
                     // 公同共有
                     tmp = ["不拘", "排除", "只有"].getV(this.searchForm.land.condition.ownershipType)
                     if(tmp) r.push(tmp + "公同共有");
