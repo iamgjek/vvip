@@ -162,7 +162,7 @@
                                     </div>
                                     <div class="form-group col-sm-6">
                                     </div>
-                                    <div class="form-group col-sm-6 pp1">
+                                    <div class="form-group col-sm-6 pp1 d-none">
                                         <input type="checkbox" class="form-check-input" id="dropdownCheck" v-model="searchForm.land.region.includeInvalid">
                                         <label class="form-check-label" for="dropdownCheck">包含失效資料</label>
                                     </div>
@@ -544,7 +544,7 @@
                     (( cityList[searchForm.land.region.city] ))<span class="grey">+</span>
                     (( areaList[searchForm.land.region.city]?.[searchForm.land.region.area] ))<span class="grey">+</span>
                     (( sectionList[searchForm.land.region.area]?.[searchForm.land.region.section] || planList[searchForm.land.region.city]?.[searchForm.land.region.plan] ))
-                    <template v-for="op in getSearchOptions()">
+                    <template v-for="op in getSearchOptionsList">
                         <span class="grey">+</span> (( op ))
                     </template>
                 </div>
@@ -923,6 +923,7 @@
                     planList: {},
                     showResult: 0,
                     loading: 0,
+                    getSearchOptionsList: [],
 
                     onepageNum: 10,
                     startPageBtn: 0,
@@ -1047,12 +1048,13 @@
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
                         var res = supfnc.toJSON(rcv.result);
-                        console.log(res)
+                        console.log(res);
+                        var land_data = res.land_data, owner_data = res.owner_data;
 
                         T.searchRes = [];
-                        for(var i in res){
-                            for(var j in res[i])res[i][j]._lbnum = i.split("_").last();
-                            T.searchRes.push(res[i]);
+                        for(var i in land_data){
+                            for(var j in land_data[i]) land_data[i][j]._lbnum = i.split("_").last();
+                            T.searchRes.push(land_data[i]);
                         }
                         T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
                         T.nowPage = 0;
@@ -1060,11 +1062,11 @@
 
                         var tmp = {};
                         T.person_searchRes = [];
-                        for(var i in res){
-                            for(var j in res[i]){
-                                if(!res[i][j].name || !res[i][j].uid) continue;
-                                res[i][j]._key = (res[i][j].name + res[i][j].uid).replace(/[\*]/g, "＊");
-                                tmp[res[i][j].name + res[i][j].uid] = res[i][j];
+                        for(var i in owner_data){
+                            for(var j in owner_data[i]){
+                                if(!owner_data[i][j].name || !owner_data[i][j].uid) continue;
+                                owner_data[i][j]._key = (owner_data[i][j].name + owner_data[i][j].uid).replace(/[\*]/g, "＊");
+                                tmp[owner_data[i][j].name + owner_data[i][j].uid] = owner_data[i][j];
                             }
                         }
                         for(var i in tmp) T.person_searchRes.push(tmp[i]);
@@ -1072,6 +1074,7 @@
                         T.person_nowPage = 0;
                         Vue.nextTick(()=>{T.person_nowPage = 1;});
 
+                        T.getSearchOptionsList = T.getSearchOptions();
                     });
                 },
                 landbuildNumberFix(str, lbtype){
@@ -1123,7 +1126,8 @@
                     // 地號
                     if(this.searchForm.land.region.land_number) r.push("地號" + (this.searchForm.land.region.includeInvalid ? " (包含失效資料)" : "") + this.searchForm.land.region.land_number);
                     // 權屬
-                    for(var i in this.searchForm.land.region.ownership) if(this.searchForm.land.region.ownership[i]) r.push(this.ownerShopList[i]);
+                    tmp = this.searchForm.land.condition.ownership.reduce((a,e,i) => {if(e) a.push(this.ownerShopList[i]); return a;}, []);
+                    r.push(tmp.join(" "));
                     // 公同共有
                     tmp = ["不拘", "排除", "只有"].getV(this.searchForm.land.condition.ownershipType)
                     if(tmp) r.push(tmp + "公同共有");
