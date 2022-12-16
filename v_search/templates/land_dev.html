@@ -117,7 +117,7 @@
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                    <li class="breadcrumb-item" :class="{active: !showResult}">土地開發</li>
+                    <li class="breadcrumb-item" :class="{active: !showResult}" :style="showResult ? 'cursor: pointer': ''" @click="showResult=0">土地開發</li>
                     <li class="breadcrumb-item active" v-if="showResult">搜尋結果</li>
                 </ol>
             </nav>
@@ -228,9 +228,7 @@
                                 <form class="p3 pp row">
                                     <div class="col-sm-6">
                                         <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.condition.areaType">
-                                            <option :value="0">總面積</option>
-                                            <option :value="1">持分面積</option>
-                                            <option :value="2">平均持分</option>
+                                            <option :value="idx" v-for="(i, idx) in areaTypeList">(( i ))</option>
                                         </select>
                                     </div>
                                     <div class="row v4">
@@ -906,7 +904,7 @@
                         IN:"印尼",
                         CH:"中國",
                     },
-                    
+                    areaTypeList: ["不拘", "總面積", "持分面積", "平均持分"],
                     inCity: ['住宅區', '工業區', '商業區', '農業區', '風景區', '別墅區', '林業區', '文教區', '水岸發展區', '水域', '行水區', '行政區', '防風林區', '其他使用分區', '服務區', '河川區', '保存區', '保護區', '活動區', '倉庫區', '旅館區', '海濱浴場區', '動植物園區', '國家公園區', '眺望區', '野餐區', '魚塭區', '景觀區', '溫泉區', '葬儀業區', '遊樂區', '遊憩區', '漁業區', '營區', '露營區', '體育運動區', '鹽田區區', '觀光農場區'],
                     outCity: ['特定農業區', '一般農業區', '工業區', '鄉村區', '森林區', '山坡地保護區', '風景區', '國家公園區', '河川區', '海域區', '其他使用區或特定專區'],
                     outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
@@ -1065,7 +1063,7 @@
                         for(var i in owner_data){
                             for(var j in owner_data[i]){
                                 if(!owner_data[i][j].name || !owner_data[i][j].uid) continue;
-                                owner_data[i][j]._key = (owner_data[i][j].name + owner_data[i][j].uid).replace(/[\*]/g, "＊");
+                                owner_data[i][j]._key = (owner_data[i][j].name + owner_data[i][j].uid).replace(/[<>@\*]/g, "＊");
                                 tmp[owner_data[i][j].name + owner_data[i][j].uid] = owner_data[i][j];
                             }
                         }
