@@ -63,8 +63,8 @@
         .loadingData > span{
             display: block;
             position: absolute;
-            width: 50px;
-            height: 50px;
+            width: 36px;
+            height: 36px;
             border-width: 5px;
             border-radius: 50%;
             border-style: solid;
@@ -217,7 +217,7 @@
                         </div>
                     </div>
 
-                    <div class="col w-200">
+                    <div class="col w-200 w-as">
                         <div class="dropdown">
                             <button class="btn dropdown-toggle custom-select on1 left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -242,7 +242,7 @@
                         </div>
                     </div>
                     <div class="w-80 float-end">
-                        <button class="btn btn-primary btn1" data-toggle="collapse" href="#collapseExample"
+                        <button class="btn btn-primary btn1 w-81" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
                         </button>
@@ -264,7 +264,7 @@
                                         $('#bs1').multiselect({
                                             // enableHTML: true,
                                             nonSelectedText: '權屬',
-                                            buttonWidth: '170px',
+                                            buttonWidth: '180px',
                                             numberDisplayed: 2,
                                             onChange:(q,w)=>{ms[0]("searchForm.land.condition.ownership." + q[0].value, w)}
                                         });
@@ -287,7 +287,7 @@
                                     $(document).ready(function () {
                                         $('#enable').multiselect({
                                             nonSelectedText: '登記原因',
-                                            buttonWidth: '170px',
+                                            buttonWidth: '180px',
                                             numberDisplayed: 6,
                                             onChange:(q,w)=>{ms[0]("searchForm.land.condition.registerReason." + q[0].value, w)}
                                         });
@@ -335,7 +335,7 @@
                                         $('#bs3').multiselect({
                                             nonSelectedText: '國土區分',
                                             numberDisplayed: 6,
-                                            buttonWidth: '170px',
+                                            buttonWidth: '180px',
                                             onChange:(q,w)=>{ms[0]("searchForm.land.region.national_land_zone." + q[0].value, w)}
                                         });
                                     });
@@ -429,7 +429,7 @@
                                         $('#example-getting-started').multiselect({
                                             enableHTML: true,
                                             nonSelectedText: '國籍',
-                                            buttonWidth: '170px',
+                                            buttonWidth: '180px',
                                             onChange:(q,w)=>{ms[0]("searchForm.land.other.country." + q[0].value, w)}
                                         });
                                     });
@@ -516,9 +516,9 @@
             <div v-if="showResult">
                 <ul class="nav nav-pills mb-3 p-tab" id="pills-tab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                        <a class="nav-link active sbtn1" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
                             aria-controls="pills-home" aria-selected="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                            <svg class="svg01" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
                                 fill="#FFFFFF">
                                 <path d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -527,9 +527,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                        <a class="nav-link sbtn2" id="pills-profile-tabs" data-toggle="pill" href="#pills-profile" role="tab"
                             aria-controls="pills-profile" aria-selected="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                            <svg class="svg02" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
                                 fill="#FFFFFF">
                                 <path d="M0 0h24v24H0z" fill="none" />
                                 <path
@@ -554,8 +554,8 @@
                                         <th scope="col">段小段</th>
                                         <th scope="col">地號</th>
                                         <th scope="col">國土分區</th>
-                                        <th scope="col">使用分區</th>
-                                        <th scope="col">使用地類別</th>
+                                        <th scope="col" class="left">使用分區</th>
+                                        <th scope="col" class="left">使用地類別</th>
                                         <th scope="col">土地面積</th>
                                         <th scope="col">公告現值</th>
                                         <th scope="col">總公告</th>
@@ -576,9 +576,9 @@
                                         </td>
                                     </tr>
                                     <tr class="tab-content" v-else-if="!searchResBox.length">
-                                        <td class="p-4" colspan="14"><img style="height:300px;" src="/static/images/nodata.svg"></td>
+                                        <td class="p-4" colspan="14"><img style="height:217px;" src="/static/images/nodata.svg"></td>
                                     </tr>
-                                    <template v-for="(data, dataIdx) in searchResBox">
+                                    <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                         <tr data-node="treetable-1">
                                             <td data="縣市">
                                                 <p>(( data[0].city_name || '(空白)' ))</p>
@@ -598,10 +598,10 @@
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
                                             </td>
-                                            <td data="使用分區">
+                                            <td data="使用分區" class="left">
                                                 <p>(( data[0].land_zone || '(空白)' ))</p>
                                             </td>
-                                            <td data="使用地類別">
+                                            <td data="使用地類別" class="left">
                                                 <p>(( data[0].urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
@@ -623,7 +623,7 @@
                                                 <p>(( data.length || 0 ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="data[0].region_name + data[0]._lbnum" class="collapse cell-1 row-child">
+                                        <tr :id="data[0].region_name + data[0]._lbnum" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15">
                                                 <table>
                                                     <thead>
@@ -698,7 +698,7 @@
                                         <th scope="col">戶籍地址</th>
                                         <th scope="col">出生日期</th>
                                         <th scope="col">土地總比數</th>
-                                        <th scope="col">持分總“坪”數</th>
+                                        <th scope="col">持分總坪數</th>
                                         <th scope="col">持分總現值(萬)</th>
                                         <th scope="col">建物總筆數</th>
                                         <th scope="col">電話</th>
@@ -756,9 +756,9 @@
                                                 <p>(( data.身份標籤 || '(空白)' ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="data._key" class="collapse cell-1 row-child">
+                                        <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15">
-                                                <table>
+                                                <table class="table11">
                                                     <thead>
                                                         <tr>
                                                             <th>縣市</th>
@@ -852,7 +852,7 @@
                     <div class="col-sm-4">
                         <div class="bg2 d-flex justify-content-between">
                             <img class="align-self-start" src="/static/images/step2.svg">
-                            <div class="align-self-center px-2">取得池有人情報</div>
+                            <div class="align-self-center px-2">取得持有人情報</div>
                         </div>
                     </div>
                 </div>
