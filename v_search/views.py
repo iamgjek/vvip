@@ -650,31 +650,44 @@ class GetSearchResponseV3View(APIView):
             if isinstance(l_upper, (int, float)):
                 l_upper = l_upper / 0.3025
                 l_upper = round(l_upper, 4)
-            print(f'輸入區間 {l_lower}, {l_upper}')
+
+            # areaType = 0
+            print(f'輸入區間 {l_lower}, {l_upper}  型態: {areaType}')
+            if areaType != 0:
+                self.total_df = self.total_df[self.total_df['right_type']==areaType]
+
             try:
                 if l_lower == 0 and l_upper == 0:
                     pass
                 else:
                     # ! 0=總面積
                     if areaType == 0:
-                        self.total_df = self.total_df[self.total_df['right_type']==1]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
                             else:
-                                # land_qs_list.append('and T2.land_area >= {l} and T2.land_area <= {u}'.format(l=l_lower, u=l_upper))
+                                pass
+                                # self.total_df = self.total_df[(self.total_df['land_area']<=l_upper) & (self.total_df['land_area']>=l_lower)]
+                                land_area_con = (self.total_df['land_area']<=l_upper) & (self.total_df['land_area']>=l_lower)
+                                share_area_con = (self.total_df['shared_size']<=l_upper) & (self.total_df['shared_size']>=l_lower)
+                                self.total_df = self.total_df[(land_area_con | share_area_con)]
+                        
+                    elif areaType == 1:
+                        # self.total_df = self.total_df[self.total_df['right_type']==1]
+                        if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
+                            if l_lower == 0 and l_upper == 0:
+                                pass
+                            else:
                                 self.total_df = self.total_df[(self.total_df['land_area']<=l_upper) & (self.total_df['land_area']>=l_lower)]
 
                         elif isinstance(l_lower, (int, float)) == True:
-                            # land_qs_list.append('and T2.land_area >= {}'.format(l_lower))
                             self.total_df = self.total_df[self.total_df['land_area']>=l_lower]
                         elif isinstance(l_upper, (int, float)) == True:
-                            # land_qs_list.append('and T2.land_area <= {}'.format(l_upper))
                             self.total_df = self.total_df[self.total_df['land_area']<=l_upper]
 
                     # ! 1=持分面積
-                    elif areaType == 1:
-                        self.total_df = self.total_df[self.total_df['right_type']==2]
+                    elif areaType == 2:
+                        # self.total_df = self.total_df[self.total_df['right_type']==2]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
@@ -687,8 +700,8 @@ class GetSearchResponseV3View(APIView):
                             self.total_df = self.total_df[self.total_df['shared_size']<=l_upper]
 
                     # ! 1=公同共有面積
-                    elif areaType == 2:
-                        self.total_df = self.total_df[self.total_df['right_type']==3]
+                    elif areaType == 3:
+                        # self.total_df = self.total_df[self.total_df['right_type']==3]
                         try:
                             self.total_df['common_part'] = self.total_df['land_area'] / self.total_df['owners_num']
                             if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
@@ -712,7 +725,7 @@ class GetSearchResponseV3View(APIView):
             # self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce')
             # self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']] * 0.3025
 
-            print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size']])
+            print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type']])
 
 
             # 公告現值
