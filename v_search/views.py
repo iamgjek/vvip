@@ -750,6 +750,8 @@ class GetSearchResponseV3View(APIView):
                     self.total_df = self.total_df[self.total_df['land_notice_value']>=vp_lower]
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
+            print(self.total_df.loc[:, ['land_notice_value']])
+
 
     def clean_other_data(self, base_other):
 
@@ -846,11 +848,11 @@ class GetSearchResponseV3View(APIView):
             self.clean_region_data(base_region=base_region)            
             print(f'clean_region_data 處理後 ：{len(self.total_df)}')
 
-            # self.clean_condition_data(base_condition)
-            # print(f'clean_condition_data 處理後 ：{len(self.total_df)}')
+            self.clean_condition_data(base_condition)
+            print(f'clean_condition_data 處理後 ：{len(self.total_df)}')
 
-            # self.clean_other_data(base_other=base_other)
-            # print(f'clean_other_data 處理後 ：{len(self.total_df)}')
+            self.clean_other_data(base_other=base_other)
+            print(f'clean_other_data 處理後 ：{len(self.total_df)}')
 
             print(f'輸出總筆數：{len(self.total_df)}')
             result = self.format_data_layout(self.total_df)
