@@ -23,39 +23,3 @@ $(function () {
         showCopyBtn: false
       });
   });
-
-
-  $(document).ready(function() {
-     $('#bs1').multiselect({
-         enableHTML: true,
-         nonSelectedText: '權屬',
-         buttonWidth: '178px',
-         numberDisplayed: 6
-       });
-   });
-
-
-   $(document).ready(function() {
-      $('#enable').multiselect({
-          nonSelectedText: '登記原因',
-          buttonWidth: '178px',
-          numberDisplayed: 6
-        });
-    });
-
-
-    $(document).ready(function() {
-       $('#bs3').multiselect({
-           nonSelectedText: '國土區分',
-           numberDisplayed: 6,
-           buttonWidth: '178px',
-         });
-     });
-
-     $(document).ready(function() {
-        $('#example-getting-started').multiselect({
-            enableHTML: true,
-             nonSelectedText: '國籍',
-             buttonWidth: '178px',
-          });
-      });
