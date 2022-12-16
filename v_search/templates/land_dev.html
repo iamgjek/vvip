@@ -101,7 +101,11 @@
             </div>
             <div class="d-flex">
                 <a href="#" type="button" class="btn dropdown-toggle w-150" data-toggle="dropdown" aria-expanded="false">
-                    uswe name
+                    {% if user.first_name == '' %}
+                    {{ user.username }}
+                    {% else %}
+                    {{ user.first_name }}
+                    {% endif %}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -654,8 +658,8 @@
                                                             <td data="住址">(( line.address_re || '(空白)' ))</td>
                                                             <td data="出生日期">(( line.bday || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分面積">(( (line.shared_size * 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( line.shared_size || '(空白)' ))</td>
+                                                            <td data="持分面積">(( line.shared_size || '(空白)' ))</td>
+                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="持分現值(萬)">(( line.持分現值 || '(空白)' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in data.creditors_rights">(( person ))</p>
