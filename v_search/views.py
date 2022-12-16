@@ -380,7 +380,7 @@ class GetSearchResponseV3View(APIView):
                             T2.city_name, T2.area_name, T2.region_name, T2.lno, \
                             T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                             T2.build_num, T2.owner_type, \
-                            T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
+                            T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
                             T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
                             T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
@@ -609,10 +609,8 @@ class GetSearchResponseV3View(APIView):
                 if ownershipType == 0:
                     pass
                 elif ownershipType == 1:
-                    # common_query.append('and T1.right_type in (0,1,2)')
                     self.total_df = self.total_df[self.total_df['right_type'].isin([0, 1, 2])]
                 elif ownershipType == 2:
-                    # common_query.append('and T1.right_type = 3')
                     self.total_df = self.total_df[self.total_df['right_type']==3]
 
             # 所有權人數
@@ -622,14 +620,11 @@ class GetSearchResponseV3View(APIView):
                 pass
             else:
                 if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                    # common_query.append('and T2.owners_num <= {num_max} and T2.owners_num >= {num_min}'.format(num_max=o_num_up, num_min=o_num_low))
                     self.total_df = self.total_df[(self.total_df['owners_num']<=o_num_up) & (self.total_df['owners_num']>=o_num_low)]
 
                 elif isinstance(o_num_low, int) == True:
-                    # common_query.append('and T2.owners_num >= {num_min}'.format(num_min=o_num_low))
                     self.total_df = self.total_df[self.total_df['owners_num']>=o_num_low]
                 elif isinstance(o_num_up, int) == True:
-                    # common_query.append('and T2.owners_num <= {num_max}'.format(num_max=o_num_up))
                     self.total_df = self.total_df[self.total_df['owners_num']<=o_num_up]
 
             # 面積分類 總 持分 平均持分 ==========================
@@ -643,13 +638,14 @@ class GetSearchResponseV3View(APIView):
             if isinstance(l_upper, (int, float)):
                 l_upper = l_upper / 0.3025
                 l_upper = round(l_upper, 4)
-
+            print(f'輸入區間 {l_lower}, {l_upper}')
             try:
                 if l_lower == 0 and l_upper == 0:
                     pass
                 else:
                     # ! 0=總面積
-                    if areaType == 0:                    
+                    if areaType == 0:
+                        self.total_df = self.total_df[self.total_df['right_type']==1]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
@@ -665,36 +661,32 @@ class GetSearchResponseV3View(APIView):
                             self.total_df = self.total_df[self.total_df['land_area']<=l_upper]
 
                     # ! 1=持分面積
-                    elif areaType == 1:  
+                    elif areaType == 1:
+                        self.total_df = self.total_df[self.total_df['right_type']==2]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
                             else:
-                                # land_qs_list.append('and T1.shared_size >= {l} and T1.shared_size <= {u}'.format(l=l_lower, u=l_upper))
                                 self.total_df = self.total_df[(self.total_df['shared_size']<=l_upper) & (self.total_df['shared_size']>=l_lower)]
 
                         elif isinstance(l_lower, (int, float)) == True:
-                            # land_qs_list.append('and T1.shared_size >= {}'.format(l_lower))
                             self.total_df = self.total_df[self.total_df['shared_size']>=l_lower]
                         elif isinstance(l_upper, (int, float)) == True:
-                            # land_qs_list.append('and T1.shared_size <= {}'.format(l_upper))
                             self.total_df = self.total_df[self.total_df['shared_size']<=l_upper]
 
                     # ! 1=公同共有面積
                     elif areaType == 2:
+                        self.total_df = self.total_df[self.total_df['right_type']==3]
                         try:
                             self.total_df['common_part'] = self.total_df['land_area'] / self.total_df['owners_num']
                             if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                                 if l_lower == 0 and l_upper == 0:
                                     pass
                                 else:
-                                    # self.math_str.append('HAVING(common_part > {l} and common_part < {u})'.format(l=l_lower, u=l_upper))
                                     self.total_df = self.total_df[(self.total_df['common_part']<=l_upper) & (self.total_df['common_part']>=l_lower)]
                             elif isinstance(l_lower, (int, float)) == True:
-                                # self.math_str.append('HAVING(common_part >= {})'.format(l_lower))
                                 self.total_df = self.total_df[self.total_df['common_part']>=l_lower]
                             elif isinstance(l_upper, (int, float)) == True:
-                                # self.math_str.append('HAVING(common_part <= {})'.format(l_upper))
                                 self.total_df = self.total_df[self.total_df['common_part']<=l_upper]
 
                             self.total_df = self.total_df.drop('common_part', axis=1)
@@ -702,6 +694,14 @@ class GetSearchResponseV3View(APIView):
                             print(f'公同共有面積錯誤 ：{e}')
             except Exception as e:
                 print(f'面積錯誤 ：{e}')
+
+            self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce')
+            self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce')
+            # self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce')
+            # self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']] * 0.3025
+
+            print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size']])
+
 
             # 公告現值
             vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
@@ -717,25 +717,21 @@ class GetSearchResponseV3View(APIView):
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
 
+
+
             # 使用區分類
-            # land_zone_type = self.check_int(base_condition.get('useSection', None))
-            in_city = []
-            out_city = []
-            # 使用分區 不拘
-
-            # land_qs_list.append('and T2.urban_type = 1')
-            self.total_df = self.total_df[self.total_df['urban_type']==1]
-            in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items()]
-            out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items()]
-            outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items()]
-
-            self.total_df = self.total_df[self.total_df['land_zone'].str.startswith(tuple(in_city+out_city))]
-
-            print(in_city+out_city+outCity2)
-
-            # if lz_list:
-            #     # self.total_df = self.total_df[self.total_df['land_zone'].isin(lz_list)]
-            #     self.total_df = self.total_df[self.total_df['land_zone'].str.startswith(tuple(lz_list))]
+            in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items() if v]
+            out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items() if v]
+            outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items() if v]
+            
+            # print(in_city)
+            # print(out_city)
+            # print(outCity2)
+            if in_city or out_city:
+                # self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(in_city))]
+                self.total_df = self.total_df[self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))]
+            if outCity2:
+                self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(outCity2))]
 
             # 個人持分總值
             vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
@@ -750,8 +746,6 @@ class GetSearchResponseV3View(APIView):
                     self.total_df = self.total_df[self.total_df['land_notice_value']>=vp_lower]
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
-            print(self.total_df.loc[:, ['land_notice_value']])
-
 
     def clean_other_data(self, base_other):
 
