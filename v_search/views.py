@@ -93,8 +93,6 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         result = {'status': 'OK', 'msg': 'logout'}
-        # return render(request, self.template_name)
-        # return Response(result)
         return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 class GetCityListView(APIView):
@@ -356,7 +354,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 500000 \
+                    WHERE {where_sql} limit 100 \
                     "
                     # 500000
 
@@ -447,7 +445,9 @@ class GetSearchResponseV3View(APIView):
         return result
 
     def format_data_layout(self, data):
-        result = {}
+        result_land = {}
+        result_owner = {}
+        result = {'land_data': {}, 'owner_data': {}}
         if data.empty:
             return result
         else:            
@@ -462,18 +462,27 @@ class GetSearchResponseV3View(APIView):
             data['creditors_rights'] = data['creditors_rights'].apply(self.apply_creditors_rights)
             # group
             try:
-                df_group = data.groupby(['region_name', 'lno'])
-                for gp_index in list(df_group.size().index):
+                df_group_land = data.groupby(['region_name', 'lno'])
+                for gp_index in list(df_group_land.size().index):
                     dict_key = f'{gp_index[0]}_{gp_index[1]}'
-                    group_data = df_group.get_group(gp_index).to_dict('records')
-                    result[dict_key] = group_data
+                    group_data = df_group_land.get_group(gp_index).to_dict('records')
+                    result_land[dict_key] = group_data
+                    result['land_data'] = result_land
+
+            except Exception as e:
+                print(e)
+            try:
+                df_group_owner = data.groupby(['name', 'uid', 'address_re'])
+                for gp_index in list(df_group_owner.size().index):
+                    dict_key = f'{gp_index[0]}_{gp_index[1]}_{gp_index[2]}'
+                    group_owner_data = df_group_owner.get_group(gp_index).to_dict('records')
+                    result_owner[dict_key] = group_owner_data
+                    result['owner_data'] = result_owner
             except Exception as e:
                 print(e)
         return result
 
     def clean_region_data(self, base_region):
-        self.total_df = self.total_df[self.total_df['is_valid']!=0]
-        self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
         if base_region:
             # 計畫區
             plan = base_region.get('plan', None)
@@ -709,27 +718,24 @@ class GetSearchResponseV3View(APIView):
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
 
             # 使用區分類
-            land_zone_type = self.check_int(base_condition.get('useSection', None))
-            lz_list = []
+            # land_zone_type = self.check_int(base_condition.get('useSection', None))
+            in_city = []
+            out_city = []
             # 使用分區 不拘
-            if land_zone_type == 0:                
-                pass
 
-            # 使用分區 都內
-            elif land_zone_type == 1:
-                # land_qs_list.append('and T2.urban_type = 1')
-                self.total_df = self.total_df[self.total_df['urban_type']==1]
-                lz_list = [self.use_zone_re(x) for x in base_condition.get('inCity', None)]
+            # land_qs_list.append('and T2.urban_type = 1')
+            self.total_df = self.total_df[self.total_df['urban_type']==1]
+            in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items()]
+            out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items()]
+            outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items()]
 
-            # 使用分區 都外
-            elif land_zone_type == 2:
-                # land_qs_list.append('and T2.urban_type = 2')
-                self.total_df = self.total_df[self.total_df['urban_type']==2]
-                lz_list = [self.use_zone_re(x) for x in base_condition.get('outCity', None)]
+            self.total_df = self.total_df[self.total_df['land_zone'].str.startswith(tuple(in_city+out_city))]
 
-            if lz_list:
-                # self.total_df = self.total_df[self.total_df['land_zone'].isin(lz_list)]
-                self.total_df = self.total_df[self.total_df['land_zone'].str.startswith(tuple(lz_list))]
+            print(in_city+out_city+outCity2)
+
+            # if lz_list:
+            #     # self.total_df = self.total_df[self.total_df['land_zone'].isin(lz_list)]
+            #     self.total_df = self.total_df[self.total_df['land_zone'].str.startswith(tuple(lz_list))]
 
             # 個人持分總值
             vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
@@ -781,7 +787,7 @@ class GetSearchResponseV3View(APIView):
         holding_period = self.check_int(base_other.get('holding_period', None))
 
     def clean_data_sql(self, data):
-        result = {}
+        result = {'land_data': {}, 'owner_data': {}}
         js_data = data.get('searchForm')
 
         self.query_list = []
@@ -828,15 +834,25 @@ class GetSearchResponseV3View(APIView):
             subscriberecords_qs, headers = get_dba(sql, "diablo_test")
             # ============================================================
             if not subscriberecords_qs:
-                result['msg'] = '查無資料'
                 return result
-
+            # df預處理
             self.total_df = pd.DataFrame(subscriberecords_qs)
-            print(len(self.total_df))
-            self.clean_region_data(base_region=base_region)
-            self.clean_condition_data(base_condition)
-            self.clean_other_data(base_other=base_other)
-            print(f'總筆數：{len(self.total_df)}')
+            self.total_df = self.total_df[self.total_df['is_valid']!=0]
+            self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
+            self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
+            #######
+            print(f'df預處理後 ：{len(self.total_df)}')
+
+            self.clean_region_data(base_region=base_region)            
+            print(f'clean_region_data 處理後 ：{len(self.total_df)}')
+
+            # self.clean_condition_data(base_condition)
+            # print(f'clean_condition_data 處理後 ：{len(self.total_df)}')
+
+            # self.clean_other_data(base_other=base_other)
+            # print(f'clean_other_data 處理後 ：{len(self.total_df)}')
+
+            print(f'輸出總筆數：{len(self.total_df)}')
             result = self.format_data_layout(self.total_df)
         return result
 
@@ -880,6 +896,5 @@ class GetSearchResponseV3View(APIView):
             qs_msg = self.clean_data_sql(serializer.data)
             result.update(qs_msg)
             qt2 = time.perf_counter()
-
             print(f'查詢總時間 : {qt2 - qt1}')
         return Response(result)
