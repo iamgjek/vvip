@@ -31,7 +31,7 @@ from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
-
+DB_NAME = 'diablo_test'
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -177,19 +177,28 @@ class GetPlanNameView(APIView):
         area = datas.get('area')
         sql = f"SELECT T1.lbkey, T2.plan_name, T2.nickname \
                 FROM diablo.t_search_landdevelopementlkeyslist T1 LEFT JOIN diablo.t_search_landdevelopementlist T2 on T1.plan_id = T2.plan_id \
-                WHERE  T2.valid =1 and lbkey LIKE '{area}%' \
+                WHERE T2.valid =1 and lbkey LIKE '{area}%' \
                 "
-        res, col = get_dba(sql_cmd=sql, db_name='diablo_test')
+        res, col = get_dba(sql_cmd=sql, db_name=DB_NAME)
         data_df = pd.DataFrame(res)
         if data_df.empty:
             pass
         else:
-            # print(data_df)
             group_name = data_df['plan_name'].to_list()
             name_res = list(set(group_name))
             group_nickname = data_df['nickname'].to_list()
             nickname_res = list(set(group_nickname))
-        return name_res, nickname_res
+
+        sql_lmlandlist = f"SELECT plan_name FROM diablo.t_search_lmlandlist WHERE lkey LIKE '{area}%' and plan_name !='' group by plan_name"
+        res_lm, col_lm = get_dba(sql_cmd=sql_lmlandlist, db_name=DB_NAME)
+        data_df_lm = pd.DataFrame(res_lm)
+        pn_df = data_df_lm['plan_name'].to_list()
+        pn_list = list(set(pn_df))
+        pn_list = sorted(pn_list)
+        nickname_res = sorted(nickname_res)
+        # print(pn_list)
+        # print(nickname_res)
+        return pn_list, nickname_res # name_res
     
     @extend_schema(
         summary='取 縣市/行政區/計劃案名',
@@ -498,9 +507,10 @@ class GetSearchResponseV3View(APIView):
         if base_region:
             # 計畫區
             plan = base_region.get('plan', None)
+            # print(self.total_df.loc[:, ['lbkey', 'plan_name', 'owner_type']])
             if plan:
-                # land_qs_list.append('and T2.plan_name like "%%{}%%"'.format(plan))
-                self.total_df = self.total_df[self.total_df['plan_name']==plan]
+                # self.total_df = self.total_df[self.total_df['plan_name']==plan]
+                self.total_df = self.total_df[self.total_df['plan_name'].str.startswith(plan)] 
 
             # 是否取用失效資料 打勾=1(不下條件) 目前看起來沒有這個條件
             # is_valid = base_region.get('includeInvalid', None)
@@ -600,7 +610,6 @@ class GetSearchResponseV3View(APIView):
                             reg_list.append(x)
                 if reg_list:
                     self.total_df = self.total_df[self.total_df['reg_reason'].isin(reg_list)]
-
             # 權屬樣態
             ownership = base_condition.get('ownership')
             if ownership:
@@ -651,7 +660,7 @@ class GetSearchResponseV3View(APIView):
                 l_upper = l_upper / 0.3025
                 l_upper = round(l_upper, 4)
 
-            print(f'輸入區間 {l_lower}, {l_upper}  型態: {areaType}')
+            # print(f'輸入區間 {l_lower}, {l_upper}  型態: {areaType}')
             if areaType != 0:
                 self.total_df = self.total_df[self.total_df['right_type']==areaType]
 
@@ -722,8 +731,6 @@ class GetSearchResponseV3View(APIView):
 
             self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce').round(2)
             self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce').round(2)
-            # self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce')
-            # self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']] * 0.3025
 
             # 公告現值
             vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
@@ -749,9 +756,12 @@ class GetSearchResponseV3View(APIView):
             # print(in_city)
             # print(out_city)
             # print(outCity2)
+            # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
             if in_city or out_city:
                 # self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(in_city))]
-                self.total_df = self.total_df[self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))]
+                con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))
+                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))
+                self.total_df = self.total_df[(con1 | con2)]
             if outCity2:
                 self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(outCity2))]
 
@@ -837,7 +847,7 @@ class GetSearchResponseV3View(APIView):
                     WHERE T1.lbkey like "H_01_0001%" and T1.remove_time is null limit 50 \
                     '
             print('測試資料')
-            subscriberecords_qs, headers = get_dba(sql, "diablo")
+            subscriberecords_qs, headers = get_dba(sql_cmd=sql,db_name=DB_NAME)
             result = self.format_data_layout_fake_data(subscriberecords_qs)
         else:
             # vvip 搜尋優化 條件只下行政區====================================
@@ -859,6 +869,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[self.total_df['is_valid']!=0]
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
+            self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
 
