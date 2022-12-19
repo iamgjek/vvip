@@ -366,7 +366,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 100 \
+                    WHERE {where_sql} limit 10000 \
                     "
                     # 500000
 
@@ -482,7 +482,7 @@ class GetSearchResponseV3View(APIView):
                     result['land_data'] = result_land
 
             except Exception as e:
-                print(e)
+                print(f'輸出錯誤 {e}')
             try:
                 df_group_owner = data.groupby(['name', 'uid', 'address_re'])
                 for gp_index in list(df_group_owner.size().index):
@@ -491,7 +491,7 @@ class GetSearchResponseV3View(APIView):
                     result_owner[dict_key] = group_owner_data
                     result['owner_data'] = result_owner
             except Exception as e:
-                print(e)
+                print(f'輸出錯誤 {e}')
         return result
 
     def clean_region_data(self, base_region):
@@ -651,7 +651,6 @@ class GetSearchResponseV3View(APIView):
                 l_upper = l_upper / 0.3025
                 l_upper = round(l_upper, 4)
 
-            # areaType = 0
             print(f'輸入區間 {l_lower}, {l_upper}  型態: {areaType}')
             if areaType != 0:
                 self.total_df = self.total_df[self.total_df['right_type']==areaType]
@@ -673,7 +672,6 @@ class GetSearchResponseV3View(APIView):
                                 self.total_df = self.total_df[(land_area_con | share_area_con)]
                         
                     elif areaType == 1:
-                        # self.total_df = self.total_df[self.total_df['right_type']==1]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
@@ -687,7 +685,6 @@ class GetSearchResponseV3View(APIView):
 
                     # ! 1=持分面積
                     elif areaType == 2:
-                        # self.total_df = self.total_df[self.total_df['right_type']==2]
                         if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
                             if l_lower == 0 and l_upper == 0:
                                 pass
@@ -698,10 +695,10 @@ class GetSearchResponseV3View(APIView):
                             self.total_df = self.total_df[self.total_df['shared_size']>=l_lower]
                         elif isinstance(l_upper, (int, float)) == True:
                             self.total_df = self.total_df[self.total_df['shared_size']<=l_upper]
+                        # print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type', 'owner_type']])
 
                     # ! 1=公同共有面積
                     elif areaType == 3:
-                        # self.total_df = self.total_df[self.total_df['right_type']==3]
                         try:
                             self.total_df['common_part'] = self.total_df['land_area'] / self.total_df['owners_num']
                             if isinstance(l_lower, (int, float)) == True and isinstance(l_upper, (int, float)) == True:
@@ -713,20 +710,20 @@ class GetSearchResponseV3View(APIView):
                                 self.total_df = self.total_df[self.total_df['common_part']>=l_lower]
                             elif isinstance(l_upper, (int, float)) == True:
                                 self.total_df = self.total_df[self.total_df['common_part']<=l_upper]
+                            self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce').round(2)
 
+                            self.total_df['shared_size'] = self.total_df['common_part']
+                            # print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type', 'owner_type','common_part']])
                             self.total_df = self.total_df.drop('common_part', axis=1)
                         except Exception as e:
                             print(f'公同共有面積錯誤 ：{e}')
             except Exception as e:
                 print(f'面積錯誤 ：{e}')
 
-            self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce')
-            self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce')
+            self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce').round(2)
+            self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce').round(2)
             # self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce')
             # self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']] * 0.3025
-
-            print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type']])
-
 
             # 公告現值
             vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
@@ -853,6 +850,7 @@ class GetSearchResponseV3View(APIView):
             sql = self.sql_str_combin(self.query_list)
             # print(sql)
             subscriberecords_qs, headers = get_dba(sql, "diablo_test")
+            print(f'搜尋總筆數:{len(subscriberecords_qs)}')
             # ============================================================
             if not subscriberecords_qs:
                 return result
@@ -874,6 +872,8 @@ class GetSearchResponseV3View(APIView):
             print(f'clean_other_data 處理後 ：{len(self.total_df)}')
 
             print(f'輸出總筆數：{len(self.total_df)}')
+
+            self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']].fillna(0)
             result = self.format_data_layout(self.total_df)
         return result
 
