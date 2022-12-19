@@ -249,8 +249,8 @@ footer{
     left: -1px;
 }
 table {
-    width: 94.5%;
-    margin-left: -6px;
+    width: 94%;
+    margin-left: 1rem;
 }
 .tl{
     width: 20%;
@@ -540,7 +540,7 @@ option{
     top: -3px;
 }
 .table1 td{
-    font-size: .8rem;
+    font-size: 1rem;
 }
 .text-center1{
     text-align: center;
@@ -550,8 +550,11 @@ option{
     font-size: 1.5rem;
 }
 .table11{
-    width: 94.5%;
-    margin-left: 20px;
+    width: 94%;
+    margin-left: 1.5rem;
+}
+.a01{
+    height: 40px;
 }
 .footer1{
     display: -ms-flexbox;
