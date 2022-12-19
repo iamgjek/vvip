@@ -68,7 +68,7 @@
             border-width: 5px;
             border-radius: 50%;
             border-style: solid;
-            border-color: blue transparent transparent transparent;
+            border-color: #007bff transparent transparent transparent;
         }
 
         .loadingData > span:nth-child(1){
@@ -1066,7 +1066,7 @@
 
                         var tmp = {};
                         for(var i in owner_data){
-                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()]/g, "");
+                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?/\\]/g, "");
                             T.person_searchRes.push(owner_data[i]);
                         }
                         T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
