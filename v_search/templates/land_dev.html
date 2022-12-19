@@ -68,7 +68,7 @@
             border-width: 5px;
             border-radius: 50%;
             border-style: solid;
-            border-color: blue transparent transparent transparent;
+            border-color: #007bff transparent transparent transparent;
         }
 
         .loadingData > span:nth-child(1){
@@ -629,7 +629,7 @@
                                                 <p>(( data[0].regno.length || 0 ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="data[0].region_name + data[0]._lbnum" class="collapse cell-1 row-child tablebg2">
+                                        <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15">
                                                 <table>
                                                     <thead>
@@ -791,10 +791,10 @@
                                                             <td data="登記次序">(( line.登記次序 || '(空白)' ))</td>
                                                             <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
-                                                            <td data="土地面積">(( line.land_area || '(空白)' ))</td>
+                                                            <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="公告現值">(( line.land_notice_value || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( line.shared_size || '(空白)' ))</td>
+                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="持分現值">(( line.持分現值 || '(空白)' ))</td>
                                                             <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
                                                         </tr>
@@ -1066,7 +1066,7 @@
 
                         var tmp = {};
                         for(var i in owner_data){
-                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()]/g, "");
+                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?/\\]/g, "");
                             T.person_searchRes.push(owner_data[i]);
                         }
                         T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
@@ -1129,7 +1129,7 @@
                     var r = [
                         this.cityList[this.searchForm.land.region.city],
                         this.areaList[this.searchForm.land.region.city]?.[this.searchForm.land.region.area],
-                        this.sectionList[this.searchForm.land.region.area]?.[this.searchForm.land.region.section] || this.planList[this.searchForm.land.region.city]?.[this.searchForm.land.region.plan]
+                        this.sectionList[this.searchForm.land.region.area]?.[this.searchForm.land.region.section] || this.planList[this.searchForm.land.region.area]?.[this.searchForm.land.region.plan]
                     ], tmp;
                     
                     
