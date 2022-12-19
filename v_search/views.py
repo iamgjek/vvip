@@ -712,9 +712,8 @@ class GetSearchResponseV3View(APIView):
                                 self.total_df = self.total_df[self.total_df['common_part']<=l_upper]
                             self.total_df['common_part'] = pd.to_numeric(self.total_df['common_part'], errors='coerce').round(2)
 
-
                             self.total_df['shared_size'] = self.total_df['common_part']
-                            print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type', 'owner_type','common_part']])
+                            # print(self.total_df.loc[:, ['lbkey', 'land_area', 'shared_size', 'right_type', 'owner_type','common_part']])
                             self.total_df = self.total_df.drop('common_part', axis=1)
                         except Exception as e:
                             print(f'公同共有面積錯誤 ：{e}')
