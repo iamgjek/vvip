@@ -597,8 +597,8 @@
                                             </td>
                                             <td data="地號">
                                                 <p>
-                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0]._lbnum" data-toggle="collapse">(( data[0]._lbnum || '(空白)' ))</a>
-                                                    <span v-else>(( data[0]._lbnum || '(空白)' ))</span>
+                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '(空白)' ))</a>
+                                                    <span v-else>(( data[0].lno || '(空白)' ))</span>
                                                 </p>
                                             </td>
                                             <td data="國土分區">
@@ -611,7 +611,7 @@
                                                 <p>(( data[0].urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
-                                                <p>(( data[0].land_area || '(空白)' ))</p>
+                                                <p>(( (data[0].land_area / 3.30579).round(2) || '(空白)' ))</p>
                                             </td>
                                             <td data="公告現值">
                                                 <p>(( data[0].land_notice_value?.chUnit() || '(空白)' ))</p>
@@ -626,7 +626,7 @@
                                                 <p>(( data[0].owner_type || '(空白)' ))</p>
                                             </td>
                                             <td data="所有權人">
-                                                <p>(( data.length || 0 ))</p>
+                                                <p>(( data[0].regno.length || 0 ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data[0].region_name + data[0]._lbnum" class="collapse cell-1 row-child tablebg2">
@@ -703,7 +703,7 @@
                                         <th scope="col">統一編號</th>
                                         <th scope="col">戶籍地址</th>
                                         <th scope="col">出生日期</th>
-                                        <th scope="col">土地總比數</th>
+                                        <th scope="col">土地總筆數</th>
                                         <th scope="col">持分總坪數</th>
                                         <th scope="col">持分總現值(萬)</th>
                                         <th scope="col">建物總筆數</th>
@@ -729,37 +729,37 @@
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="所有權人">
-                                                <p><a :href="'#'+data._key" data-toggle="collapse">(( data.name || '(空白)' ))</a></p>
+                                                <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '(空白)' ))</a></p>
                                             </td>
                                             <td data="統一編號">
-                                                <p>(( data.uid || '(空白)' ))</p>
+                                                <p>(( data[0].uid || '(空白)' ))</p>
                                             </td>
                                             <td data="戶籍地址">
-                                                <p>(( data.戶籍地址 || '(空白)' ))</p>
+                                                <p>(( data[0].address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
-                                                <p>(( data.出生日期 || '(空白)' ))</p>
+                                                <p>(( data[0].bday || '(空白)' ))</p>
                                             </td>
-                                            <td data="土地總比數">
-                                                <p>(( data.土地總比數 || '(空白)' ))</p>
+                                            <td data="土地總筆數">
+                                                <p>(( data[0].regno?.length || '(空白)' ))</p>
                                             </td>
-                                            <td data="持分總評數">
-                                                <p>(( data.持分總評數 || '(空白)' ))</p>
+                                            <td data="持分總坪數">
+                                                <p>(( data[0].持分總評數 || '(空白)' ))</p>
                                             </td>
                                             <td data="持分總現值(萬)">
-                                                <p>(( data.持分總現值 || '(空白)' ))</p>
+                                                <p>(( data[0].持分總現值 || '(空白)' ))</p>
                                             </td>
                                             <td data="建物總筆數">
-                                                <p>(( data.建物總筆數 || '(空白)' ))</p>
+                                                <p>(( data[0].建物總筆數 || '(空白)' ))</p>
                                             </td>
                                             <td data="電話">
-                                                <p>(( data.電話 || '(空白)' ))</p>
+                                                <p>(( data[0].電話 || '(空白)' ))</p>
                                             </td>
                                             <td data="所有權註記">
-                                                <p>(( data.所有權註記 || '(空白)' ))</p>
+                                                <p>(( data[0].所有權註記 || '(空白)' ))</p>
                                             </td>
                                             <td data="身份標籤">
-                                                <p>(( data.身份標籤 || '(空白)' ))</p>
+                                                <p>(( data[0].身份標籤 || '(空白)' ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
@@ -783,20 +783,20 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td data="縣市">(( data.city_name || '(空白)' ))</td>
-                                                            <td data="行政區">(( data.area_name || '(空白)' ))</td>
-                                                            <td data="段小段">(( data.region_name || '(空白)' ))</td>
-                                                            <td data="地號">(( data._lbnum || '(空白)' ))</td>
-                                                            <td data="登記次序">(( data.登記次序 || '(空白)' ))</td>
-                                                            <td data="登記日期">(( data.reg_date_str || '(空白)' ))</td>
-                                                            <td data="登記原因">(( data.reg_reason_str || '(空白)' ))</td>
-                                                            <td data="土地面積">(( data.land_area || '(空白)' ))</td>
-                                                            <td data="公告現值">(( data.land_notice_value || '(空白)' ))</td>
-                                                            <td data="權利範圍">(( data.right_str || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( data.shared_size || '(空白)' ))</td>
-                                                            <td data="持分現值">(( data.持分現值 || '(空白)' ))</td>
-                                                            <td data="他項權利">(( data.他項權利 || '(空白)' ))</td>
+                                                        <tr v-for="line in data">
+                                                            <td data="縣市">(( line.city_name || '(空白)' ))</td>
+                                                            <td data="行政區">(( line.area_name || '(空白)' ))</td>
+                                                            <td data="段小段">(( line.region_name || '(空白)' ))</td>
+                                                            <td data="地號">(( line._lbnum || '(空白)' ))</td>
+                                                            <td data="登記次序">(( line.登記次序 || '(空白)' ))</td>
+                                                            <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
+                                                            <td data="土地面積">(( line.land_area || '(空白)' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value || '(空白)' ))</td>
+                                                            <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
+                                                            <td data="持分坪數">(( line.shared_size || '(空白)' ))</td>
+                                                            <td data="持分現值">(( line.持分現值 || '(空白)' ))</td>
+                                                            <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -1058,7 +1058,6 @@
                         var land_data = res.land_data, owner_data = res.owner_data;
 
                         for(var i in land_data){
-                            for(var j in land_data[i]) land_data[i][j]._lbnum = i.split("_").last();
                             T.searchRes.push(land_data[i]);
                         }
                         T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
@@ -1067,13 +1066,9 @@
 
                         var tmp = {};
                         for(var i in owner_data){
-                            for(var j in owner_data[i]){
-                                if(!owner_data[i][j].name || !owner_data[i][j].uid) continue;
-                                owner_data[i][j]._key = (owner_data[i][j].name + owner_data[i][j].uid).replace(/[<>@\*]/g, "＊");
-                                tmp[owner_data[i][j].name + owner_data[i][j].uid] = owner_data[i][j];
-                            }
+                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()]/g, "");
+                            T.person_searchRes.push(owner_data[i]);
                         }
-                        for(var i in tmp) T.person_searchRes.push(tmp[i]);
                         T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
                         T.person_nowPage = 0;
                         Vue.nextTick(()=>{T.person_nowPage = 1;});
