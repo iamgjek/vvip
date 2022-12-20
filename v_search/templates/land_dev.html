@@ -675,13 +675,20 @@
                         </div>
                         <div class="footer1">
                             <div class="row">
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">每頁：</span>
+                                    <select class="custom-select" v-model="onepageNum"><option v-for="i in pageNumList" :value="i">((i))</option></select>
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">筆，共(( searchRes.length ))筆</span>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm">
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
                                                 <span class="page-link" @click="nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 3..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
+                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 9..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
                                                 <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
                                             <li class="page-item">
@@ -808,13 +815,20 @@
                         </div>
                         <div class="footer1">
                             <div class="row">
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">每頁：</span>
+                                    <select class="custom-select" v-model="person_onepageNum"><option v-for="i in person_pageNumList" :value="i">((i))</option></select>
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">筆，共(( person_searchRes.length ))筆</span>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm">
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
                                                 <span class="page-link" @click="person_nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item" :class="{active:person_nowPage==person_startPageBtn+i}" v-for="i in 3..minmax(1,person_totalPage)" @click="person_nowPage=person_startPageBtn+i">
+                                            <li class="page-item" :class="{active:person_nowPage==person_startPageBtn+i}" v-for="i in 9..minmax(1,person_totalPage)" @click="person_nowPage=person_startPageBtn+i">
                                                 <span class="page-link">(( person_startPageBtn+i ))</span>
                                             </li>
                                             <li class="page-item">
@@ -926,6 +940,7 @@
                     loading: 0,
                     getSearchOptionsList: [],
 
+                    pageNumList: [5, 10, 20, 50, 100],
                     onepageNum: 10,
                     startPageBtn: 0,
                     nowPage: 0,
@@ -933,6 +948,7 @@
                     searchRes: [],
                     searchResBox: [],
 
+                    person_pageNumList: [5, 10, 20, 50, 100],
                     person_onepageNum: 10,
                     person_startPageBtn: 0,
                     person_nowPage: 0,
@@ -1190,7 +1206,29 @@
                     if(tmp) r.push(tmp);
 
                     return r;
-                }
+                },
+                selectPage(nV, oV){
+                    var data;
+                    this.nowPage = nV.minmax(1, this.totalPage);
+                    this.startPageBtn = (this.nowPage-4).minmax(1, Math.max(this.totalPage-8, 1)) - 1;
+                    this.searchResBox.length = 0;
+                    for(var i=0; i<this.onepageNum; i++){
+                        data = this.searchRes[(nV-1) * this.onepageNum + i];
+                        if(!data) break;
+                        this.searchResBox.push(data);
+                    }
+                },
+                person_selectPage(nV, oV){
+                    var data;
+                    this.person_nowPage = nV.minmax(1, this.person_totalPage);
+                    this.person_startPageBtn = (this.person_nowPage-4).minmax(1, Math.max(this.person_totalPage-8, 1)) - 1;
+                    this.person_searchResBox.length = 0;
+                    for(var i=0; i<this.person_onepageNum; i++){
+                        data = this.person_searchRes[(nV-1) * this.person_onepageNum + i];
+                        if(!data) break;
+                        this.person_searchResBox.push(data);
+                    }
+                },
             },
             mounted(){
                 ms[0] = this.multipleSelect;
@@ -1201,28 +1239,24 @@
             watch:{
                 nowPage:{
                     handler(nV, oV){
-                        var data;
-                        this.nowPage = nV.minmax(1, this.totalPage);
-                        this.startPageBtn = (this.nowPage-1).minmax(1, Math.max(this.totalPage-2, 1)) - 1;
-                        this.searchResBox.length = 0;
-                        for(var i=0; i<this.onepageNum; i++){
-                            data = this.searchRes[(nV-1) * this.onepageNum + i];
-                            if(!data) break;
-                            this.searchResBox.push(data);
-                        }
+                        this.selectPage(nV, oV);
+                    }
+                },
+                onepageNum:{
+                    handler(nV, oV){
+                        this.totalPage = Math.ceil(this.searchRes.length / nV);
+                        this.selectPage(this.nowPage, oV);
                     }
                 },
                 person_nowPage:{
                     handler(nV, oV){
-                        var data;
-                        this.person_nowPage = nV.minmax(1, this.person_totalPage);
-                        this.person_startPageBtn = (this.person_nowPage-1).minmax(1, Math.max(this.person_totalPage-2, 1)) - 1;
-                        this.person_searchResBox.length = 0;
-                        for(var i=0; i<this.person_onepageNum; i++){
-                            data = this.person_searchRes[(nV-1) * this.person_onepageNum + i];
-                            if(!data) break;
-                            this.person_searchResBox.push(data);
-                        }
+                        this.person_selectPage(nV, oV);
+                    },
+                },
+                person_onepageNum:{
+                    handler(nV, oV){
+                        this.person_totalPage = Math.ceil(this.person_searchRes.length / nV);
+                        this.person_selectPage(this.person_nowPage, oV);
                     },
                 },
                 "searchForm.land.other.holding_period_l":{
