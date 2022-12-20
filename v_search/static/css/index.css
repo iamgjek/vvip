@@ -712,7 +712,7 @@ th {
     -ms-flex-align: center;
     align-items: center;
     -ms-flex-pack: end;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 2rem;
     margin-top: 1rem;
 }
