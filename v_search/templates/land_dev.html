@@ -943,49 +943,49 @@
                     searchForm:{
                         land:{
                             "region": {
-                                "city": null,
-                                "area": null,
-                                "plan": null,
-                                "section": null,
-                                "includeInvalid": 0,
-                                "land_number": "",
+                                "city": null, // 縣市
+                                "area": null, // 行政區
+                                "plan": null, // 計劃案
+                                "section": null, // 段小段
+                                "includeInvalid": 0, //包含失效
+                                "land_number": "", // 地號
                                 "national_land_zone": [], // 國土分區
                             },
                             "condition": {
-                                "registerReason": {
+                                "registerReason": { // 登記原因
 
                                 },
-                                "ownership": {
+                                "ownership": { //權屬
                                     "natural": 0,
                                     "private": 0,
                                     "public": 0,
                                     "non_public": 0,
                                     "partially_public": 0
                                 },
-                                "ownershipType": null,
-                                "ownershipNumLowerLimit": 0,
-                                "ownershipNumUpperLimit": 0,
-                                "areaType": 0,
-                                "landAreaLowerLimit": 0,
-                                "landAreaUpperLimit": 0,
-                                "inCity": {},
-                                "outCity": {},
-                                "outCity2": {},
-                                "presentLowerLimit": 0,
-                                "presentUpperLimit": 0,
+                                "ownershipType": null, // 權屬種類 公同共有那些
+                                "ownershipNumLowerLimit": 0, // 所有權人數 下限
+                                "ownershipNumUpperLimit": 0, // 所有權人數 上限
+                                "areaType": 0, // 土地面積 總面積那些
+                                "landAreaLowerLimit": 0, // 土地面積 下限
+                                "landAreaUpperLimit": 0, // 土地面積 上限
+                                "inCity": {}, // 使用分區都內
+                                "outCity": {}, // 使用分區都外 分區
+                                "outCity2": {}, // 使用分區都外 地類別
+                                "presentLowerLimit": 0, // 公告現值 下限
+                                "presentUpperLimit": 0, // 公告現值 上限
                             },
                             "other": {
-                                "otherRemark": null,
-                                "restrictedRegistration": null, 
+                                "otherRemark": null, // 他項標記
+                                "restrictedRegistration": null, // 限制登記
                                 "age_range": null,    // 年齡範圍
                                 "country": {},      // 國籍
-                                "p_part_valueLowerLimit": "", // 個人持分總值
-                                "p_part_valueUpperLimit": "",
-                                "p_part_areaLowerLimit": "",   // 個人持分總面積
-                                "p_part_areaUpperLimit": "",
+                                "p_part_valueLowerLimit": "", // 個人持分總值 下限
+                                "p_part_valueUpperLimit": "", // 個人持分總值 上限
+                                "p_part_areaLowerLimit": "", // 個人持分總面積 下限
+                                "p_part_areaUpperLimit": "", // 個人持分總面積 上限
                                 "holding_period": "", // 持有年限
-                                "holding_period_l": 0,
-                                "holding_period_u": 0,
+                                "holding_period_l": 0, // 持有年限 下限
+                                "holding_period_u": 0, // 持有年限 上限
                             }
                         }
                     },
@@ -1050,6 +1050,8 @@
                     T.person_searchRes = [];
                     T.searchResBox = [];
                     T.person_searchResBox = [];
+
+                    this.searchForm.land.region.land_number = this.landbuildNumberFix(this.searchForm.land.region.land_number, "l").res.join(",");
 
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
