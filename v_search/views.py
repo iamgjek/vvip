@@ -404,7 +404,8 @@ class GetSearchResponseV3View(APIView):
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
                             T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
-                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
+                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type, \
+                            T1.right_numerator, T1.right_denominator \
                             "
 
         sql = sql_str.format(
@@ -807,10 +808,24 @@ class GetSearchResponseV3View(APIView):
         # 個人持分總值
         pv_lower = self.check_int(base_other.get('p_part_valueLowerLimit', None))
         pv_upper = self.check_int(base_other.get('p_part_valueUpperLimit', None))
+        pv_lower = pv_lower * 10000
+        pv_upper = pv_upper * 10000
 
-        # 個人持分總面積
-        pa_lower = self.check_int(base_other.get('p_part_areaLowerLimit', None))
-        pa_upper = self.check_int(base_other.get('p_part_areaUpperLimit', None))
+        self.total_df['present_value'] = self.total_df['shared_size'] * self.total_df['land_notice_value']
+        if pv_lower == 0 and pv_upper == 0:
+            pass
+        else:
+            if isinstance(pv_lower, int) == True and isinstance(pv_upper, int) == True:
+                self.total_df = self.total_df[(self.total_df['present_value']<=pv_upper) & (self.total_df['present_value']>=pv_lower)]
+            elif isinstance(pv_lower, int) == True:
+                self.total_df = self.total_df[self.total_df['present_value']>=pv_lower]
+            elif isinstance(pv_upper, int) == True:
+                self.total_df = self.total_df[self.total_df['present_value']<=pv_upper]
+
+        self.total_df['present_value'] = self.total_df['present_value'].fillna(0.0)
+        self.total_df['present_value'] = pd.to_numeric(self.total_df['present_value'], errors='coerce').round(2)
+        # print(self.total_df.loc[:, ['lbkey', 'land_notice_value', 'shared_size', 'present_value']])
+
 
         # 持有年限
         holding_period = self.check_int(base_other.get('holding_period', None))
@@ -871,6 +886,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
 
