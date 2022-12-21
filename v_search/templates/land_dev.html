@@ -675,13 +675,20 @@
                         </div>
                         <div class="footer1">
                             <div class="row">
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">每頁：</span>
+                                    <select class="custom-select" v-model="onepageNum"><option v-for="i in pageNumList" :value="i">((i))</option></select>
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">筆，共(( searchRes.length ))筆</span>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm">
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
                                                 <span class="page-link" @click="nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 3..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
+                                            <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 9..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
                                                 <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
                                             <li class="page-item">
@@ -808,13 +815,20 @@
                         </div>
                         <div class="footer1">
                             <div class="row">
+                                <div class="input-group">
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">每頁：</span>
+                                    <select class="custom-select" v-model="person_onepageNum"><option v-for="i in person_pageNumList" :value="i">((i))</option></select>
+                                    <span class="input-group-text border-0" style="background-color: #f5f5f5;">筆，共(( person_searchRes.length ))筆</span>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm">
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
                                                 <span class="page-link" @click="person_nowPage--">上一頁</span>
                                             </li>
-                                            <li class="page-item" :class="{active:person_nowPage==person_startPageBtn+i}" v-for="i in 3..minmax(1,person_totalPage)" @click="person_nowPage=person_startPageBtn+i">
+                                            <li class="page-item" :class="{active:person_nowPage==person_startPageBtn+i}" v-for="i in 9..minmax(1,person_totalPage)" @click="person_nowPage=person_startPageBtn+i">
                                                 <span class="page-link">(( person_startPageBtn+i ))</span>
                                             </li>
                                             <li class="page-item">
@@ -926,6 +940,7 @@
                     loading: 0,
                     getSearchOptionsList: [],
 
+                    pageNumList: [5, 10, 20, 50, 100],
                     onepageNum: 10,
                     startPageBtn: 0,
                     nowPage: 0,
@@ -933,6 +948,7 @@
                     searchRes: [],
                     searchResBox: [],
 
+                    person_pageNumList: [5, 10, 20, 50, 100],
                     person_onepageNum: 10,
                     person_startPageBtn: 0,
                     person_nowPage: 0,
@@ -943,49 +959,49 @@
                     searchForm:{
                         land:{
                             "region": {
-                                "city": null,
-                                "area": null,
-                                "plan": null,
-                                "section": null,
-                                "includeInvalid": 0,
-                                "land_number": "",
+                                "city": null, // 縣市
+                                "area": null, // 行政區
+                                "plan": null, // 計劃案
+                                "section": null, // 段小段
+                                "includeInvalid": 0, //包含失效
+                                "land_number": "", // 地號
                                 "national_land_zone": [], // 國土分區
                             },
                             "condition": {
-                                "registerReason": {
+                                "registerReason": { // 登記原因
 
                                 },
-                                "ownership": {
+                                "ownership": { //權屬
                                     "natural": 0,
                                     "private": 0,
                                     "public": 0,
                                     "non_public": 0,
                                     "partially_public": 0
                                 },
-                                "ownershipType": null,
-                                "ownershipNumLowerLimit": 0,
-                                "ownershipNumUpperLimit": 0,
-                                "areaType": 0,
-                                "landAreaLowerLimit": 0,
-                                "landAreaUpperLimit": 0,
-                                "inCity": {},
-                                "outCity": {},
-                                "outCity2": {},
-                                "presentLowerLimit": 0,
-                                "presentUpperLimit": 0,
+                                "ownershipType": null, // 權屬種類 公同共有那些
+                                "ownershipNumLowerLimit": 0, // 所有權人數 下限
+                                "ownershipNumUpperLimit": 0, // 所有權人數 上限
+                                "areaType": 0, // 土地面積 總面積那些
+                                "landAreaLowerLimit": 0, // 土地面積 下限
+                                "landAreaUpperLimit": 0, // 土地面積 上限
+                                "inCity": {}, // 使用分區都內
+                                "outCity": {}, // 使用分區都外 分區
+                                "outCity2": {}, // 使用分區都外 地類別
+                                "presentLowerLimit": 0, // 公告現值 下限
+                                "presentUpperLimit": 0, // 公告現值 上限
                             },
                             "other": {
-                                "otherRemark": null,
-                                "restrictedRegistration": null, 
+                                "otherRemark": null, // 他項標記
+                                "restrictedRegistration": null, // 限制登記
                                 "age_range": null,    // 年齡範圍
                                 "country": {},      // 國籍
-                                "p_part_valueLowerLimit": "", // 個人持分總值
-                                "p_part_valueUpperLimit": "",
-                                "p_part_areaLowerLimit": "",   // 個人持分總面積
-                                "p_part_areaUpperLimit": "",
+                                "p_part_valueLowerLimit": "", // 個人持分總值 下限
+                                "p_part_valueUpperLimit": "", // 個人持分總值 上限
+                                "p_part_areaLowerLimit": "", // 個人持分總面積 下限
+                                "p_part_areaUpperLimit": "", // 個人持分總面積 上限
                                 "holding_period": "", // 持有年限
-                                "holding_period_l": 0,
-                                "holding_period_u": 0,
+                                "holding_period_l": 0, // 持有年限 下限
+                                "holding_period_u": 0, // 持有年限 上限
                             }
                         }
                     },
@@ -1050,6 +1066,8 @@
                     T.person_searchRes = [];
                     T.searchResBox = [];
                     T.person_searchResBox = [];
+
+                    this.searchForm.land.region.land_number = this.landbuildNumberFix(this.searchForm.land.region.land_number, "l").res.join(",");
 
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
@@ -1188,7 +1206,29 @@
                     if(tmp) r.push(tmp);
 
                     return r;
-                }
+                },
+                selectPage(nV, oV){
+                    var data;
+                    this.nowPage = nV.minmax(1, this.totalPage);
+                    this.startPageBtn = (this.nowPage-4).minmax(1, Math.max(this.totalPage-8, 1)) - 1;
+                    this.searchResBox.length = 0;
+                    for(var i=0; i<this.onepageNum; i++){
+                        data = this.searchRes[(nV-1) * this.onepageNum + i];
+                        if(!data) break;
+                        this.searchResBox.push(data);
+                    }
+                },
+                person_selectPage(nV, oV){
+                    var data;
+                    this.person_nowPage = nV.minmax(1, this.person_totalPage);
+                    this.person_startPageBtn = (this.person_nowPage-4).minmax(1, Math.max(this.person_totalPage-8, 1)) - 1;
+                    this.person_searchResBox.length = 0;
+                    for(var i=0; i<this.person_onepageNum; i++){
+                        data = this.person_searchRes[(nV-1) * this.person_onepageNum + i];
+                        if(!data) break;
+                        this.person_searchResBox.push(data);
+                    }
+                },
             },
             mounted(){
                 ms[0] = this.multipleSelect;
@@ -1199,28 +1239,24 @@
             watch:{
                 nowPage:{
                     handler(nV, oV){
-                        var data;
-                        this.nowPage = nV.minmax(1, this.totalPage);
-                        this.startPageBtn = (this.nowPage-1).minmax(1, Math.max(this.totalPage-2, 1)) - 1;
-                        this.searchResBox.length = 0;
-                        for(var i=0; i<this.onepageNum; i++){
-                            data = this.searchRes[(nV-1) * this.onepageNum + i];
-                            if(!data) break;
-                            this.searchResBox.push(data);
-                        }
+                        this.selectPage(nV, oV);
+                    }
+                },
+                onepageNum:{
+                    handler(nV, oV){
+                        this.totalPage = Math.ceil(this.searchRes.length / nV);
+                        this.selectPage(this.nowPage, oV);
                     }
                 },
                 person_nowPage:{
                     handler(nV, oV){
-                        var data;
-                        this.person_nowPage = nV.minmax(1, this.person_totalPage);
-                        this.person_startPageBtn = (this.person_nowPage-1).minmax(1, Math.max(this.person_totalPage-2, 1)) - 1;
-                        this.person_searchResBox.length = 0;
-                        for(var i=0; i<this.person_onepageNum; i++){
-                            data = this.person_searchRes[(nV-1) * this.person_onepageNum + i];
-                            if(!data) break;
-                            this.person_searchResBox.push(data);
-                        }
+                        this.person_selectPage(nV, oV);
+                    },
+                },
+                person_onepageNum:{
+                    handler(nV, oV){
+                        this.person_totalPage = Math.ceil(this.person_searchRes.length / nV);
+                        this.person_selectPage(this.person_nowPage, oV);
                     },
                 },
                 "searchForm.land.other.holding_period_l":{
