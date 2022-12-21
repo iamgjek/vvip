@@ -603,13 +603,12 @@ class GetSearchResponseV3View(APIView):
                 for x, v in registerReason.items():
                     x = int(x)
                     v = int(v)
+                    # x_real = x + 1
                     if v:
-                        if x == 11:
-                            reg_list.append(12)
-                        else:
-                            reg_list.append(x)
+                        reg_list.append(x)
                 if reg_list:
                     self.total_df = self.total_df[self.total_df['reg_reason'].isin(reg_list)]
+
             # 權屬樣態
             ownership = base_condition.get('ownership')
             if ownership:
@@ -765,9 +764,11 @@ class GetSearchResponseV3View(APIView):
             if outCity2:
                 self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(outCity2))]
 
-            # 個人持分總值
-            vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
-            vp_upper = self.check_int(base_condition.get('vp_UpperLimit', None))
+            # 公告現值
+            vp_lower = self.check_int(base_condition.get('presentLowerLimit', None))
+            vp_upper = self.check_int(base_condition.get('presentUpperLimit', None))
+            vp_lower = vp_lower * 10000
+            vp_upper = vp_upper * 10000
             self.total_df['land_notice_value'] = pd.to_numeric(self.total_df['land_notice_value'], errors='coerce')
             if vp_lower == 0 and vp_upper == 0:
                 pass
