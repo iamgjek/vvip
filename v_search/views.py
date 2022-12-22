@@ -565,7 +565,7 @@ class GetSearchResponseV3View(APIView):
                             low_str = low[0]
                             up_str = up[0]
                             self.total_df = self.total_df[self.total_df['lno'].between(low_str, up_str)]
-                            
+
                     except Exception as e:
                         print(e)
                         pass
@@ -707,24 +707,9 @@ class GetSearchResponseV3View(APIView):
             except Exception as e:
                 print(f'面積錯誤 ：{e}')
 
+            # 去小數
             self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce').round(2)
             self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce').round(2)
-
-            # # 公告現值(X)
-            # vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
-            # vp_upper = self.check_int(base_condition.get('vp_UpperLimit', None))
-            # self.total_df['land_notice_value'] = pd.to_numeric(self.total_df['land_notice_value'], errors='coerce')
-            # if vp_lower == 0 and vp_upper == 0:
-            #     pass
-            # else:
-            #     if isinstance(vp_lower, int) == True and isinstance(vp_upper, int) == True:
-            #         self.total_df = self.total_df[(self.total_df['land_notice_value']<=vp_upper) & (self.total_df['land_notice_value']>=vp_lower)]
-            #     elif isinstance(vp_lower, int) == True:
-            #         self.total_df = self.total_df[self.total_df['land_notice_value']>=vp_lower]
-            #     elif isinstance(vp_upper, int) == True:
-            #         self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
-
-
 
             # 使用區分類
             in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items() if v]
@@ -736,7 +721,6 @@ class GetSearchResponseV3View(APIView):
             # print(outCity2)
             # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
             if in_city or out_city:
-                # self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(in_city))]
                 con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))
                 con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))
                 self.total_df = self.total_df[(con1 | con2)]
@@ -758,6 +742,10 @@ class GetSearchResponseV3View(APIView):
                     self.total_df = self.total_df[self.total_df['land_notice_value']>=vp_lower]
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
+
+            # 總公告
+            self.total_df['total_vp'] = self.total_df['land_area'] * self.total_df['land_notice_value']
+
 
     def clean_other_data(self, base_other):
 
