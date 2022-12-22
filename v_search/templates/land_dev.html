@@ -262,7 +262,7 @@
                     <div class="card card-body">
                         <div class="row row-cols-auto row1">
                             <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
-                            <div class="w-200 left">
+                            <div class="w-200">
                                 <script type="text/javascript">
                                     $(document).ready(function () {
                                         $('#bs1').multiselect({
@@ -298,7 +298,7 @@
                                     });
                                 </script>
                                 <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.land.condition.registerReason">
-                                    <option :value="idx" v-for="(i, idx) in registerReasonList">(( i))</option>
+                                    <option :value="idx+1" v-for="(i, idx) in registerReasonList">(( i ))</option>
                                 </select>
                             </div>
 
@@ -344,7 +344,7 @@
                                         });
                                     });
                                 </script>
-                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone">
+                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone" disabled>
                                     <option :value="idx" v-for="(i ,idx) in national_land_zoneList">(( i ))</option>
                                 </select>
                             </div>
@@ -393,7 +393,7 @@
                                 </div>
                             </div>
 
-                            <div class="w-200">
+                            <div class="w-200 d-none">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -420,7 +420,7 @@
                                 <script type="text/javascript">
                                     $('#example-single').multiselect();
                                 </script>
-                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range">
+                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range" disabled>
                                     <option :value="null">年齡區間</option>
                                     <option :value="0">民國前</option>
                                     <option :value="1">民國20年以前</option>
@@ -439,7 +439,7 @@
                                     });
                                 </script>
                                 <select id="example-getting-started" multiple="multiple"
-                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country">
+                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country" disabled>
                                     <option value="ALL">不拘</option>
                                     <option value="TW">台灣</option>
                                     <option value="VN">越南</option>
@@ -582,7 +582,11 @@
                                         </td>
                                     </tr>
                                     <tr class="tab-content" v-else-if="!searchResBox.length">
-                                        <td class="p-4" colspan="14"><img style="height:217px;" src="/static/images/nodata.svg"></td>
+                                        <td class="p-4" colspan="14">
+                                            <img style="height:217px;" src="/static/images/nodata.svg">
+                                            <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
+                                            <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
+                                        </td>
                                     </tr>
                                     <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                         <tr data-node="treetable-1">
@@ -617,7 +621,7 @@
                                                 <p>(( data[0].land_notice_value?.chUnit() || '(空白)' ))</p>
                                             </td>
                                             <td data="總公告">
-                                                <p>(( data[0].總公告?.chUnit() || '(空白)' ))</p>
+                                                <p>(( data[0].total_vp?.chUnit() || '(空白)' ))</p>
                                             </td>
                                             <td data="地上建物">
                                                 <p>(( data[0].build_num || '(空白)' ))</p>
@@ -626,7 +630,7 @@
                                                 <p>(( data[0].owner_type || '(空白)' ))</p>
                                             </td>
                                             <td data="所有權人">
-                                                <p>(( data[0].regno.length || 0 ))</p>
+                                                <p>(( data.length || 0 ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -642,7 +646,7 @@
                                                             <th>住址</th>
                                                             <th>出生日期</th>
                                                             <th>權利範圍</th>
-                                                            <th>持分面積</th>
+                                                            <th>持分面積(平方公尺)</th>
                                                             <th>持分坪數</th>
                                                             <th>持分現值</th>
                                                             <th>他項權利(其他註記)</th>
@@ -658,9 +662,9 @@
                                                             <td data="住址" class="left">(( line.address_re || '(空白)' ))</td>
                                                             <td data="出生日期">(( line.bday || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分面積">(( line.shared_size || '(空白)' ))</td>
+                                                            <td data="持分面積(平方公尺)">(( line.shared_size || '(空白)' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值(萬)">(( line.持分現值 || '(空白)' ))</td>
+                                                            <td data="持分現值">(( line.持分現值?.chUnit() || '(空白)' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in data.creditors_rights">(( person ))</p>
                                                             </td>
@@ -731,7 +735,11 @@
                                         </td>
                                     </tr>
                                     <tr class="tab-content" v-else-if="!person_searchResBox.length">
-                                        <td class="p-4" colspan="11"><img style="height:217px;" src="/static/images/nodata.svg"></td>
+                                        <td class="p-4" colspan="14">
+                                            <img style="height:217px;" src="/static/images/nodata.svg">
+                                            <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
+                                            <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
+                                        </td>
                                     </tr>
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
@@ -748,13 +756,19 @@
                                                 <p>(( data[0].bday || '(空白)' ))</p>
                                             </td>
                                             <td data="土地總筆數">
-                                                <p>(( data[0].regno?.length || '(空白)' ))</p>
+                                                <p>(( data?.length || '(空白)' ))</p>
                                             </td>
                                             <td data="持分總坪數">
-                                                <p>(( data[0].持分總評數 || '(空白)' ))</p>
+                                                <p>(( (data.reduce((a,e) => {
+                                                    a += e.shared_size;
+                                                    return a;
+                                                }, 0) / 3.30579).round(2) ))</p>
                                             </td>
-                                            <td data="持分總現值(萬)">
-                                                <p>(( data[0].持分總現值 || '(空白)' ))</p>
+                                            <td data="持分總現值">
+                                                <p>(( data.reduce((a,e) => {
+                                                    a += e.land_notice_value;
+                                                    return a;
+                                                }, 0)?.chUnit() || '(空白)' ))</p>
                                             </td>
                                             <td data="建物總筆數">
                                                 <p>(( data[0].建物總筆數 || '(空白)' ))</p>
@@ -781,11 +795,11 @@
                                                             <th>登記次序</th>
                                                             <th>登記日期</th>
                                                             <th>登記原因</th>
-                                                            <th>土地面積</th>
+                                                            <th>土地面積(坪)</th>
                                                             <th>公告現值</th>
                                                             <th>權利範圍</th>
                                                             <th>持分坪數</th>
-                                                            <th>持分現值(萬)</th>
+                                                            <th>持分現值</th>
                                                             <th>他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
@@ -799,10 +813,10 @@
                                                             <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="公告現值">(( line.land_notice_value || '(空白)' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value?.chUnit() || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.持分現值 || '(空白)' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit() || '(空白)' ))</td>
                                                             <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
                                                         </tr>
                                                     </tbody>
@@ -938,6 +952,7 @@
                     planList: {},
                     showResult: 0,
                     loading: 0,
+                    serverError: 0,
                     getSearchOptionsList: [],
 
                     pageNumList: [5, 10, 20, 50, 100],
@@ -1056,12 +1071,13 @@
                 },
                 serverSearch(){
                     var T = this;
-                    this.loading = 1;
-                    this.showResult = 1;
                     if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
                         Swal.fire("請選擇至段小段或計劃案")
                         return;
                     }
+                    this.loading = 1;
+                    this.showResult = 1;
+
                     T.searchRes = [];
                     T.person_searchRes = [];
                     T.searchResBox = [];
@@ -1071,27 +1087,33 @@
 
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
-                        var res = supfnc.toJSON(rcv.result);
-                        console.log(res);
-                        var land_data = res.land_data, owner_data = res.owner_data;
+                        if(rcv.status == 200){
+                            var res = supfnc.toJSON(rcv.result);
+                            console.log(res);
+                            var land_data = res.land_data, owner_data = res.owner_data;
 
-                        for(var i in land_data){
-                            T.searchRes.push(land_data[i]);
+                            for(var i in land_data){
+                                T.searchRes.push(land_data[i]);
+                            }
+                            T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
+                            T.nowPage = 0;
+                            Vue.nextTick(()=>{T.nowPage = 1;});
+
+                            var tmp = {};
+                            for(var i in owner_data){
+                                owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?<>/\\]/g, "");
+                                T.person_searchRes.push(owner_data[i]);
+                            }
+                            T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
+                            T.person_nowPage = 0;
+                            Vue.nextTick(()=>{T.person_nowPage = 1;});
+
+                            T.getSearchOptionsList = T.getSearchOptions();
+                            T.serverError = 0;
                         }
-                        T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
-                        T.nowPage = 0;
-                        Vue.nextTick(()=>{T.nowPage = 1;});
-
-                        var tmp = {};
-                        for(var i in owner_data){
-                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?/\\]/g, "");
-                            T.person_searchRes.push(owner_data[i]);
+                        else{
+                            T.serverError = 1;
                         }
-                        T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
-                        T.person_nowPage = 0;
-                        Vue.nextTick(()=>{T.person_nowPage = 1;});
-
-                        T.getSearchOptionsList = T.getSearchOptions();
                     });
                 },
                 landbuildNumberFix(str, lbtype){
