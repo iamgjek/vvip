@@ -626,7 +626,7 @@
                                                 <p>(( data[0].owner_type || '(空白)' ))</p>
                                             </td>
                                             <td data="所有權人">
-                                                <p>(( data[0].regno.length || 0 ))</p>
+                                                <p>(( data.length || 0 ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -800,15 +800,15 @@
                                                             <td data="縣市">(( line.city_name || '(空白)' ))</td>
                                                             <td data="行政區">(( line.area_name || '(空白)' ))</td>
                                                             <td data="段小段">(( line.region_name || '(空白)' ))</td>
-                                                            <td data="地號">(( line._lbnum || '(空白)' ))</td>
-                                                            <td data="登記次序">(( line.登記次序 || '(空白)' ))</td>
+                                                            <td data="地號">(( line.lno || '(空白)' ))</td>
+                                                            <td data="登記次序">(( line.regno || '(空白)' ))</td>
                                                             <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="公告現值">(( line.land_notice_value?.chUnit() || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.present_value || '(空白)' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit() || '(空白)' ))</td>
                                                             <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
                                                         </tr>
                                                     </tbody>

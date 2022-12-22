@@ -337,7 +337,7 @@ Object.defineProperty(
         enumerable: false,
         writable: true,
         value: function () {
-            return this.slice();
+            return JSON.parse(JSON.stringify(this));
         }
     }
 );
