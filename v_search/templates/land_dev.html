@@ -262,7 +262,7 @@
                     <div class="card card-body">
                         <div class="row row-cols-auto row1">
                             <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
-                            <div class="w-200 left">
+                            <div class="w-200">
                                 <script type="text/javascript">
                                     $(document).ready(function () {
                                         $('#bs1').multiselect({
@@ -754,7 +754,7 @@
                                                 <p>(( data[0].持分總評數 || '(空白)' ))</p>
                                             </td>
                                             <td data="持分總現值(萬)">
-                                                <p>(( data[0].持分總現值 || '(空白)' ))</p>
+                                                <p>(( data[0].total_vp || '(空白)' ))</p>
                                             </td>
                                             <td data="建物總筆數">
                                                 <p>(( data[0].建物總筆數 || '(空白)' ))</p>
@@ -802,7 +802,7 @@
                                                             <td data="公告現值">(( line.land_notice_value || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.持分現值 || '(空白)' ))</td>
+                                                            <td data="持分現值">(( line.present_value || '(空白)' ))</td>
                                                             <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
                                                         </tr>
                                                     </tbody>
