@@ -1091,7 +1091,7 @@
 
                         var tmp = {};
                         for(var i in owner_data){
-                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?/\\]/g, "");
+                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?<>/\\]/g, "");
                             T.person_searchRes.push(owner_data[i]);
                         }
                         T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
