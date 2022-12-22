@@ -298,7 +298,7 @@
                                     });
                                 </script>
                                 <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.land.condition.registerReason">
-                                    <option :value="idx" v-for="(i, idx) in registerReasonList">(( i))</option>
+                                    <option :value="idx+1" v-for="(i, idx) in registerReasonList">(( i ))</option>
                                 </select>
                             </div>
 
@@ -344,7 +344,7 @@
                                         });
                                     });
                                 </script>
-                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone">
+                                <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone" disabled>
                                     <option :value="idx" v-for="(i ,idx) in national_land_zoneList">(( i ))</option>
                                 </select>
                             </div>
@@ -393,7 +393,7 @@
                                 </div>
                             </div>
 
-                            <div class="w-200">
+                            <div class="w-200 d-none">
                                 <div class="dropdown">
                                     <button class="btn dropdown-toggle  custom-select left" type="button"
                                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -420,7 +420,7 @@
                                 <script type="text/javascript">
                                     $('#example-single').multiselect();
                                 </script>
-                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range">
+                                <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range" disabled>
                                     <option :value="null">年齡區間</option>
                                     <option :value="0">民國前</option>
                                     <option :value="1">民國20年以前</option>
@@ -439,7 +439,7 @@
                                     });
                                 </script>
                                 <select id="example-getting-started" multiple="multiple"
-                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country">
+                                    class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country" disabled>
                                     <option value="ALL">不拘</option>
                                     <option value="TW">台灣</option>
                                     <option value="VN">越南</option>
