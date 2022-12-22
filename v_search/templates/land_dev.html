@@ -106,7 +106,7 @@
                     {% else %}
                     {{ user.first_name }}
                     {% endif %}
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
+                    <svg  class="svg5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
@@ -245,14 +245,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-80 float-end">
-                        <button class="btn btn-primary btn1 w-81" data-toggle="collapse" href="#collapseExample"
+                    <div class="w-80 float-end right2">
+                        <button class="btn btn1 w-81 btn002" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
                         </button>
                     </div>
-                    <div class="cw-125 float-end">
-                        <button type="button" class="btn btn-primary" @click="serverSearch()"><svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/>
+                    <div class="cw-125 float-end right1">
+                        <button type="button" class="btn btn-primary btn001" @click="serverSearch()"><svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/>
                             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                         </svg>搜尋</button>
                     </div>
@@ -262,7 +262,7 @@
                     <div class="card card-body">
                         <div class="row row-cols-auto row1">
                             <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
-                            <div class="w-200">
+                            <div class="w-200 left">
                                 <script type="text/javascript">
                                     $(document).ready(function () {
                                         $('#bs1').multiselect({
@@ -549,25 +549,25 @@
                     </template>
                 </div>
                 </div>
-                <div class="tab-content" id="pills-tabContent">
+                <div class="tab-content width2" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        <div class="row" style="display: block;max-height: 50rem;overflow-y: auto;">
+                        <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">縣市</th>
-                                        <th scope="col">行政區</th>
-                                        <th scope="col">段小段</th>
-                                        <th scope="col">地號</th>
-                                        <th scope="col">國土分區</th>
-                                        <th scope="col" class="left">使用分區</th>
-                                        <th scope="col" class="left">使用地類別</th>
-                                        <th scope="col">土地面積(坪)</th>
-                                        <th scope="col">公告現值</th>
-                                        <th scope="col">總公告</th>
-                                        <th scope="col">地上建物</th>
-                                        <th scope="col">權屬種類</th>
-                                        <th scope="col">所有權人</th>
+                                        <th scope="col" style="width:5%">縣市</th>
+                                        <th scope="col" style="width:5%">行政區</th>
+                                        <th scope="col" style="width:9%">段小段</th>
+                                        <th scope="col" style="width:7%">地號</th>
+                                        <th scope="col" style="width:7%">國土分區</th>
+                                        <th scope="col" style="width:19%" class="left">使用分區</th>
+                                        <th scope="col" style="width:22%" class="left">使用地類別</th>
+                                        <th scope="col" style="width:7%">土地面積(坪)</th>
+                                        <th scope="col" style="width:7%">公告現值</th>
+                                        <th scope="col" style="width:3%">總公告</th>
+                                        <th scope="col" style="width:3%">地上建物</th>
+                                        <th scope="col" style="width:3%">權屬種類</th>
+                                        <th scope="col" style="width:3%">所有權人</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -604,10 +604,10 @@
                                             <td data="國土分區">
                                                 <p>(( data[0].national_land_zone || '(空白)' ))</p>
                                             </td>
-                                            <td data="使用分區" class="left">
+                                            <td data="使用分區"class="left">
                                                 <p>(( data[0].land_zone || '(空白)' ))</p>
                                             </td>
-                                            <td data="使用地類別" class="left">
+                                            <td data="使用地類別"class="left">
                                                 <p>(( data[0].urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
@@ -631,7 +631,7 @@
                                         </tr>
                                         <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15">
-                                                <table>
+                                                <table class="table3">
                                                     <thead>
                                                         <tr>
                                                             <th>登記次序</th>
@@ -655,7 +655,7 @@
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
                                                             <td data="所有權人">(( line.name || '(空白)' ))</td>
                                                             <td data="統一編號">(( line.uid || '(空白)' ))</td>
-                                                            <td data="住址">(( line.address_re || '(空白)' ))</td>
+                                                            <td data="住址" class="left">(( line.address_re || '(空白)' ))</td>
                                                             <td data="出生日期">(( line.bday || '(空白)' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
                                                             <td data="持分面積">(( line.shared_size || '(空白)' ))</td>
@@ -702,21 +702,21 @@
                     </div>
 
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        <div class="row" style="display: block;max-height: 50rem;overflow-y: auto;">
+                        <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">所有權人</th>
-                                        <th scope="col">統一編號</th>
-                                        <th scope="col">戶籍地址</th>
-                                        <th scope="col">出生日期</th>
-                                        <th scope="col">土地總筆數</th>
-                                        <th scope="col">持分總坪數</th>
-                                        <th scope="col">持分總現值(萬)</th>
-                                        <th scope="col">建物總筆數</th>
-                                        <th scope="col">電話</th>
-                                        <th scope="col">所有權註記</th>
-                                        <th scope="col">身份標籤</th>
+                                        <th scope="col" style="width:10%;">所有權人</th>
+                                        <th scope="col" style="width:10%;">統一編號</th>
+                                        <th scope="col" style="width:25%;">戶籍地址</th>
+                                        <th scope="col" style="width:5;">出生日期</th>
+                                        <th scope="col" style="width:10%;">土地總筆數</th>
+                                        <th scope="col" style="width:5%;">持分總坪數</th>
+                                        <th scope="col" style="width:5%;">持分總現值(萬)</th>
+                                        <th scope="col" style="width:5%;">建物總筆數</th>
+                                        <th scope="col" style="width:5%;">電話</th>
+                                        <th scope="col" style="width:10%;">所有權註記</th>
+                                        <th scope="col" style="width:10%;">身份標籤</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -741,7 +741,7 @@
                                             <td data="統一編號">
                                                 <p>(( data[0].uid || '(空白)' ))</p>
                                             </td>
-                                            <td data="戶籍地址">
+                                            <td data="戶籍地址" class="left">
                                                 <p>(( data[0].address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
@@ -856,23 +856,23 @@
                         <img src="/static/images/slogan.svg">
                     </div>
                 </div>
-                <div class="row">
+                <div class="row bg3">
                     <div class="col-sm-4">
-                        <div class="bg2 d-flex justify-content-between">
+                        <div class="bg2 justify-content-between">
+                            <div class="bg4 align-self-center px-2">設定搜尋範圍<span>&gt;</span></div>
                             <img class="align-self-start" src="/static/images/step0.svg">
-                            <div class="align-self-center px-2">設定搜尋範圍 <span>&gt;</span></div>
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="bg2 d-flex justify-content-between">
+                        <div class="bg2 justify-content-between">
+                            <div class="bg5 align-self-center px-2">查看開發範圍<span>&gt;</span></div>
                             <img class="align-self-start" src="/static/images/step1.svg">
-                            <div class="align-self-center px-2">查看開發範圍 <span>&gt;</span></div>
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="bg2 d-flex justify-content-between">
+                        <div class="bg2 justify-content-between">
+                            <div class="bg6 align-self-center px-2">取得持有人情報</div>
                             <img class="align-self-start" src="/static/images/step2.svg">
-                            <div class="align-self-center px-2">取得持有人情報</div>
                         </div>
                     </div>
                 </div>
