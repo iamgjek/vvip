@@ -730,7 +730,6 @@ class GetSearchResponseV3View(APIView):
             # print(out_city)
             # print(outCity2)
             # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
-
             total_con = []
             # if in_city or out_city or outCity2 or road_land or common_land :
             if in_city:
@@ -876,6 +875,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+            self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
             if self.total_df.empty:
                 return result
             new_total_df = self.total_df.copy()
