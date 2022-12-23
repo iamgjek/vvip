@@ -153,8 +153,11 @@
                         </select>
                     </div>
                     <div class="col w-200">
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle  custom-select left" type="button"
+                        <div class="">
+                            <input class="form-control" :class="{'is-invalid': !landbuildNumberFix(searchForm.land.region.land_number, 'l').ok}" placeholder="地號" v-model="searchForm.land.region.land_number">
+                        </div>
+                        <div class="dropdown d-none">
+                            <button class="btn dropdown-toggle custom-select left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 地號
@@ -186,10 +189,16 @@
                                     <button class="dropdown-item" type="button" @click.stop="clearInOutCitty()">不拘</button>
                                 </div>
                                 <div class="dropdown dropright">
-                                    <button class="dropdown-item" type="button" @click.stop="">道路用地</button>
+                                    <button class="dropdown-item" type="button"@click.stop>
+                                        <input type="checkbox" class="form-check-input" id="road" v-model="searchForm.land.condition.road_land">
+                                        <label class="m-0 w-100" for="road">道路用地</label>
+                                    </button>
                                 </div>
                                 <div class="dropdown dropright">
-                                    <button class="dropdown-item" type="button" @click.stop="">公共設施保留地</button>
+                                    <button class="dropdown-item" type="button" @click.stop>
+                                        <input type="checkbox" class="form-check-input" id="reserve" v-model="searchForm.land.condition.common_land">
+                                        <label class="m-0 w-100" for="reserve">公共設施保留地</label>
+                                    </button>
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
@@ -486,7 +495,7 @@
                             <div class="w-200">
                                 <select class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.restrictedRegistration">
                                     <option :value="null">限制登記</option>
-                                    <option :value="idx" v-for="(i, idx) in restrictedRegistrationList">(( i ))</option>
+                                    <option :value="idx+1" v-for="(i, idx) in restrictedRegistrationList">(( i ))</option>
                                 </select>
                             </div>
                             <div class="w-200 d-none">
@@ -670,7 +679,7 @@
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分面積(平方公尺)">(( line.shared_size || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
-                                                            <td data="持分現值">(( line.持分現值?.chUnit(1, 2) || '' ))</td>
+                                                            <td data="持分現值">(( (line.land_notice_value * line.shared_size)?.chUnit(1, 2) || '' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in data.creditors_rights">(( person ))</p>
                                                             </td>
@@ -814,16 +823,18 @@
                                                             <td data="縣市">(( line.city_name || '(空白)' ))</td>
                                                             <td data="行政區">(( line.area_name || '(空白)' ))</td>
                                                             <td data="段小段">(( line.region_name || '(空白)' ))</td>
-                                                            <td data="地號">(( line.lno || '(空白)' ))</td>
-                                                            <td data="登記次序">(( line.regno || '(空白)' ))</td>
-                                                            <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
-                                                            <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
-                                                            <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="公告現值">(( line.land_notice_value?.format() || '(空白)' ))</td>
-                                                            <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '(空白)' ))</td>
-                                                            <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
+                                                            <td data="地號">(( line.lno || '' ))</td>
+                                                            <td data="登記次序">(( line.regno || '' ))</td>
+                                                            <td data="登記日期">(( line.reg_date_str || '' ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str || '' ))</td>
+                                                            <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value?.format() || '' ))</td>
+                                                            <td data="權利範圍">(( line.right_str || '' ))</td>
+                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '' ))</td>
+                                                            <td data="他項權利(其他註記)">
+                                                                <p v-for="person in data.creditors_rights">(( person ))</p>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -950,8 +961,8 @@
                     outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
                     national_land_zoneList: ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類'],
                     registerReasonList: ["繼承", "贈與", "買賣", "交換", "重劃", "總登記", "分割", "調解", "拍賣", "信託", "合併", "其他"],
-                    otherRemarkList: ["私設", "銀行二胎", "銀行", "租賃"],
-                    restrictedRegistrationList: ["查封登記", "假扣押登記", "假處分登記", "破產登記", "其他依法律所為禁止處分登記"],
+                    otherRemarkList: ["無設定", "私設", "銀行二胎", "銀行", "租賃", "公司", "政府機構"],
+                    restrictedRegistrationList: ["預告登記", "查封登記", "假扣押登記", "假處分登記", "破產登記", "其他依法律所為禁止處分登記"],
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     areaList: {},
                     sectionList:{},
@@ -1005,6 +1016,8 @@
                                 "areaType": 0, // 土地面積 總面積那些
                                 "landAreaLowerLimit": 0, // 土地面積 下限
                                 "landAreaUpperLimit": 0, // 土地面積 上限
+                                "road_land": false, // 道路用地
+                                "common_land": false, // 公共設施保留地
                                 "inCity": {}, // 使用分區都內
                                 "outCity": {}, // 使用分區都外 分區
                                 "outCity2": {}, // 使用分區都外 地類別
@@ -1230,7 +1243,7 @@
                     tmp = this.otherRemarkList.getV(this.searchForm.land.other.otherRemark);
                     if(tmp) r.push(tmp);
                     // 限制登記
-                    tmp = this.restrictedRegistrationList.getV(this.searchForm.land.other.restrictedRegistration);
+                    tmp = this.restrictedRegistrationList.getV(this.searchForm.land.other.restrictedRegistration-1);
                     if(tmp) r.push(tmp);
 
                     return r;
