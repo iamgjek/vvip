@@ -569,7 +569,7 @@
                         <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
-                                    <tr>
+                                    <tr class="tabletop">
                                         <th scope="col" style="width:5%">縣市</th>
                                         <th scope="col" style="width:5%">行政區</th>
                                         <th scope="col" style="width:9%">段小段</th>
@@ -654,7 +654,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>登記次序</th>
-                                                            <th>登記日期</th>
+                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
                                                             <th>所有權人</th>
                                                             <th>統一編號</th>
@@ -670,11 +670,11 @@
                                                     <tbody>
                                                         <tr v-for="line in data">
                                                             <td data="登記次序">(( line.regno || '' ))</td>
-                                                            <td data="登記日期">(( line.reg_date_str || '' ))</td>
-                                                            <td data="登記原因">(( line.reg_reason_str || '' ))</td>
+                                                            <td data="登記日期"nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str || '()' ))</td>
                                                             <td data="所有權人">(( line.name || '' ))</td>
                                                             <td data="統一編號">(( line.uid || '' ))</td>
-                                                            <td data="住址" class="left">(( line.address_re || '(空白)' ))</td>
+                                                            <td data="住址" class="left">(( line.address_re || '' ))</td>
                                                             <td data="出生日期">(( line.bday || '' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分面積(平方公尺)">(( line.shared_size || '' ))</td>
@@ -808,7 +808,7 @@
                                                             <th>段小段</th>
                                                             <th nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                                             <th>登記次序</th>
-                                                            <th>登記日期</th>
+                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
                                                             <th>土地面積(坪)</th>
                                                             <th>公告現值</th>
@@ -820,21 +820,19 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
-                                                            <td data="縣市">(( line.city_name || '(空白)' ))</td>
-                                                            <td data="行政區">(( line.area_name || '(空白)' ))</td>
-                                                            <td data="段小段">(( line.region_name || '(空白)' ))</td>
-                                                            <td data="地號">(( line.lno || '' ))</td>
-                                                            <td data="登記次序">(( line.regno || '' ))</td>
-                                                            <td data="登記日期">(( line.reg_date_str || '' ))</td>
+                                                            <td data="縣市">(( line.city_name || '' ))</td>
+                                                            <td data="行政區">(( line.area_name || '' ))</td>
+                                                            <td data="段小段">(( line.region_name || '' ))</td>
+                                                            <td data="地號"  nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '' ))</td>
+                                                            <td data="登記次序">(( line.登記次序 || '' ))</td>
+                                                            <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>
-                                                            <td data="公告現值">(( line.land_notice_value?.format() || '' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value?.chUnit() || '' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
-                                                            <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '' ))</td>
-                                                            <td data="他項權利(其他註記)">
-                                                                <p v-for="person in data.creditors_rights">(( person ))</p>
-                                                            </td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit() || '' ))</td>
+                                                            <td data="他項權利">(( line.他項權利 || '' ))</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
