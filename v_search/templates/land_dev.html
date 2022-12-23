@@ -832,7 +832,9 @@
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
                                                             <td data="持分現值">(( line.present_value?.chUnit() || '' ))</td>
-                                                            <td data="他項權利">(( line.他項權利 || '' ))</td>
+                                                            <td data="他項權利(其他註記)">
+                                                                <p v-for="person in data.creditors_rights">(( person ))</p>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
