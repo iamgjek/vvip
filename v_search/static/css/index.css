@@ -352,7 +352,7 @@ table thead th{
     -webkit-box-shadow: 0 10px 40px rgb(0 0 0 / 7%);
     -moz-box-shadow: 0 10px 40px rgba(0,0,0,0.065);
     box-shadow: 0 10px 40px rgb(0 0 0 / 7%);
-    border: 1px solid #6eaadf!important;
+    /* border: 1px solid #6eaadf!important; */
 }
 .table1 td, .table1 th {
     padding: 0.22rem;
@@ -511,7 +511,7 @@ th {
     background-image: -o-linear-gradient(top,#fff,#337ab7);
     background-image: linear-gradient(to bottom,#19609d,#337ab7);
     background-repeat: repeat-x;
-    border: 1px solid #3f7fb7;
+    /* border: 1px solid #3f7fb7; */
     /* -webkit-border-radius: 4px; */
     -moz-border-radius: 4px;
     /* border-radius: 4px; */
@@ -847,9 +847,9 @@ th {
 .mntable{
     background: #fff;
     display: block;
-    overflow-y: auto;
-    height: 32rem;
-    box-shadow: 0 2px 1px rgb(220 220 220 / 50);
+    /* overflow-y: auto; */
+    min-height: 32rem;
+    /* box-shadow: 0 2px 1px rgb(220 220 220 / 50); */
 }
 .grey {
     color: rgb(107 107 107);
@@ -1117,6 +1117,28 @@ th {
 .custom-select {
     color: #6c6c6c;
 }
+.tabletop{
+    padding: 0; 
+    position: sticky;
+    top: -2px;
+}
+.tabletop tr th{
+    border: 1px solid #6eaadf!important;
+}
+/*.tabletop tr:not(.is-hidden):last-child{
+    right:-1px;
+}
+.tabletop::v-deep .el-table__row{
+    td:not(.is-hidden):last-child{
+      border-left:1px solid #DDDDDD;
+    }
+  
+  }
+.tabletop::v-deep .el-table__header{
+    th:not(.is-hidden):last-child{
+      border-left:1px solid #DDDDDD;
+    }
+  }*/
 @media screen and (max-width: 1703px) {
     .right1{
         position: relative;
