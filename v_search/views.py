@@ -1,6 +1,9 @@
 import json
 import logging
 import time
+import operator
+
+from functools import reduce
 from datetime import date, datetime, timedelta
 
 import numpy as np
@@ -380,7 +383,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 10000 \
+                    WHERE {where_sql} LIMIT 100000 \
                     "
                     # 500000
 
@@ -405,11 +408,11 @@ class GetSearchResponseV3View(APIView):
             select_colunm = "\
                             T2.city_name, T2.area_name, T2.region_name, T2.lno, \
                             T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
-                            T2.build_num, T2.owner_type, \
+                            T2.build_num, T2.owner_type, T2.urban_type ,T2.owners_num, T2.land_zone_code, \
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
                             T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
-                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
+                            T1.reg_reason, T1.right_type, T1.case_type, T1.restricted_type \
                             "
 
         sql = sql_str.format(
@@ -419,6 +422,7 @@ class GetSearchResponseV3View(APIView):
                             lbk = self.col_set_lbkey,
                             where_sql = condition,
                             limit = self.data_limit)
+        # print(sql)
         return sql
 
     def set_sql_db(self, lbtype, sb='sr'):
@@ -719,17 +723,34 @@ class GetSearchResponseV3View(APIView):
             in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items() if v]
             out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items() if v]
             outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items() if v]
-            
+            road_land = base_condition.get('road_land', None)
+            common_land = base_condition.get('common_land', None)
+            # print(road_land, common_land)
             # print(in_city)
             # print(out_city)
             # print(outCity2)
             # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
-            if in_city or out_city:
+
+            total_con = []
+            # if in_city or out_city or outCity2 or road_land or common_land :
+            if in_city:
                 con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))
-                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))
-                self.total_df = self.total_df[(con1 | con2)]
+                total_con.append(con1)
+            if out_city:
+                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))   
+                total_con.append(con2)
             if outCity2:
-                self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(outCity2))]
+                con3 = self.total_df['urban_name'].str.startswith(tuple(outCity2))
+                total_con.append(con3)
+            if road_land:
+                con4 = self.total_df['land_zone_code']=='C11'
+                total_con.append(con4)
+            if common_land:
+                con5 = self.total_df['land_zone_code'].str.startswith('C')
+                total_con.append(con5)
+                
+            if total_con:
+                self.total_df = self.total_df[reduce(operator.or_, total_con)]
 
             # 公告現值
             vp_lower = self.check_int(base_condition.get('presentLowerLimit', None))
@@ -792,7 +813,6 @@ class GetSearchResponseV3View(APIView):
 
         self.total_df['present_value'] = self.total_df['present_value'].fillna(0.0)
         self.total_df['present_value'] = pd.to_numeric(self.total_df['present_value'], errors='coerce').round(2)
-        # print(self.total_df.loc[:, ['lbkey', 'land_notice_value', 'shared_size', 'present_value']])
 
 
         # 持有年限
@@ -835,30 +855,33 @@ class GetSearchResponseV3View(APIView):
             result = self.format_data_layout_fake_data(subscriberecords_qs)
         else:
             # vvip 搜尋優化 條件只下行政區====================================
+            st1 = time.perf_counter()
             area = base_region.get('area', None)
             section = base_region.get('section', None)
             if section:
-                self.query_list.append('and T1.lbkey like "{}%"'.format(section))
+                self.query_list.append('and T2.lkey like "{}%"'.format(section))
             elif area:
-                self.query_list.append('and T1.lbkey like "{}%"'.format(area))
+                self.query_list.append('and T2.lkey like "{}%"'.format(area))
             sql = self.sql_str_combin(self.query_list)
             # print(sql)
-            subscriberecords_qs, headers = get_dba(sql, "diablo_test")
-            print(f'搜尋總筆數:{len(subscriberecords_qs)}')
+            subscriberecords_qs, headers = get_dba(sql_cmd=sql, db_name=DB_NAME)
+            st2 = time.perf_counter()
+            print(f'sql時間: {st2-st1} 搜尋總筆數:{len(subscriberecords_qs)}')
             # ============================================================
             if not subscriberecords_qs:
                 return result
             # df預處理
             self.total_df = pd.DataFrame(subscriberecords_qs)
-            self.total_df = self.total_df[self.total_df['is_valid']!=0]
+            self.total_df = self.total_df[self.total_df['is_valid'] != 0]
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+            if self.total_df.empty:
+                return result
             new_total_df = self.total_df.copy()
             new_total_df = new_total_df.groupby('lbkey')
             lbkey_dict = new_total_df.size().to_dict()
             self.total_df['owner_num_real'] = self.total_df.apply(self.apply_owners_num, axis=1, args=(lbkey_dict, ))
-            # print(self.total_df.loc[:, ['lbkey', 'owner_num_real', 'owners_num']])
 
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
@@ -874,8 +897,10 @@ class GetSearchResponseV3View(APIView):
 
             print(f'輸出總筆數：{len(self.total_df)}')
 
-            self.total_df[['land_area', 'shared_size', 'build_num']] = self.total_df[['land_area', 'shared_size', 'build_num']].fillna(0)
-            self.total_df[['bday', 'national_land_zone', 'remove_time']] = self.total_df[['bday', 'national_land_zone', 'remove_time']].fillna('')
+            fillna_str = ['bday', 'national_land_zone', 'remove_time', 'land_zone_code']
+            fillna_zero = ['land_area', 'shared_size', 'build_num']
+            self.total_df[fillna_zero] = self.total_df[fillna_zero].fillna(0)
+            self.total_df[fillna_str] = self.total_df[fillna_str].fillna('')
             self.total_df = self.total_df.fillna(0)
             result = self.format_data_layout(self.total_df)
         return result
