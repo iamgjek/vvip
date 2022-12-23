@@ -357,6 +357,11 @@ class GetSearchResponseV3View(APIView):
         data = self.ownership_out.get(owner_type)
         return data
 
+    def apply_owners_num(self, df_data, lbkey_dict):
+        get_owner_num = lbkey_dict.get(df_data['lbkey'], 0)
+
+        return get_owner_num
+
     def apply_creditors_rights(self, creditors_rights):
         data = []        
         if creditors_rights in ['None', 'none', None, np.NaN, []]:
@@ -375,7 +380,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 10000 \
+                    WHERE {where_sql} limit 100000 \
                     "
                     # 500000
 
@@ -404,8 +409,7 @@ class GetSearchResponseV3View(APIView):
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
                             T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
-                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type, \
-                            T1.right_numerator, T1.right_denominator \
+                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
                             "
 
         sql = sql_str.format(
@@ -619,12 +623,12 @@ class GetSearchResponseV3View(APIView):
                 pass
             else:
                 if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[(self.total_df['owners_num']<=o_num_up) & (self.total_df['owners_num']>=o_num_low)]
+                    self.total_df = self.total_df[(self.total_df['owner_num_real']<=o_num_up) & (self.total_df['owner_num_real']>=o_num_low)]
 
                 elif isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']>=o_num_low]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']>=o_num_low]
                 elif isinstance(o_num_up, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']<=o_num_up]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']<=o_num_up]
 
             # 面積分類 總 持分 平均持分 ==========================
             areaType = self.check_int(base_condition.get('areaType'))
@@ -771,7 +775,7 @@ class GetSearchResponseV3View(APIView):
         # 國籍
         country = self.check_int(base_other.get('country', None))
         
-        # 個人持分總值
+        # 個人持分總值 ｜ 持分現值
         pv_lower = self.check_int(base_other.get('p_part_valueLowerLimit', None))
         pv_upper = self.check_int(base_other.get('p_part_valueUpperLimit', None))
         pv_lower = pv_lower * 10000
@@ -852,6 +856,11 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+            new_total_df = self.total_df.copy()
+            new_total_df = new_total_df.groupby('lbkey')
+            lbkey_dict = new_total_df.size().to_dict()
+            self.total_df['owner_num_real'] = self.total_df.apply(self.apply_owners_num, axis=1, args=(lbkey_dict, ))
+            # print(self.total_df.loc[:, ['lbkey', 'owner_num_real', 'owners_num']])
 
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
@@ -867,7 +876,9 @@ class GetSearchResponseV3View(APIView):
 
             print(f'輸出總筆數：{len(self.total_df)}')
 
-            self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']].fillna(0)
+            self.total_df[['land_area', 'shared_size', 'build_num']] = self.total_df[['land_area', 'shared_size', 'build_num']].fillna(0)
+            self.total_df[['bday', 'national_land_zone', 'remove_time']] = self.total_df[['bday', 'national_land_zone', 'remove_time']].fillna('')
+            self.total_df = self.total_df.fillna(0)
             result = self.format_data_layout(self.total_df)
         return result
 
@@ -887,7 +898,7 @@ class GetSearchResponseV3View(APIView):
             raise ParseError('格式錯誤')
         else:
             # 預設參數
-            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type']
+            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type', 'remove_time']
 
             try:
                 max_data = info_config.objects.get(lbtype='Max')
