@@ -153,8 +153,11 @@
                         </select>
                     </div>
                     <div class="col w-200">
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle  custom-select left" type="button"
+                        <div class="">
+                            <input class="form-control" :class="{'is-invalid': !landbuildNumberFix(searchForm.land.region.land_number, 'l').ok}" placeholder="地號" v-model="searchForm.land.region.land_number">
+                        </div>
+                        <div class="dropdown d-none">
+                            <button class="btn dropdown-toggle custom-select left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 地號
@@ -184,6 +187,18 @@
                             <div class="dropdown-menu">
                                 <div class="dropdown dropright">
                                     <button class="dropdown-item" type="button" @click.stop="clearInOutCitty()">不拘</button>
+                                </div>
+                                <div class="dropdown dropright">
+                                    <button class="dropdown-item" type="button"@click.stop>
+                                        <input type="checkbox" class="form-check-input" id="road" v-model="searchForm.land.condition.road_land">
+                                        <label class="m-0 w-100" for="road">道路用地</label>
+                                    </button>
+                                </div>
+                                <div class="dropdown dropright">
+                                    <button class="dropdown-item" type="button" @click.stop>
+                                        <input type="checkbox" class="form-check-input" id="reserve" v-model="searchForm.land.condition.common_land">
+                                        <label class="m-0 w-100" for="reserve">公共設施保留地</label>
+                                    </button>
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
@@ -480,7 +495,7 @@
                             <div class="w-200">
                                 <select class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.restrictedRegistration">
                                     <option :value="null">限制登記</option>
-                                    <option :value="idx" v-for="(i, idx) in restrictedRegistrationList">(( i ))</option>
+                                    <option :value="idx+1" v-for="(i, idx) in restrictedRegistrationList">(( i ))</option>
                                 </select>
                             </div>
                             <div class="w-200 d-none">
@@ -561,7 +576,7 @@
                                         <th scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                         <th scope="col" style="width:7%">國土分區</th>
                                         <th scope="col" style="width:19%" class="left">使用分區</th>
-                                        <th scope="col" style="width:22%" class="left">使用地類別</th>
+                                        <th scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
                                         <th scope="col" style="width:7%">土地面積(坪)</th>
                                         <th scope="col" style="width:7%">公告現值</th>
                                         <th scope="col" style="width:3%">總公告</th>
@@ -601,33 +616,33 @@
                                             </td>
                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>
-                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '(空白)' ))</a>
-                                                    <span v-else>(( data[0].lno || '(空白)' ))</span>
+                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '' ))</a>
+                                                    <span v-else>(( data[0].lno || '' ))</span>
                                                 </p>
                                             </td>
                                             <td data="國土分區">
-                                                <p>(( data[0].national_land_zone || '(空白)' ))</p>
+                                                <p>(( data[0].national_land_zone || '' ))</p>
                                             </td>
                                             <td data="使用分區"class="left">
                                                 <p>(( data[0].land_zone || '(空白)' ))</p>
                                             </td>
-                                            <td data="使用地類別"class="left">
+                                            <td data="使用地類別(計畫案名)"class="left">
                                                 <p>(( data[0].urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
-                                                <p>(( (data[0].land_area / 3.30579).round(2) || '(空白)' ))</p>
+                                                <p>(( (data[0].land_area / 3.30579).round(2) || '' ))</p>
                                             </td>
                                             <td data="公告現值">
-                                                <p>(( data[0].land_notice_value?.chUnit() || '(空白)' ))</p>
+                                                <p>(( data[0].land_notice_value?.format() || '' ))</p>
                                             </td>
                                             <td data="總公告">
-                                                <p>(( data[0].total_vp?.chUnit() || '(空白)' ))</p>
+                                                <p>(( data[0].total_vp?.chUnit(1, 2) || '' ))</p>
                                             </td>
                                             <td data="地上建物">
-                                                <p>(( data[0].build_num || '(空白)' ))</p>
+                                                <p>(( data[0].build_num || '' ))</p>
                                             </td>
                                             <td data="權屬種類">
-                                                <p>(( data[0].owner_type || '(空白)' ))</p>
+                                                <p>(( data[0].owner_type || '' ))</p>
                                             </td>
                                             <td data="所有權人">
                                                 <p>(( data.length || 0 ))</p>
@@ -654,17 +669,17 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
-                                                            <td data="登記次序">(( line.regno || '(空白)' ))</td>
-                                                            <td data="登記日期"nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '(空白)' ))</td>
-                                                            <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
-                                                            <td data="所有權人">(( line.name || '(空白)' ))</td>
-                                                            <td data="統一編號">(( line.uid || '(空白)' ))</td>
-                                                            <td data="住址" class="left">(( line.address_re || '(空白)' ))</td>
-                                                            <td data="出生日期">(( line.bday || '(空白)' ))</td>
-                                                            <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分面積(平方公尺)">(( line.shared_size || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.持分現值?.chUnit() || '(空白)' ))</td>
+                                                            <td data="登記次序">(( line.regno || '' ))</td>
+                                                            <td data="登記日期"nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str || '()' ))</td>
+                                                            <td data="所有權人">(( line.name || '' ))</td>
+                                                            <td data="統一編號">(( line.uid || '' ))</td>
+                                                            <td data="住址" class="left">(( line.address_re || '' ))</td>
+                                                            <td data="出生日期">(( line.bday || '' ))</td>
+                                                            <td data="權利範圍">(( line.right_str || '' ))</td>
+                                                            <td data="持分面積(平方公尺)">(( line.shared_size || '' ))</td>
+                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
+                                                            <td data="持分現值">(( (line.land_notice_value * line.shared_size)?.chUnit(1, 2) || '' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in data.creditors_rights">(( person ))</p>
                                                             </td>
@@ -716,7 +731,7 @@
                                         <th scope="col" style="width:5;">出生日期</th>
                                         <th scope="col" style="width:10%;">土地總筆數</th>
                                         <th scope="col" style="width:5%;">持分總坪數</th>
-                                        <th scope="col" style="width:5%;">持分總現值(萬)</th>
+                                        <th scope="col" style="width:5%;">持分總現值</th>
                                         <th scope="col" style="width:5%;">建物總筆數</th>
                                         <th scope="col" style="width:5%;">電話</th>
                                         <th scope="col" style="width:10%;">所有權註記</th>
@@ -744,19 +759,19 @@
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '(空白)' ))</a></p>
+                                                <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '' ))</a></p>
                                             </td>
                                             <td data="統一編號">
-                                                <p>(( data[0].uid || '(空白)' ))</p>
+                                                <p>(( data[0].uid || '' ))</p>
                                             </td>
                                             <td data="戶籍地址" class="left">
                                                 <p>(( data[0].address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
-                                                <p>(( data[0].bday || '(空白)' ))</p>
+                                                <p>(( data[0].bday || '' ))</p>
                                             </td>
                                             <td data="土地總筆數">
-                                                <p>(( data?.length || '(空白)' ))</p>
+                                                <p>(( data?.length || '' ))</p>
                                             </td>
                                             <td data="持分總坪數">
                                                 <p>(( (data.reduce((a,e) => {
@@ -766,21 +781,21 @@
                                             </td>
                                             <td data="持分總現值">
                                                 <p>(( data.reduce((a,e) => {
-                                                    a += e.land_notice_value;
+                                                    a += e.present_value;
                                                     return a;
-                                                }, 0)?.chUnit() || '(空白)' ))</p>
+                                                }, 0)?.chUnit(1, 2) || '' ))</p>
                                             </td>
                                             <td data="建物總筆數">
-                                                <p>(( data[0].建物總筆數 || '(空白)' ))</p>
+                                                <p>(( data[0].建物總筆數 || '' ))</p>
                                             </td>
                                             <td data="電話">
-                                                <p>(( data[0].電話 || '(空白)' ))</p>
+                                                <p>(( data[0].電話 || '' ))</p>
                                             </td>
                                             <td data="所有權註記">
-                                                <p>(( data[0].所有權註記 || '(空白)' ))</p>
+                                                <p>(( data[0].所有權註記 || '' ))</p>
                                             </td>
                                             <td data="身份標籤">
-                                                <p>(( data[0].身份標籤 || '(空白)' ))</p>
+                                                <p>(( data[0].身份標籤 || '' ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
@@ -791,7 +806,7 @@
                                                             <th>縣市</th>
                                                             <th>行政區</th>
                                                             <th>段小段</th>
-                                                            <th  nowrap="nowrap" style="white-space:nowrap;">地號</th>
+                                                            <th nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                                             <th>登記次序</th>
                                                             <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
@@ -805,19 +820,19 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
-                                                            <td data="縣市">(( line.city_name || '(空白)' ))</td>
-                                                            <td data="行政區">(( line.area_name || '(空白)' ))</td>
-                                                            <td data="段小段">(( line.region_name || '(空白)' ))</td>
-                                                            <td data="地號"  nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '(空白)' ))</td>
-                                                            <td data="登記次序">(( line.登記次序 || '(空白)' ))</td>
-                                                            <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '(空白)' ))</td>
-                                                            <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
-                                                            <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="公告現值">(( line.land_notice_value?.chUnit() || '(空白)' ))</td>
-                                                            <td data="權利範圍">(( line.right_str || '(空白)' ))</td>
-                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '(空白)' ))</td>
-                                                            <td data="持分現值">(( line.present_value?.chUnit() || '(空白)' ))</td>
-                                                            <td data="他項權利">(( line.他項權利 || '(空白)' ))</td>
+                                                            <td data="縣市">(( line.city_name || '' ))</td>
+                                                            <td data="行政區">(( line.area_name || '' ))</td>
+                                                            <td data="段小段">(( line.region_name || '' ))</td>
+                                                            <td data="地號"  nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '' ))</td>
+                                                            <td data="登記次序">(( line.登記次序 || '' ))</td>
+                                                            <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
+                                                            <td data="登記原因">(( line.reg_reason_str || '' ))</td>
+                                                            <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value?.chUnit() || '' ))</td>
+                                                            <td data="權利範圍">(( line.right_str || '' ))</td>
+                                                            <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit() || '' ))</td>
+                                                            <td data="他項權利">(( line.他項權利 || '' ))</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -944,8 +959,8 @@
                     outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
                     national_land_zoneList: ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類'],
                     registerReasonList: ["繼承", "贈與", "買賣", "交換", "重劃", "總登記", "分割", "調解", "拍賣", "信託", "合併", "其他"],
-                    otherRemarkList: ["私設", "銀行二胎", "銀行", "租賃"],
-                    restrictedRegistrationList: ["查封登記", "假扣押登記", "假處分登記", "破產登記", "其他依法律所為禁止處分登記"],
+                    otherRemarkList: ["無設定", "私設", "銀行二胎", "銀行", "租賃", "公司", "政府機構"],
+                    restrictedRegistrationList: ["預告登記", "查封登記", "假扣押登記", "假處分登記", "破產登記", "其他依法律所為禁止處分登記"],
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     areaList: {},
                     sectionList:{},
@@ -999,6 +1014,8 @@
                                 "areaType": 0, // 土地面積 總面積那些
                                 "landAreaLowerLimit": 0, // 土地面積 下限
                                 "landAreaUpperLimit": 0, // 土地面積 上限
+                                "road_land": false, // 道路用地
+                                "common_land": false, // 公共設施保留地
                                 "inCity": {}, // 使用分區都內
                                 "outCity": {}, // 使用分區都外 分區
                                 "outCity2": {}, // 使用分區都外 地類別
@@ -1187,7 +1204,7 @@
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity2.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     if(tmp.length) r.push(tmp.join(" "));
                     // 登記原因
-                    tmp = this.searchForm.land.condition.registerReason.reduce((a,e,i) => {if(e) a.push(this.registerReasonList[i]); return a;}, []);
+                    tmp = this.searchForm.land.condition.registerReason.reduce((a,e,i) => {if(e) a.push(this.registerReasonList[i-1]); return a;}, []);
                     for(var i in tmp) r.push(tmp[i] + "登記");
                     // 持有年限
                     tmp = JSON.parse(this.searchForm.land.other.holding_period);
@@ -1224,7 +1241,7 @@
                     tmp = this.otherRemarkList.getV(this.searchForm.land.other.otherRemark);
                     if(tmp) r.push(tmp);
                     // 限制登記
-                    tmp = this.restrictedRegistrationList.getV(this.searchForm.land.other.restrictedRegistration);
+                    tmp = this.restrictedRegistrationList.getV(this.searchForm.land.other.restrictedRegistration-1);
                     if(tmp) r.push(tmp);
 
                     return r;
