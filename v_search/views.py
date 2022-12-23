@@ -383,7 +383,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} LIMIT 100000 \
+                    WHERE {where_sql} LIMIT 3000 \
                     "
                     # 500000
 
@@ -719,7 +719,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce').round(2)
             self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce').round(2)
 
-            # 使用區分類
+            # 使用分區 使用地類別(計畫案名)
             in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items() if v]
             out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items() if v]
             outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items() if v]
