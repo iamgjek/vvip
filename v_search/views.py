@@ -34,7 +34,7 @@ from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
-DB_NAME = 'diablo_test'
+DB_NAME = 'diablo'
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -874,6 +874,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[self.total_df['is_valid'] != 0]
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
+            # self.total_df = self.total_df.dropna(subset=['name'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
             self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
             if self.total_df.empty:
