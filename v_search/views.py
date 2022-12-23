@@ -378,20 +378,20 @@ class GetSearchResponseV3View(APIView):
     def sql_str_combin(self, condition_list):
         # base sql
                     # {col}
-        # sql_str =  "\
-        #             SELECT {col} \
-        #             FROM \
-        #             diablo.{tr1} T1 \
-        #             left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-        #             WHERE {where_sql} LIMIT 100000 \
-        #             "
-        #             # 500000
         sql_str =  "\
                     SELECT {col} \
                     FROM \
                     diablo.{tr1} T1 \
-                    left join (select city_name,area_name,region_name,lno,national_land_zone,plan_name,land_zone,urban_name,land_area,land_notice_value,build_num,owner_type,urban_type ,owners_num, land_zone_code,lkey from diablo.{t2} T2 WHERE {where_sql} LIMIT 3000) T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} and T1.remove_time is null"
+                    left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
+                    WHERE {where_sql} LIMIT 100000 \
+        #             "
+        #             # 500000
+        # sql_str =  "\
+        #             SELECT {col} \
+        #             FROM \
+        #             diablo.{tr1} T1 \
+        #             left join (select city_name,area_name,region_name,lno,national_land_zone,plan_name,land_zone,urban_name,land_area,land_notice_value,build_num,owner_type,urban_type ,owners_num, land_zone_code,lkey from diablo.{t2} T2 WHERE {where_sql} LIMIT 3000) T2 on T1.lbkey =  T2.{lbk} \
+        #             WHERE {where_sql} and T1.remove_time is null"
         
         condition = ''
         if condition_list:
@@ -428,7 +428,7 @@ class GetSearchResponseV3View(APIView):
                             lbk = self.col_set_lbkey,
                             where_sql = condition,
                             limit = self.data_limit)
-        print(sql)
+        # print(sql)
         return sql
 
     def set_sql_db(self, lbtype, sb='sr'):
