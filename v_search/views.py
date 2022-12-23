@@ -31,7 +31,7 @@ from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
-DB_NAME = 'diablo_test'
+DB_NAME = 'diablo'
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -380,7 +380,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 100000 \
+                    WHERE {where_sql} limit 10000 \
                     "
                     # 500000
 
@@ -754,19 +754,17 @@ class GetSearchResponseV3View(APIView):
     def clean_other_data(self, base_other):
 
         # 他項設定:他項標記
-        cast_type = self.check_int(base_other.get('otherRemark', 0))
-        if cast_type in [0, None, 'None', 'null']:
+        cast_type = self.check_int(base_other.get('otherRemark', None))
+        if cast_type in [None, 'None', 'null']:
             pass
         else:
-            # common_query.append('and T1.case_type = {}'.format(cast_type))
             self.total_df = self.total_df[self.total_df['case_type']==cast_type]
 
         # 他項設定:限制登記
         restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
-        if restricted_type in [0, None, 'None', 'null']:
+        if restricted_type in [None, 'None', 'null']:
             pass
         else:
-            # common_query.append('and T1.restricted_type = {}'.format(restricted_type))
             self.total_df = self.total_df[self.total_df['restricted_type']==restricted_type]
 
         # 年齡範圍
