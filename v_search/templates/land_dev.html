@@ -558,7 +558,7 @@
                                         <th scope="col" style="width:5%">縣市</th>
                                         <th scope="col" style="width:5%">行政區</th>
                                         <th scope="col" style="width:9%">段小段</th>
-                                        <th scope="col" style="width:7%">地號</th>
+                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                         <th scope="col" style="width:7%">國土分區</th>
                                         <th scope="col" style="width:19%" class="left">使用分區</th>
                                         <th scope="col" style="width:22%" class="left">使用地類別</th>
@@ -582,7 +582,11 @@
                                         </td>
                                     </tr>
                                     <tr class="tab-content" v-else-if="!searchResBox.length">
-                                        <td class="p-4" colspan="14"><img style="height:217px;" src="/static/images/nodata.svg"></td>
+                                        <td class="p-4" colspan="14">
+                                            <img style="height:217px;" src="/static/images/nodata.svg">
+                                            <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
+                                            <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
+                                        </td>
                                     </tr>
                                     <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                         <tr data-node="treetable-1">
@@ -595,7 +599,7 @@
                                             <td data="段小段">
                                                 <p>(( data[0].region_name || '(空白)' ))</p>
                                             </td>
-                                            <td data="地號">
+                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>
                                                     <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '(空白)' ))</a>
                                                     <span v-else>(( data[0].lno || '(空白)' ))</span>
@@ -706,7 +710,7 @@
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width:10%;">所有權人</th>
+                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;">所有權人</th>
                                         <th scope="col" style="width:10%;">統一編號</th>
                                         <th scope="col" style="width:25%;">戶籍地址</th>
                                         <th scope="col" style="width:5;">出生日期</th>
@@ -731,11 +735,15 @@
                                         </td>
                                     </tr>
                                     <tr class="tab-content" v-else-if="!person_searchResBox.length">
-                                        <td class="p-4" colspan="11"><img style="height:217px;" src="/static/images/nodata.svg"></td>
+                                        <td class="p-4" colspan="14">
+                                            <img style="height:217px;" src="/static/images/nodata.svg">
+                                            <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
+                                            <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
+                                        </td>
                                     </tr>
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
-                                            <td data="所有權人">
+                                            <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '(空白)' ))</a></p>
                                             </td>
                                             <td data="統一編號">
@@ -783,7 +791,7 @@
                                                             <th>縣市</th>
                                                             <th>行政區</th>
                                                             <th>段小段</th>
-                                                            <th>地號</th>
+                                                            <th  nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                                             <th>登記次序</th>
                                                             <th>登記日期</th>
                                                             <th>登記原因</th>
@@ -851,14 +859,14 @@
 
             <div v-if="!showResult">
                 <div class="row bg1">
-                    <div class="col-sm-7 d-flex1">
+                    <div class="col-sm-6 d-flex1 bgrwD">
                         <div class="align-self-center">
                             <h1 class="font-weight-bold mb-3">輕鬆幫您找出土地持有人</h1>
                             <h4 class="">搜尋土地開發範圍，輕鬆幫您找出土地持有人相關資訊</br>
                                 幫助您精準鎖定關係人進一步推進成交！</h4>
                         </div>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-6">
                         <!--img src="/static/images/slogan.png"-->
                     </div>
                 </div>
@@ -944,6 +952,7 @@
                     planList: {},
                     showResult: 0,
                     loading: 0,
+                    serverError: 0,
                     getSearchOptionsList: [],
 
                     pageNumList: [5, 10, 20, 50, 100],
@@ -1078,27 +1087,33 @@
 
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
-                        var res = supfnc.toJSON(rcv.result);
-                        console.log(res);
-                        var land_data = res.land_data, owner_data = res.owner_data;
+                        if(rcv.status == 200){
+                            var res = supfnc.toJSON(rcv.result);
+                            console.log(res);
+                            var land_data = res.land_data, owner_data = res.owner_data;
 
-                        for(var i in land_data){
-                            T.searchRes.push(land_data[i]);
+                            for(var i in land_data){
+                                T.searchRes.push(land_data[i]);
+                            }
+                            T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
+                            T.nowPage = 0;
+                            Vue.nextTick(()=>{T.nowPage = 1;});
+
+                            var tmp = {};
+                            for(var i in owner_data){
+                                owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?<>/\\]/g, "");
+                                T.person_searchRes.push(owner_data[i]);
+                            }
+                            T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
+                            T.person_nowPage = 0;
+                            Vue.nextTick(()=>{T.person_nowPage = 1;});
+
+                            T.getSearchOptionsList = T.getSearchOptions();
+                            T.serverError = 0;
                         }
-                        T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
-                        T.nowPage = 0;
-                        Vue.nextTick(()=>{T.nowPage = 1;});
-
-                        var tmp = {};
-                        for(var i in owner_data){
-                            owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?/\\]/g, "");
-                            T.person_searchRes.push(owner_data[i]);
+                        else{
+                            T.serverError = 1;
                         }
-                        T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
-                        T.person_nowPage = 0;
-                        Vue.nextTick(()=>{T.person_nowPage = 1;});
-
-                        T.getSearchOptionsList = T.getSearchOptions();
                     });
                 },
                 landbuildNumberFix(str, lbtype){
