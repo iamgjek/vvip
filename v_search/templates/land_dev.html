@@ -554,7 +554,7 @@
                         <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
-                                    <tr>
+                                    <tr class="tabletop">
                                         <th scope="col" style="width:5%">縣市</th>
                                         <th scope="col" style="width:5%">行政區</th>
                                         <th scope="col" style="width:9%">段小段</th>
@@ -639,7 +639,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>登記次序</th>
-                                                            <th>登記日期</th>
+                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
                                                             <th>所有權人</th>
                                                             <th>統一編號</th>
@@ -655,7 +655,7 @@
                                                     <tbody>
                                                         <tr v-for="line in data">
                                                             <td data="登記次序">(( line.regno || '(空白)' ))</td>
-                                                            <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
+                                                            <td data="登記日期"nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '(空白)' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
                                                             <td data="所有權人">(( line.name || '(空白)' ))</td>
                                                             <td data="統一編號">(( line.uid || '(空白)' ))</td>
@@ -793,7 +793,7 @@
                                                             <th>段小段</th>
                                                             <th  nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                                             <th>登記次序</th>
-                                                            <th>登記日期</th>
+                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
                                                             <th>土地面積(坪)</th>
                                                             <th>公告現值</th>
@@ -810,7 +810,7 @@
                                                             <td data="段小段">(( line.region_name || '(空白)' ))</td>
                                                             <td data="地號"  nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '(空白)' ))</td>
                                                             <td data="登記次序">(( line.登記次序 || '(空白)' ))</td>
-                                                            <td data="登記日期">(( line.reg_date_str || '(空白)' ))</td>
+                                                            <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '(空白)' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '(空白)' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '(空白)' ))</td>
                                                             <td data="公告現值">(( line.land_notice_value?.chUnit() || '(空白)' ))</td>
