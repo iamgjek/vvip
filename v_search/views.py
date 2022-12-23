@@ -357,6 +357,11 @@ class GetSearchResponseV3View(APIView):
         data = self.ownership_out.get(owner_type)
         return data
 
+    def apply_owners_num(self, df_data, lbkey_dict):
+        get_owner_num = lbkey_dict.get(df_data['lbkey'])
+        # print(df_data['lbkey'], get_owner_num)
+        return get_owner_num
+
     def apply_creditors_rights(self, creditors_rights):
         data = []        
         if creditors_rights in ['None', 'none', None, np.NaN, []]:
@@ -619,12 +624,12 @@ class GetSearchResponseV3View(APIView):
                 pass
             else:
                 if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[(self.total_df['owners_num']<=o_num_up) & (self.total_df['owners_num']>=o_num_low)]
+                    self.total_df = self.total_df[(self.total_df['owner_num_real']<=o_num_up) & (self.total_df['owner_num_real']>=o_num_low)]
 
                 elif isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']>=o_num_low]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']>=o_num_low]
                 elif isinstance(o_num_up, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']<=o_num_up]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']<=o_num_up]
 
             # 面積分類 總 持分 平均持分 ==========================
             areaType = self.check_int(base_condition.get('areaType'))
@@ -771,7 +776,7 @@ class GetSearchResponseV3View(APIView):
         # 國籍
         country = self.check_int(base_other.get('country', None))
         
-        # 個人持分總值
+        # 個人持分總值 ｜ 持分現值
         pv_lower = self.check_int(base_other.get('p_part_valueLowerLimit', None))
         pv_upper = self.check_int(base_other.get('p_part_valueUpperLimit', None))
         pv_lower = pv_lower * 10000
@@ -852,6 +857,11 @@ class GetSearchResponseV3View(APIView):
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+            new_total_df = self.total_df.copy()
+            new_total_df = new_total_df.groupby('lbkey')
+            lbkey_dict = new_total_df.size().to_dict()
+            self.total_df['owner_num_real'] = self.total_df.apply(self.apply_owners_num, axis=1, args=(lbkey_dict, ))
+            # print(self.total_df.loc[:, ['lbkey', 'owner_num_real', 'owners_num']])
 
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
