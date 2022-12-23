@@ -358,8 +358,8 @@ class GetSearchResponseV3View(APIView):
         return data
 
     def apply_owners_num(self, df_data, lbkey_dict):
-        get_owner_num = lbkey_dict.get(df_data['lbkey'])
-        # print(df_data['lbkey'], get_owner_num)
+        get_owner_num = lbkey_dict.get(df_data['lbkey'], 0)
+
         return get_owner_num
 
     def apply_creditors_rights(self, creditors_rights):
@@ -380,7 +380,7 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 10000 \
+                    WHERE {where_sql} limit 100000 \
                     "
                     # 500000
 
@@ -409,8 +409,7 @@ class GetSearchResponseV3View(APIView):
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
                             T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
-                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type, \
-                            T1.right_numerator, T1.right_denominator \
+                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
                             "
 
         sql = sql_str.format(
@@ -877,7 +876,9 @@ class GetSearchResponseV3View(APIView):
 
             print(f'輸出總筆數：{len(self.total_df)}')
 
-            self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']].fillna(0)
+            self.total_df[['land_area', 'shared_size', 'build_num']] = self.total_df[['land_area', 'shared_size', 'build_num']].fillna(0)
+            self.total_df[['bday', 'national_land_zone', 'remove_time']] = self.total_df[['bday', 'national_land_zone', 'remove_time']].fillna('')
+            self.total_df = self.total_df.fillna(0)
             result = self.format_data_layout(self.total_df)
         return result
 
@@ -897,7 +898,7 @@ class GetSearchResponseV3View(APIView):
             raise ParseError('格式錯誤')
         else:
             # 預設參數
-            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type']
+            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type', 'remove_time']
 
             try:
                 max_data = info_config.objects.get(lbtype='Max')
