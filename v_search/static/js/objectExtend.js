@@ -483,7 +483,7 @@ Object.defineProperty(
             if(type == 1){
                 for(var i=un.length; i>=0; i--){
                     if(un[i]){
-                        rtn = (un[i] + ((un[i-1]||0)/1E4).round(rnum) ) + unitCh[i];
+                        rtn = ((un[i] + (un[i-1]||0)/1E4).round(rnum)) + unitCh[i];
                         break;
                     }
                 }
