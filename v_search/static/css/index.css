@@ -847,9 +847,10 @@ th {
 .mntable{
     background: #fff;
     display: block;
-    /* overflow-y: auto; */
     min-height: 32rem;
-    /* box-shadow: 0 2px 1px rgb(220 220 220 / 50); */
+    /*overflow-x:hidden;
+    overflow-y:auto;*/
+    box-shadow: 0 2px 1px rgb(220 220 220 / 50);
 }
 .grey {
     color: rgb(107 107 107);
@@ -1139,7 +1140,16 @@ th {
       border-left:1px solid #DDDDDD;
     }
   }*/
+.br1{
+    border-radius: 5px 0 0 0;
+}
+.br2{
+    border-radius: 0 5px 0 0;
+}
 @media screen and (max-width: 1703px) {
+    .table1 th{
+        padding:1rem 2rem;
+    }
     .right1{
         position: relative;
         right: 32px;
@@ -1149,18 +1159,27 @@ th {
         right: 39px;
     }
 }
-@media screen and (max-width: 1703px) {
-    .table1 th{
-        padding:1rem 2rem;
-    }
-}
 @media screen and (max-width: 1200px) {
     .bg2 img {
         margin-top: 30px;
         width: 60%;
     }
+    .table1, .table2, .table3 {
+        /* width: 100%; */
+        margin: 0 auto;
+        border-collapse: collapse;
+        margin-bottom: 0.5rem;
+        /* background: #fff; */
+        /* border: 1px solid #d2d2d2; */
+    }
+    .mntable {
+        overflow: auto;
+    }
 }
 @media screen and (max-width: 1000px) {
+    .mntable {
+        overflow: auto;
+    }
     .w-200 {
         flex-basis: auto;
     }
