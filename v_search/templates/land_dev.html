@@ -570,19 +570,19 @@
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr class="tabletop">
-                                        <th scope="col" style="width:5%">縣市</th>
-                                        <th scope="col" style="width:5%">行政區</th>
-                                        <th scope="col" style="width:9%">段小段</th>
-                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
-                                        <th scope="col" style="width:7%">國土分區</th>
-                                        <th scope="col" style="width:19%" class="left">使用分區</th>
-                                        <th scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
-                                        <th scope="col" style="width:7%">土地面積(坪)</th>
-                                        <th scope="col" style="width:7%">公告現值</th>
-                                        <th scope="col" style="width:3%">總公告</th>
-                                        <th scope="col" style="width:3%">地上建物</th>
-                                        <th scope="col" style="width:3%">權屬種類</th>
-                                        <th scope="col" style="width:3%">所有權人</th>
+                                        <th @click="sortf(searchRes, '0.city_name')" scope="col" style="width:5%">縣市</th>
+                                        <th @click="sortf(searchRes, '0.area_name')" scope="col" style="width:5%">行政區</th>
+                                        <th @click="sortf(searchRes, '0.region_name')" scope="col" style="width:9%">段小段</th>
+                                        <th @click="sortf(searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
+                                        <th @click="sortf(searchRes, '0.national_land_zone')" scope="col" style="width:7%">國土分區</th>
+                                        <th @click="sortf(searchRes, '0.land_zone')" scope="col" style="width:19%" class="left">使用分區</th>
+                                        <th @click="sortf(searchRes, '0.urban_name')" scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
+                                        <th @click="sortf(searchRes, '0.land_area')" scope="col" style="width:7%">土地面積(坪)</th>
+                                        <th @click="sortf(searchRes, '0.land_notice_value')" scope="col" style="width:7%">公告現值</th>
+                                        <th @click="sortf(searchRes, '0.total_vp')" scope="col" style="width:3%">總公告</th>
+                                        <th @click="sortf(searchRes, '0.build_num')" scope="col" style="width:3%">地上建物</th>
+                                        <th @click="sortf(searchRes, '0.owner_type')" scope="col" style="width:3%">權屬種類</th>
+                                        <th @click="sortf(searchRes, 'length')" scope="col" style="width:3%">所有權人</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -653,18 +653,18 @@
                                                 <table class="table3">
                                                     <thead>
                                                         <tr>
-                                                            <th>登記次序</th>
-                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
-                                                            <th>登記原因</th>
-                                                            <th>所有權人</th>
-                                                            <th>統一編號</th>
-                                                            <th>住址</th>
-                                                            <th>出生日期</th>
-                                                            <th>權利範圍</th>
-                                                            <th>持分面積(平方公尺)</th>
-                                                            <th>持分坪數</th>
-                                                            <th>持分現值</th>
-                                                            <th>他項權利(其他註記)</th>
+                                                            <th @click="sortf(data, 'regno')">登記次序</th>
+                                                            <th @click="sortf(data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
+                                                            <th @click="sortf(data, 'reg_reason_str')">登記原因</th>
+                                                            <th @click="sortf(data, 'name')">所有權人</th>
+                                                            <th @click="sortf(data, 'uid')">統一編號</th>
+                                                            <th @click="sortf(data, 'address_re')">住址</th>
+                                                            <th @click="sortf(data, 'bday')">出生日期</th>
+                                                            <th @click="sortf(data, 'right_str')">權利範圍</th>
+                                                            <th @click="sortf(data, 'shared_size')">持分面積(平方公尺)</th>
+                                                            <th @click="sortf(data, 'shared_size')">持分坪數</th>
+                                                            <th @click="sortf(data, 'shared_value')">持分現值</th>
+                                                            <th @click="sortf(data, 'creditors_rights')">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -679,7 +679,7 @@
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分面積(平方公尺)">(( line.shared_size || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
-                                                            <td data="持分現值">(( (line.land_notice_value * line.shared_size)?.chUnit(1, 2) || '' ))</td>
+                                                            <td data="持分現值">(( line.shared_value?.chUnit(1, 2) || '' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
@@ -725,17 +725,17 @@
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;">所有權人</th>
-                                        <th scope="col" style="width:10%;">統一編號</th>
-                                        <th scope="col" style="width:25%;">戶籍地址</th>
-                                        <th scope="col" style="width:5;">出生日期</th>
-                                        <th scope="col" style="width:10%;">土地總筆數</th>
-                                        <th scope="col" style="width:5%;">持分總坪數</th>
-                                        <th scope="col" style="width:5%;">持分總現值</th>
-                                        <th scope="col" style="width:5%;">建物總筆數</th>
-                                        <th scope="col" style="width:5%;">電話</th>
-                                        <th scope="col" style="width:10%;">所有權註記</th>
-                                        <th scope="col" style="width:10%;">身份標籤</th>
+                                        <th @click="sortf(person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">所有權人</th>
+                                        <th @click="sortf(person_searchRes, '0.uid')" scope="col" style="width:10%;">統一編號</th>
+                                        <th @click="sortf(person_searchRes, '0.address_re')" scope="col" style="width:25%;">戶籍地址</th>
+                                        <th @click="sortf(person_searchRes, '0.bday')" scope="col" style="width:5;">出生日期</th>
+                                        <th @click="sortf(person_searchRes, 'length')" scope="col" style="width:10%;">土地總筆數</th>
+                                        <th @click="sortf(person_searchRes, 'shared_size_t')" scope="col" style="width:5%;">持分總坪數</th>
+                                        <th @click="sortf(person_searchRes, 'shared_value_t')" scope="col" style="width:5%;">持分總現值</th>
+                                        <th @click="sortf(person_searchRes, '0.$建物總筆數')" scope="col" style="width:5%;">建物總筆數</th>
+                                        <th @click="sortf(person_searchRes, '0.$電話')" scope="col" style="width:5%;">電話</th>
+                                        <th @click="sortf(person_searchRes, '0.$所有權註記')" scope="col" style="width:10%;">所有權註記</th>
+                                        <th @click="sortf(person_searchRes, '0.$身份標籤')" scope="col" style="width:10%;">身份標籤</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -774,28 +774,22 @@
                                                 <p>(( data?.length || '' ))</p>
                                             </td>
                                             <td data="持分總坪數">
-                                                <p>(( (data.reduce((a,e) => {
-                                                    a += e.shared_size;
-                                                    return a;
-                                                }, 0) / 3.30579).round(2) ))</p>
+                                                <p>(( data.shared_size_t ))</p>
                                             </td>
                                             <td data="持分總現值">
-                                                <p>(( data.reduce((a,e) => {
-                                                    a += e.present_value;
-                                                    return a;
-                                                }, 0)?.chUnit(1, 2) || '' ))</p>
+                                                <p>(( data.shared_value_t ))</p>
                                             </td>
                                             <td data="建物總筆數">
-                                                <p>(( data[0].建物總筆數 || '' ))</p>
+                                                <p>(( data[0].$建物總筆數 || '' ))</p>
                                             </td>
                                             <td data="電話">
-                                                <p>(( data[0].電話 || '' ))</p>
+                                                <p>(( data[0].$電話 || '' ))</p>
                                             </td>
                                             <td data="所有權註記">
-                                                <p>(( data[0].所有權註記 || '' ))</p>
+                                                <p>(( data[0].$所有權註記 || '' ))</p>
                                             </td>
                                             <td data="身份標籤">
-                                                <p>(( data[0].身份標籤 || '' ))</p>
+                                                <p>(( data[0].$身份標籤 || '' ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
@@ -803,19 +797,19 @@
                                                 <table class="table11">
                                                     <thead>
                                                         <tr>
-                                                            <th>縣市</th>
-                                                            <th>行政區</th>
-                                                            <th>段小段</th>
-                                                            <th nowrap="nowrap" style="white-space:nowrap;">地號</th>
-                                                            <th>登記次序</th>
-                                                            <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
-                                                            <th>登記原因</th>
-                                                            <th>土地面積(坪)</th>
-                                                            <th>公告現值</th>
-                                                            <th>權利範圍</th>
-                                                            <th>持分坪數</th>
-                                                            <th>持分現值</th>
-                                                            <th>他項權利(其他註記)</th>
+                                                            <th @click="sortf(data, 'city_name')">縣市</th>
+                                                            <th @click="sortf(data, 'area_name')">行政區</th>
+                                                            <th @click="sortf(data, 'region_name')">段小段</th>
+                                                            <th @click="sortf(data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
+                                                            <th @click="sortf(data, '@登記次序')">登記次序</th>
+                                                            <th @click="sortf(data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
+                                                            <th @click="sortf(data, 'reg_reason_str')">登記原因</th>
+                                                            <th @click="sortf(data, 'land_area')">土地面積(坪)</th>
+                                                            <th @click="sortf(data, 'land_notice_value')">公告現值</th>
+                                                            <th @click="sortf(data, 'right_str')">權利範圍</th>
+                                                            <th @click="sortf(data, 'shared_size')">持分坪數</th>
+                                                            <th @click="sortf(data, 'present_value')">持分現值</th>
+                                                            <th @click="sortf(data, 'creditors_rights')">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -823,15 +817,15 @@
                                                             <td data="縣市">(( line.city_name || '' ))</td>
                                                             <td data="行政區">(( line.area_name || '' ))</td>
                                                             <td data="段小段">(( line.region_name || '' ))</td>
-                                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '' ))</td>
-                                                            <td data="登記次序">(( line.登記次序 || '' ))</td>
+                                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line.lno || '' ))</td>
+                                                            <td data="登記次序">(( line.$登記次序 || '' ))</td>
                                                             <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>
                                                             <td data="公告現值">(( line.land_notice_value?.format() || '' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
-                                                            <td data="持分現值">(( line.present_value?.format() || '' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '' ))</td>
                                                             <td data="他項權利(其他註記)">
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
@@ -971,6 +965,8 @@
                     loading: 0,
                     serverError: 0,
                     getSearchOptionsList: [],
+
+                    sortOption: "",
 
                     pageNumList: [5, 10, 20, 50, 100],
                     onepageNum: 10,
@@ -1112,14 +1108,26 @@
                             var land_data = res.land_data, owner_data = res.owner_data;
 
                             for(var i in land_data){
+                                for(var j in land_data[i]){
+                                    land_data[i][j].shared_value = land_data[i][j].land_notice_value * land_data[i][j].shared_size;
+                                }
                                 T.searchRes.push(land_data[i]);
                             }
                             T.totalPage = Math.ceil(T.searchRes.length / T.onepageNum);
                             T.nowPage = 0;
                             Vue.nextTick(()=>{T.nowPage = 1;});
 
-                            var tmp = {};
+                            var tmp = {}, shared_size_t, shared_value_t;
                             for(var i in owner_data){
+                                shared_size_t = 0;
+                                shared_value_t = 0;
+                                for(var j in owner_data[i]){
+                                    shared_size_t += owner_data[i][j].shared_size / 3.30579;
+                                    shared_value_t += owner_data[i][j].present_value;
+                                }
+                                owner_data[i].shared_size_t = shared_size_t.round(2);
+                                owner_data[i].shared_value_t = shared_value_t.chUnit(1, 2);
+                                
                                 owner_data[i]._key = "k" + i.replace(/[~!@#$%^&*()?<>/\\]/g, "");
                                 T.person_searchRes.push(owner_data[i]);
                             }
@@ -1247,6 +1255,21 @@
                     if(tmp) r.push(tmp);
 
                     return r;
+                },
+                sortf(tar, rou, dire = 1){
+                    if(this.sortOption == rou + dire) dire ^= 1;
+                    this.sortOption = rou + dire;
+
+                    var route = rou.split("."), T = this;
+                    tar.sort((a,b)=>{
+                        for(var i in route){
+                            a = a?.[route[i]];
+                            b = b?.[route[i]];
+                        }
+                        return (a < b ? 1 : -1) * (-1) ** dire;
+                    });
+                    this.selectPage(1);
+                    this.person_selectPage(1);
                 },
                 selectPage(nV, oV){
                     var data;
