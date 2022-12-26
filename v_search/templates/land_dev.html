@@ -396,6 +396,22 @@
                                     <option :value="idx" v-for="(i ,idx) in national_land_zoneList">(( i ))</option>
                                 </select>
                             </div>
+
+                            <div class="w-200">
+                                <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        $('#bs4').multiselect({
+                                            nonSelectedText: '地上建物',
+                                            numberDisplayed: 6,
+                                            buttonWidth: '180px',
+                                            onChange:(q,w)=>{ms[0]("searchForm.land.region.landbuild." + q[0].value, w)}
+                                        });
+                                    });
+                                </script>
+                                <select id="bs4" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.landbuild" disabled>
+                                    <option :value="idx" v-for="(i ,idx) in landbuildList">(( i ))</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="row row-cols-auto row1">
@@ -798,7 +814,7 @@
                                                 <p>(( data[0].uid || '' ))</p>
                                             </td>
                                             <td data="戶籍地址" class="left">
-                                                <p>(( data[0].address_re || '(空白)' ))</p>
+                                                <p>(( data[0].戶籍地址address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
                                                 <p>(( data[0].bday || '' ))</p>
@@ -987,6 +1003,7 @@
                     outCity: ['特定農業區', '一般農業區', '工業區', '鄉村區', '森林區', '山坡地保護區', '風景區', '國家公園區', '河川區', '海域區', '其他使用區或特定專區'],
                     outCity2: ['甲種建築用地', '乙種建築用地', '丙種建築用地', '丁種建築用地', '牧農用地', '林業用地', '養殖用地', '鹽業用地', '礦業用地', '窯業用地', '交通用地', '水利用地', '遊憩用地', '古蹟保存用地', '生態保護用地', '國土保安用地', '殯葬用地', '海域用地', '特定目的事業用地'],
                     national_land_zoneList: ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類'],
+                    landbuildList: ["不拘"],
                     registerReasonList: ["繼承", "贈與", "買賣", "交換", "重劃", "總登記", "分割", "調解", "拍賣", "信託", "合併", "其他"],
                     otherRemarkList: ["無設定", "私設", "銀行二胎", "銀行", "租賃", "公司", "政府機構"],
                     restrictedRegistrationList: ["預告登記", "查封登記", "假扣押登記", "假處分登記", "破產登記", "其他依法律所為禁止處分登記"],
