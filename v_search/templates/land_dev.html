@@ -605,14 +605,22 @@
                                     <tr class="tabletop">
                                         <th @click="sortf(searchRes, '0.city_name')" scope="col" style="width:5%" class="br1">縣市</th>
                                         <th @click="sortf(searchRes, '0.area_name')" scope="col" style="width:5%">行政區</th>
+<<<<<<< HEAD
                                         <th @click="sortf(searchRes, '0.region_name')" scope="col" style="width:9%">段小段</th>
+=======
+                                        <th @click="sortf(searchRes, '0.region_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                         <th @click="sortf(searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                         <th @click="sortf(searchRes, '0.national_land_zone')" scope="col" style="width:7%">國土分區</th>
                                         <th @click="sortf(searchRes, '0.land_zone')" scope="col" style="width:19%" class="left">使用分區</th>
                                         <th @click="sortf(searchRes, '0.urban_name')" scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
                                         <th @click="sortf(searchRes, '0.land_area')" scope="col" style="width:7%">土地面積(坪)</th>
                                         <th @click="sortf(searchRes, '0.land_notice_value')" scope="col" style="width:7%">公告現值</th>
+<<<<<<< HEAD
                                         <th @click="sortf(searchRes, '0.total_vp')" scope="col" style="width:3%">總公告</th>
+=======
+                                        <th @click="sortf(searchRes, '0.total_vp')" scope="col"  nowrap="nowrap" style="white-space:nowrap;">總公告</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                         <th @click="sortf(searchRes, '0.build_num')" scope="col" style="width:3%">地上建物</th>
                                         <th @click="sortf(searchRes, '0.owner_type')" scope="col" style="width:3%">權屬種類</th>
                                         <th @click="sortf(searchRes, 'length')" scope="col" style="width:3%" class="br2">所有權人</th>
@@ -644,7 +652,7 @@
                                             <td data="行政區">
                                                 <p>(( data[0].area_name || '(空白)' ))</p>
                                             </td>
-                                            <td data="段小段">
+                                            <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>(( data[0].region_name || '(空白)' ))</p>
                                             </td>
                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;">
@@ -668,7 +676,7 @@
                                             <td data="公告現值">
                                                 <p>(( data[0].land_notice_value?.format() || '' ))</p>
                                             </td>
-                                            <td data="總公告">
+                                            <td data="總公告" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>(( data[0].total_vp?.chUnit(1, 2) || '' ))</p>
                                             </td>
                                             <td data="地上建物">
@@ -697,7 +705,11 @@
                                                             <th @click="sortf(data, 'shared_size')">持分面積(平方公尺)</th>
                                                             <th @click="sortf(data, 'shared_size')">持分坪數</th>
                                                             <th @click="sortf(data, 'shared_value')">持分現值</th>
+<<<<<<< HEAD
                                                             <th @click="sortf(data, 'creditors_rights')" class="br2">他項權利(其他註記)</th>
+=======
+                                                            <th @click="sortf(data, 'creditors_rights')" class="br2" style="text-align:left;">他項權利(其他註記)</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -713,7 +725,11 @@
                                                             <td data="持分面積(平方公尺)">(( line.shared_size || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
                                                             <td data="持分現值">(( line.shared_value?.chUnit(1, 2) || '' ))</td>
+<<<<<<< HEAD
                                                             <td data="他項權利(其他註記)">
+=======
+                                                            <td data="他項權利(其他註記)"  style="text-align:left;">
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
                                                         </tr>
@@ -757,8 +773,13 @@
                         <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
+<<<<<<< HEAD
                                     <tr>
                                         <th @click="sortf(person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">所有權人</th>
+=======
+                                    <tr class="tabletop">
+                                        <th @click="sortf(person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;text-align: left;" class="br1">所有權人</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                         <th @click="sortf(person_searchRes, '0.uid')" scope="col" style="width:10%;">統一編號</th>
                                         <th @click="sortf(person_searchRes, '0.address_re')" scope="col" style="width:25%;">戶籍地址</th>
                                         <th @click="sortf(person_searchRes, '0.bday')" scope="col" style="width:5;">出生日期</th>
@@ -791,7 +812,7 @@
                                     </tr>
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
-                                            <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;">
+                                            <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;text-align: left;">
                                                 <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '' ))</a></p>
                                             </td>
                                             <td data="統一編號">
@@ -832,7 +853,11 @@
                                                         <tr>
                                                             <th @click="sortf(data, 'city_name')" class="br1">縣市</th>
                                                             <th @click="sortf(data, 'area_name')">行政區</th>
+<<<<<<< HEAD
                                                             <th @click="sortf(data, 'region_name')">段小段</th>
+=======
+                                                            <th @click="sortf(data, 'region_name')" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                             <th @click="sortf(data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
                                                             <th @click="sortf(data, '@登記次序')">登記次序</th>
                                                             <th @click="sortf(data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
@@ -842,14 +867,22 @@
                                                             <th @click="sortf(data, 'right_str')">權利範圍</th>
                                                             <th @click="sortf(data, 'shared_size')">持分坪數</th>
                                                             <th @click="sortf(data, 'present_value')">持分現值</th>
+<<<<<<< HEAD
                                                             <th @click="sortf(data, 'creditors_rights')" class="br2">他項權利(其他註記)</th>
+=======
+                                                            <th @click="sortf(data, 'creditors_rights')" class="br2"  style="text-align:left;">他項權利(其他註記)</th>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
                                                             <td data="縣市">(( line.city_name || '' ))</td>
                                                             <td data="行政區">(( line.area_name || '' ))</td>
+<<<<<<< HEAD
                                                             <td data="段小段">(( line.region_name || '' ))</td>
+=======
+                                                            <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">(( line.region_name || '' ))</td>
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line.lno || '' ))</td>
                                                             <td data="登記次序">(( line.$登記次序 || '' ))</td>
                                                             <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
@@ -859,7 +892,11 @@
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
                                                             <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '' ))</td>
+<<<<<<< HEAD
                                                             <td data="他項權利(其他註記)">
+=======
+                                                            <td data="他項權利(其他註記)"  style="text-align:left;">
+>>>>>>> 88108f85364195f3d48e7eb5da9eaa76081c4dbd
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
                                                         </tr>
