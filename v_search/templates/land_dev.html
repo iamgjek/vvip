@@ -681,7 +681,7 @@
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
                                                             <td data="持分現值">(( (line.land_notice_value * line.shared_size)?.chUnit(1, 2) || '' ))</td>
                                                             <td data="他項權利(其他註記)">
-                                                                <p v-for="person in data.creditors_rights">(( person ))</p>
+                                                                <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -823,17 +823,17 @@
                                                             <td data="縣市">(( line.city_name || '' ))</td>
                                                             <td data="行政區">(( line.area_name || '' ))</td>
                                                             <td data="段小段">(( line.region_name || '' ))</td>
-                                                            <td data="地號"  nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '' ))</td>
+                                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line._lbnum || '' ))</td>
                                                             <td data="登記次序">(( line.登記次序 || '' ))</td>
                                                             <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>
-                                                            <td data="公告現值">(( line.land_notice_value?.chUnit() || '' ))</td>
+                                                            <td data="公告現值">(( line.land_notice_value?.format() || '' ))</td>
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
-                                                            <td data="持分現值">(( line.present_value?.chUnit() || '' ))</td>
+                                                            <td data="持分現值">(( line.present_value?.format() || '' ))</td>
                                                             <td data="他項權利(其他註記)">
-                                                                <p v-for="person in data.creditors_rights">(( person ))</p>
+                                                                <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
                                                         </tr>
                                                     </tbody>
