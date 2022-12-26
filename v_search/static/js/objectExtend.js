@@ -474,7 +474,7 @@ Object.defineProperty(
         configurable: true,
         enumerable: false,
         writable: true,
-        value: function (type, num) {
+        value: function (type, rnum = 0) {
             var un = [], num = this, rtn = "", unitCh = ["", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載", "極"];
             while(num >= 1){
                 un.push(num%1E4);
@@ -483,7 +483,7 @@ Object.defineProperty(
             if(type == 1){
                 for(var i=un.length; i>=0; i--){
                     if(un[i]){
-                        rtn = (un[i] + (un[i-1]/1E4).round(num) ) + unitCh[i];
+                        rtn = (un[i] + ((un[i-1]||0)/1E4).round(rnum) ) + unitCh[i];
                         break;
                     }
                 }
