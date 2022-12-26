@@ -20,7 +20,6 @@
     <link href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/css/jquery-peeper.css">
     <link rel="stylesheet" href="/static/css/index.css">
-
     <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -37,6 +36,40 @@
     <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
     <script src="/static/js/index.js"></script>
     <script src="/static/js/jquery-peeper.js"></script>
+    <script src="/static/js/freeze-table.js"></script>
+	<script>
+	$(document).ready(function() {
+
+	  $(".table-basic").freezeTable();
+
+	  $(".table-columns-only").freezeTable({
+	    'freezeHead': false,
+	  });
+
+	  $(".table-head-only").freezeTable({
+	    'freezeColumn': false,
+	  });
+
+	  // 2 Columns to be fixed
+	  $(".table-multi-columns").freezeTable({
+	    'columnNum' : 2,
+	  });
+
+	  // Shadow enabled
+	  $(".table-shadow").freezeTable({
+	    'shadow' : true,
+	  });
+
+	  // Customized styles
+	  $(".table-wrap-styles").freezeTable({
+	    'headWrapStyles': {'box-shadow': '0px 9px 10px -5px rgba(159, 159, 160, 0.8)'},
+	  });
+
+	  $(".table-with-scrollbar").freezeTable({
+	    'scrollBar': true,
+	  });
+	});
+	</script>
     <script>
         $(function () {
             $("#password1").peeper({
@@ -567,10 +600,10 @@
                 <div class="tab-content width2" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         <div class="row mntable">
-                            <table class="table1 table-expandable">
+                            <table cellspacing="0"  id="table-basic" class="table1 table-expandable  mntable">
                                 <thead>
                                     <tr class="tabletop">
-                                        <th scope="col" style="width:5%">縣市</th>
+                                        <th scope="col" style="width:5%" class="br1">縣市</th>
                                         <th scope="col" style="width:5%">行政區</th>
                                         <th scope="col" style="width:9%">段小段</th>
                                         <th scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
@@ -582,7 +615,7 @@
                                         <th scope="col" style="width:3%">總公告</th>
                                         <th scope="col" style="width:3%">地上建物</th>
                                         <th scope="col" style="width:3%">權屬種類</th>
-                                        <th scope="col" style="width:3%">所有權人</th>
+                                        <th scope="col" style="width:3%" class="br2">所有權人</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -653,7 +686,7 @@
                                                 <table class="table3">
                                                     <thead>
                                                         <tr>
-                                                            <th>登記次序</th>
+                                                            <th class="br1">登記次序</th>
                                                             <th nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th>登記原因</th>
                                                             <th>所有權人</th>
@@ -664,7 +697,7 @@
                                                             <th>持分面積(平方公尺)</th>
                                                             <th>持分坪數</th>
                                                             <th>持分現值</th>
-                                                            <th>他項權利(其他註記)</th>
+                                                            <th class="br2">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -724,8 +757,8 @@
                         <div class="row mntable">
                             <table class="table1 table-expandable">
                                 <thead>
-                                    <tr>
-                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;">所有權人</th>
+                                    <tr class="tabletop">
+                                        <th scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">所有權人</th>
                                         <th scope="col" style="width:10%;">統一編號</th>
                                         <th scope="col" style="width:25%;">戶籍地址</th>
                                         <th scope="col" style="width:5;">出生日期</th>
@@ -735,7 +768,7 @@
                                         <th scope="col" style="width:5%;">建物總筆數</th>
                                         <th scope="col" style="width:5%;">電話</th>
                                         <th scope="col" style="width:10%;">所有權註記</th>
-                                        <th scope="col" style="width:10%;">身份標籤</th>
+                                        <th scope="col" style="width:10%;" class="br2">身份標籤</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -803,7 +836,7 @@
                                                 <table class="table11">
                                                     <thead>
                                                         <tr>
-                                                            <th>縣市</th>
+                                                            <th class="br1">縣市</th>
                                                             <th>行政區</th>
                                                             <th>段小段</th>
                                                             <th nowrap="nowrap" style="white-space:nowrap;">地號</th>
@@ -815,7 +848,7 @@
                                                             <th>權利範圍</th>
                                                             <th>持分坪數</th>
                                                             <th>持分現值</th>
-                                                            <th>他項權利(其他註記)</th>
+                                                            <th class="br2">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
