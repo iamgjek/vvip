@@ -71,7 +71,7 @@ class Company(models.Model):
 class OpenArea(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True, on_delete=models.CASCADE, verbose_name='公司')
     open_area_str = models.CharField(max_length=100, null=True, blank=True, verbose_name='開放地區字串')
-    open_area_code = models.CharField(max_length=2, null=True, blank=True, verbose_name='開放地區代碼')
+    open_area_code = models.CharField(max_length=10, null=True, blank=True, verbose_name='開放地區代碼')
     is_valid = models.BooleanField(default=True, verbose_name='是否有效')
     create_time = models.DateTimeField(auto_now_add=True, null=False, blank=False, verbose_name='建立時間')
     update_time = models.DateTimeField(null=True, blank=True, verbose_name='最後更新時間')
