@@ -15,7 +15,7 @@ class UserProfile(models.Model):
         verbose_name_plural = "頭像"
 
 
-class User(AbstractUser):
+class UserV2(AbstractUser):
     # user   = models.OneToOneField(User, on_delete=models.CASCADE)
     # avatar = models.ImageField(upload_to='avatar/%Y%m', blank=True, null=True, verbose_name='使用者頭像')
     user_token = models.UUIDField(default=uuid.uuid4, unique=True, verbose_name='使用者公鑰')
