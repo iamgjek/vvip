@@ -16,7 +16,7 @@ class UserProfile(models.Model):
 
 
 class User(AbstractUser):
-    user   = models.OneToOneField(User, on_delete=models.CASCADE)
+    # user   = models.OneToOneField(User, on_delete=models.CASCADE)
     # avatar = models.ImageField(upload_to='avatar/%Y%m', blank=True, null=True, verbose_name='使用者頭像')
     user_token = models.UUIDField(default=uuid.uuid4, unique=True, verbose_name='使用者公鑰')
 
