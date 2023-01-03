@@ -1,7 +1,7 @@
 from django import forms
 from django.core.files.images import get_image_dimensions
 
-from users.models import UserProfile
+# from users.models import UserProfile
 from allauth.account.adapter import DefaultAccountAdapter
 
 

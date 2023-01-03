@@ -1,5 +1,3 @@
-from users.models import UserProfile
-from users.forms import UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.views.generic import View, TemplateView
@@ -20,7 +18,6 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     # 建立帳號時 自動觸發
     if created:
         Token.objects.create(user=instance)
-        UserProfile.objects.create(user=instance)
 
 # class RestfulApiView(LoginRequiredMixin, SpectacularSwaggerView):
 #     TAG = '[RestfulApiView]'
