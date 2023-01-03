@@ -121,9 +121,10 @@ class supfnc{
         var el = document.createElement(tagName), tmp;
         for(var i in options){
             if(i == "class"){
-                tmp = options.class;
-                if(typeof options.class == "string") tmp = tmp.split(" ");
-                if(Array.isArray(options.class)) for(var j in tmp) el.classList.add(tmp[j]);
+                tmp = [];
+                if(typeof options.class == "string") tmp = options.class.split(" ");
+                else if(Array.isArray(options.class)) tmp = options.class;
+                for(var j in tmp) el.classList.add(tmp[j]);
             }
             else if(i == "style"){
                 for(var j in options.style){

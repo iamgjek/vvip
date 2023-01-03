@@ -116,6 +116,10 @@
         .loadingData > span:nth-child(4){
             animation: spinning 3s ease-in-out 0.45s infinite;
         }
+
+        [role=button] {
+            cursor: pointer;
+        }
     </style>
     {% endblock %}
 </head>
@@ -619,19 +623,19 @@
                             <table cellspacing="0"  id="table-basic" class="table1 table-expandable  mntable">
                                 <thead>
                                     <tr class="tabletop">
-                                        <th @click="sortf(searchRes, '0.city_name')" scope="col" style="width:5%" class="br1">縣市</th>
-                                        <th @click="sortf(searchRes, '0.area_name')" scope="col" style="width:5%">行政區</th>
-                                        <th @click="sortf(searchRes, '0.region_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
-                                        <th @click="sortf(searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
-                                        <th @click="sortf(searchRes, '0.national_land_zone')" scope="col" style="width:7%">國土分區</th>
-                                        <th @click="sortf(searchRes, '0.land_zone')" scope="col" style="width:19%" class="left">使用分區</th>
-                                        <th @click="sortf(searchRes, '0.urban_name')" scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
-                                        <th @click="sortf(searchRes, '0.land_area')" scope="col" style="width:7%">土地面積(坪)</th>
-                                        <th @click="sortf(searchRes, '0.land_notice_value')" scope="col" style="width:7%">公告現值</th>
-                                        <th @click="sortf(searchRes, '0.total_vp')" scope="col"  nowrap="nowrap" style="white-space:nowrap;">總公告</th>
-                                        <th @click="sortf(searchRes, '0.build_num')" scope="col" style="width:3%">地上建物</th>
-                                        <th @click="sortf(searchRes, '0.owner_type')" scope="col" style="width:3%">權屬種類</th>
-                                        <th @click="sortf(searchRes, 'length')" scope="col" style="width:3%" class="br2">所有權人</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.city_name')" scope="col" style="width:5%" class="br1">縣市</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.area_name')" scope="col" style="width:5%">行政區</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.region_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.national_land_zone')" scope="col" style="width:7%">國土分區</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.land_zone')" scope="col" style="width:19%" class="left">使用分區</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.urban_name')" scope="col" style="width:22%" class="left">使用地類別(計畫案名)</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.land_area')" scope="col" style="width:7%">土地面積(坪)</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.land_notice_value')" scope="col" style="width:7%">公告現值</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.total_vp')" scope="col"  nowrap="nowrap" style="white-space:nowrap;">總公告</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.build_num')" scope="col" style="width:3%">地上建物</th>
+                                        <th role="button" @click="sortf($event, searchRes, '0.owner_type')" scope="col" style="width:3%">權屬種類</th>
+                                        <th role="button" @click="sortf($event, searchRes, 'length')" scope="col" style="width:3%" class="br2">所有權人</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -702,18 +706,18 @@
                                                 <table class="table3">
                                                     <thead>
                                                         <tr>
-                                                            <th @click="sortf(data, 'regno')" class="br1">登記次序</th>
-                                                            <th @click="sortf(data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
-                                                            <th @click="sortf(data, 'reg_reason_str')">登記原因</th>
-                                                            <th @click="sortf(data, 'name')">所有權人</th>
-                                                            <th @click="sortf(data, 'uid')">統一編號</th>
-                                                            <th @click="sortf(data, 'address_re')">住址</th>
-                                                            <th @click="sortf(data, 'bday')">出生日期</th>
-                                                            <th @click="sortf(data, 'right_str')">權利範圍</th>
-                                                            <th @click="sortf(data, 'shared_size')">持分面積(平方公尺)</th>
-                                                            <th @click="sortf(data, 'shared_size')">持分坪數</th>
-                                                            <th @click="sortf(data, 'shared_value')">持分現值</th>
-                                                            <th @click="sortf(data, 'creditors_rights')" class="br2" style="text-align:left;">他項權利(其他註記)</th>
+                                                            <th role="button" @click="sortf($event, data, 'regno')" class="br1">登記次序</th>
+                                                            <th role="button" @click="sortf($event, data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
+                                                            <th role="button" @click="sortf($event, data, 'reg_reason_str')">登記原因</th>
+                                                            <th role="button" @click="sortf($event, data, 'name')">所有權人</th>
+                                                            <th role="button" @click="sortf($event, data, 'uid')">統一編號</th>
+                                                            <th role="button" @click="sortf($event, data, 'address_re')">住址</th>
+                                                            <th role="button" @click="sortf($event, data, 'bday')">出生日期</th>
+                                                            <th role="button" @click="sortf($event, data, 'right_str')">權利範圍</th>
+                                                            <th role="button" @click="sortf($event, data, 'shared_size')">持分面積(平方公尺)</th>
+                                                            <th role="button" @click="sortf($event, data, 'shared_size')">持分坪數</th>
+                                                            <th role="button" @click="sortf($event, data, 'shared_value')">持分現值</th>
+                                                            <th role="button" @click="sortf($event, data, 'creditors_rights')" class="br2" style="text-align:left;">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -774,17 +778,17 @@
                             <table class="table1 table-expandable">
                                 <thead>
                                     <tr class="tabletop">
-                                        <th @click="sortf(person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;text-align: left;" class="br1">所有權人</th>
-                                        <th @click="sortf(person_searchRes, '0.uid')" scope="col" style="width:10%;">統一編號</th>
-                                        <th @click="sortf(person_searchRes, '0.address_re')" scope="col" style="width:25%;">戶籍地址</th>
-                                        <th @click="sortf(person_searchRes, '0.bday')" scope="col" style="width:5;">出生日期</th>
-                                        <th @click="sortf(person_searchRes, 'length')" scope="col" style="width:10%;">土地總筆數</th>
-                                        <th @click="sortf(person_searchRes, 'shared_size_t')" scope="col" style="width:5%;">持分總坪數</th>
-                                        <th @click="sortf(person_searchRes, 'shared_value_t')" scope="col" style="width:5%;">持分總現值</th>
-                                        <th @click="sortf(person_searchRes, '0.$建物總筆數')" scope="col" style="width:5%;">建物總筆數</th>
-                                        <th @click="sortf(person_searchRes, '0.$電話')" scope="col" style="width:5%;">電話</th>
-                                        <th @click="sortf(person_searchRes, '0.$所有權註記')" scope="col" style="width:10%;">所有權註記</th>
-                                        <th @click="sortf(person_searchRes, '0.$身份標籤')" scope="col" style="width:10%;" class="br2">身份標籤</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;text-align: left;" class="br1">所有權人</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.uid')" scope="col" style="width:10%;">統一編號</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.address_re')" scope="col" style="width:25%;">戶籍地址</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.bday')" scope="col" style="width:5;">出生日期</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, 'length')" scope="col" style="width:10%;">土地總筆數</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, 'shared_size_t')" scope="col" style="width:5%;">持分總坪數</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, 'shared_value_t')" scope="col" style="width:5%;">持分總現值</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.$建物總筆數')" scope="col" style="width:5%;">建物總筆數</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.$電話')" scope="col" style="width:5%;">電話</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.$所有權註記')" scope="col" style="width:10%;">所有權註記</th>
+                                        <th role="button" @click="sortf($event, person_searchRes, '0.$身份標籤')" scope="col" style="width:10%;" class="br2">身份標籤</th>
                                     </tr>
                                 </thead>
                                 <tbody class="table-body">
@@ -846,19 +850,19 @@
                                                 <table class="table11">
                                                     <thead>
                                                         <tr>
-                                                            <th @click="sortf(data, 'city_name')" class="br1">縣市</th>
-                                                            <th @click="sortf(data, 'area_name')">行政區</th>
-                                                            <th @click="sortf(data, 'region_name')" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
-                                                            <th @click="sortf(data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
-                                                            <th @click="sortf(data, '@登記次序')">登記次序</th>
-                                                            <th @click="sortf(data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
-                                                            <th @click="sortf(data, 'reg_reason_str')">登記原因</th>
-                                                            <th @click="sortf(data, 'land_area')">土地面積(坪)</th>
-                                                            <th @click="sortf(data, 'land_notice_value')">公告現值</th>
-                                                            <th @click="sortf(data, 'right_str')">權利範圍</th>
-                                                            <th @click="sortf(data, 'shared_size')">持分坪數</th>
-                                                            <th @click="sortf(data, 'present_value')">持分現值</th>
-                                                            <th @click="sortf(data, 'creditors_rights')" class="br2"  style="text-align:left;">他項權利(其他註記)</th>
+                                                            <th role="button" @click="sortf($event, data, 'city_name')" class="br1">縣市</th>
+                                                            <th role="button" @click="sortf($event, data, 'area_name')">行政區</th>
+                                                            <th role="button" @click="sortf($event, data, 'region_name')" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
+                                                            <th role="button" @click="sortf($event, data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
+                                                            <th role="button" @click="sortf($event, data, '@登記次序')">登記次序</th>
+                                                            <th role="button" @click="sortf($event, data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
+                                                            <th role="button" @click="sortf($event, data, 'reg_reason_str')">登記原因</th>
+                                                            <th role="button" @click="sortf($event, data, 'land_area')">土地面積(坪)</th>
+                                                            <th role="button" @click="sortf($event, data, 'land_notice_value')">公告現值</th>
+                                                            <th role="button" @click="sortf($event, data, 'right_str')">權利範圍</th>
+                                                            <th role="button" @click="sortf($event, data, 'shared_size')">持分坪數</th>
+                                                            <th role="button" @click="sortf($event, data, 'present_value')">持分現值</th>
+                                                            <th role="button" @click="sortf($event, data, 'creditors_rights')" class="br2"  style="text-align:left;">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -1017,6 +1021,7 @@
                     getSearchOptionsList: [],
 
                     sortOption: "",
+                    sortPreElement: "",
 
                     pageNumList: [5, 10, 20, 50, 100],
                     onepageNum: 10,
@@ -1306,9 +1311,26 @@
 
                     return r;
                 },
-                sortf(tar, rou, dire = 1){
+                sortf($event, tar, rou, dire = 1){
                     if(this.sortOption == rou + dire) dire ^= 1;
                     this.sortOption = rou + dire;
+                    
+                    var iE;
+                    if(this.sortPreElement) {
+                        this.sortPreElement.classList.remove("fa-sort-up");
+                        this.sortPreElement.classList.remove("fa-sort-down");
+                    }
+
+                    if($event.target.getElementsByClassName("sorticon").length == 0){
+                        iE = supfnc.createElement("i", {class: "sorticon ml-1 font-weight-bold fa"});
+                        $event.target.appendChild(iE);
+                    }
+                    else{
+                        iE = $event.target.getElementsByClassName("sorticon")[0];
+                    }
+
+                    iE.classList.add(dire ? "fa-sort-up" : "fa-sort-down");
+                    this.sortPreElement = iE;
 
                     var route = rou.split("."), T = this;
                     tar.sort((a,b)=>{
