@@ -81,6 +81,76 @@ class LandDevView(NormalTemplateView):
             return redirect('/')
         return render(request, self.template_name, context=context)
 
+class AccountManageView(NormalTemplateView):
+    TAG = '[AccountManageView]'
+    template_name = 'account_manage.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class AccountEditView(NormalTemplateView):
+    TAG = '[AccountEditView]'
+    template_name = 'account_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class AccountAddView(NormalTemplateView):
+    TAG = '[AccountAddView]'
+    template_name = 'account_add.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberPwView(NormalTemplateView):
+    TAG = '[MemberPwView]'
+    template_name = 'member_pw.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberAclistView(NormalTemplateView):
+    TAG = '[MemberAclistView]'
+    template_name = 'member_aclist.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberNewacView(NormalTemplateView):
+    TAG = '[MemberNewacView]'
+    template_name = 'member_newac.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberEditacView(NormalTemplateView):
+    TAG = '[MemberEditacView]'
+    template_name = 'member_editac.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
 class LoginView(View):
     # authentication_classes = (CsrfExemptSessionAuthentication, )
     def post(self, request):
