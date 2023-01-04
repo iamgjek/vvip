@@ -141,9 +141,17 @@
                     });
                 },
                 getAccountData(){
+                    if(!this.dataForm.account.length) {
+                        Swal.fire("請輸入帳號");
+                        return;
+                    }
                     var T = this; // @@@@
-                    new HTTPreq("/users/get_user/", "fd").posta().then(rcv => {
+                    new HTTPreq("/users/get_user/", "fd").posta({account: this.dataForm.account}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
+                        if(res.status == "OK"){
+                            for(var i in res.data) T.dataForm[i] = res.data[i];
+                        }
+                        Swal.fire(res.msg);
                     });
                 },
                 editAccount(){

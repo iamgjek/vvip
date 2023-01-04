@@ -78,7 +78,7 @@
                 <hr/>
                 <div class="">
                     <div class="px-2">
-                        <h5>上傳logo</h5>
+                        <h5>上傳logo <span class="ms-3 fs-6 text-secondary" role="button" @click="showImg()">查看當前logo</span></h5>
                         <div class="input-group mb-3">
                             <input type="file" class="form-control" placeholder="請選擇檔案" v-model="dataForm.upload_file">
                         </div>
@@ -102,6 +102,10 @@
                                     <option :value="true">啟用</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="px-2">
+                            <h5>取得帳號資料</h5>
+                            <div class="btn btn-outline-secondary" @click="getAccountData()">載入</div>
                         </div>
                     </div>
                 </div>
@@ -160,7 +164,7 @@
                         sub_domain: "",
                         open_area: {},
                         upload_file: "",
-                        state: "",
+                        state: true,
                         company_name: "",
                         company_id: "",
                         contact_person: "",
@@ -178,9 +182,17 @@
                     });
                 },
                 getAccountData(){
-                    var T = this; // @@@@
-                    new HTTPreq("/users/get_company/", "fd").posta().then(rcv => {
+                    if(!this.dataForm.account.length) {
+                        Swal.fire("請輸入帳號");
+                        return;
+                    }
+                    var T = this;
+                    new HTTPreq("/users/get_company_info/", "fd").posta({account: this.dataForm.account}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
+                        if(res.status == "OK"){
+                            for(var i in res.data) T.dataForm[i] = res.data[i];
+                        }
+                        Swal.fire(res.msg);
                     });
                 },
                 editAccountData(){
@@ -190,6 +202,14 @@
                         Swal.fire(res.msg);
                     });
                 },
+                showImg(src){
+                    Swal.fire({
+                        imageUrl: src,
+                        imageWidth: 500,
+                        imageHeight: 500,
+                        imageAlt: 'logo'
+                    })
+                }
             },
             mounted(){},
             created(){},

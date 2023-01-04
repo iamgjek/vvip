@@ -57,15 +57,19 @@
                 <table class="my-4 table">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th v-for="title in titleOrder">(( titleTrans.getV(title, title) ))</th>
+                            <th>動作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="row in dataBox">
+                        <tr v-for="(row, rowIdx) in dataBox">
+                            <th>(( (nowPage-1) * onepageNum + rowIdx ))</th>
                             <td v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
+                            <th><button class="btn btn-outline-secondary">編輯</button></th>
                         </tr>
                         <tr v-if="!dataBox.length">
-                            <td :colspan="titleOrder.length" class="text-center">無資料</td>
+                            <td :colspan="titleOrder.length + 2" class="text-center">無資料</td>
                         </tr>
                     </tbody>
                 </table>
@@ -93,15 +97,14 @@
             delimiters: ['((', '))'],
             data() {
                 return {
-                    titleOrder: ["#", "companyName", "account", "subDomain", "allowedArea", "phoneNumber", "status", "action"],
+                    titleOrder: ["name", "account", "sub_domain", "open_area", "phone", "state"],
                     titleTrans: {
-                        companyName: "名稱",
+                        name: "名稱",
                         account: "帳號",
-                        subDomain: "sub-domain",
-                        allowedArea: "開放地區",
-                        phoneNumber: "電話",
-                        status: "狀態",
-                        action: "動作",
+                        sub_domain: "sub-domain",
+                        open_area: "開放地區",
+                        phone: "電話",
+                        state: "狀態",
                     },
 
                     data:[],
@@ -138,6 +141,7 @@
                     new HTTPreq("/users/get_company_list/").geta().then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
+                            for(var i in res.data) res.data[i].state = res.data[i].state ? "啟用":"停用";
                             T.data = res.data;
                             T.selectPage(1);
                         }
