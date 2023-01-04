@@ -30,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    path('users/', include('users.urls')),
     path('v_search/', include('v_search.urls')),
 ]
 
