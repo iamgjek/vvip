@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 
 from users.models import Company, CompanyUserMapping, OpenArea, User
 from users.serializers import (AddCompanySerializer, GetCompanyInfoSerializer,
-                               ModifyCompanySerializer)
+                               ModifyCompanySerializer, GetUserListSerializer, AddUserSerializer, ModifyUserSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -394,21 +394,33 @@ class GetUserList(APIView):
     def process(self, request):
         result = {'status': 'NG'}
         try:
-            sql = '''SELECT a.id, a.company_name, c.username, a.sub_domain, a.open_area_list, a.phone, c.using FROM vvip.users_company a
-                    left join vvip.users_companyusermapping b on b.company_id=a.id and b.is_admin=1
-                    left join vvip.users_user c on c.id = b.user_id
-                    '''
-            companys = Company.objects.raw(sql)
+            params = request.GET
+            company_account = params.get('company_account', None)
+            if not company_account:
+                sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
+                        left join vvip.users_user b on b.id=a.user_id
+                        left join vvip.users_company c on c.id=a.company_id
+                        where a.is_admin=0;
+                        '''
+            else:
+                sql = f'''SELECT c.id
+                        FROM vvip.users_user a
+                        left join vvip.users_companyusermapping b on b.user_id=a.id
+                        left join vvip.users_company c on c.id=b.company_id
+                        where a.username="{company_account}"'''
+                company_id = User.objects.raw(sql)[0].id
+                sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
+                        left join vvip.users_user b on b.id=a.user_id
+                        left join vvip.users_company c on c.id=a.company_id
+                        where a.company_id={company_id} and a.is_admin=0;
+                        '''
+            users = User.objects.raw(sql)
             data_list = []
-            for i in companys:
-                open_area_list = ' '.join(i.open_area_list) if i.open_area_list else ''
+            for i in users:
                 data_list.append({
-                    'name': i.company_name,
+                    'name': i.first_name,
                     'account': i.username,
-                    'sub_domain': i.sub_domain,
-                    'open_area': open_area_list,
                     'phone': i.phone,
-                    'state': True if i.using else False,
                     })
 
             result['status'] = 'OK'
@@ -420,9 +432,9 @@ class GetUserList(APIView):
         return result
 
     @extend_schema(
-        summary='取帳號列表(公司)',
-        description='取帳號列表(公司)',
-        request=None,
+        summary='取帳號列表(使用者)',
+        description='取帳號列表(使用者)',
+        request=GetUserListSerializer,
         responses={
             200: OpenApiResponse(description='ok'),
             401: OpenApiResponse(description='身分認證失敗'),
@@ -430,7 +442,7 @@ class GetUserList(APIView):
     )
 
     def get(self, request):
-        logger.info('取帳號列表(公司)')
+        logger.info('取帳號列表(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
         time_end = time.perf_counter()
@@ -446,15 +458,11 @@ class AddUser(APIView):
         result = {'status': 'NG'}
         try:
             params = request.POST
-            sub_domain = params.get('sub_domain', None)
-            open_area = params.get('open_area', None)
-            upload_file = request.FILES.get('upload_file', None)
+            company_account = params.get('company_account', None)
             account = params.get('account', None)
             password = params.get('password', None)
             password2 = params.get('password2', None)
-            company_name = params.get('company_name', None)
-            company_id = params.get('company_id', None)
-            contact_person = params.get('contact_person', None)
+            name = params.get('name', None)
             phone = params.get('phone', None)
 
             #* 檢查密碼
@@ -463,44 +471,25 @@ class AddUser(APIView):
                 result['msg'] = '確認密碼錯誤'
                 return result
 
-            #* 檢查公司有無重複
-            company = Company.objects.filter(company_name=company_name, is_valid=1)
-            if company:
-                result['msg'] = '該公司已存在'
-                return result
-
-            #* 開放地區處理
-            open_area_list = []
-            city_code_dict = {}
-            if open_area:
-                for k, v in json.loads(open_area).items():
-                    if v:
-                        city_code_dict[k] = ''
-                try:
-                    url = 'https://lbor.wsos.com.tw/common/car/get_all_code/?select_type=0'
-                    r = requests.get(url)
-                    r = r.json()
-                    for city_code in city_code_dict:
-                        city_name = r[city_code]['city_name']
-                        city_code_dict[city_code] = city_name
-                        open_area_list.append(city_name)
-                except:
-                    logger.info('取地區代碼失敗')
-                    result['msg'] = '取地區代碼失敗'
-                    return result
+            #* 取得公司id
+            if company_account:
+                sql = f'''SELECT c.id
+                        FROM vvip.users_user a
+                        left join vvip.users_companyusermapping b on b.user_id=a.id
+                        left join vvip.users_company c on c.id=b.company_id
+                        where a.username="{company_account}"'''
+                company_id = User.objects.raw(sql)[0].id
+            else:
+                company_id = 1
+            company = Company.objects.get(id=company_id, is_valid=1)
 
             with transaction.atomic():
                 try:
-                    user = User.objects.create(username=account, password=make_password(password), first_name=contact_person)
+                    user = User.objects.create(username=account, password=make_password(password), first_name=name, phone=phone)
                 except:
                     result['msg'] = '已存在此帳號'
                     return result
-                company = Company.objects.create(company_name=company_name, company_id=company_id, sub_domain=sub_domain, phone=phone, open_area_list=open_area_list,
-                                                contact_person=contact_person, logo=upload_file)
-                CompanyUserMapping.objects.create(user=user, company=company, is_admin=True)
-                if open_area and city_code_dict:
-                    for open_area_code, open_area_str in city_code_dict.items():
-                        OpenArea.objects.create(company=company, open_area_str=open_area_str, open_area_code=open_area_code)
+                CompanyUserMapping.objects.create(user=user, company=company)
 
             result['status'] = 'OK'
             result['msg'] = '新增帳號成功'
@@ -510,9 +499,9 @@ class AddUser(APIView):
         return result
 
     @extend_schema(
-        summary='新增帳號(公司)',
-        description='新增帳號(公司)',
-        request=AddCompanySerializer,
+        summary='新增帳號(使用者)',
+        description='新增帳號(使用者)',
+        request=AddUserSerializer,
         responses={
             200: OpenApiResponse(description='ok'),
             401: OpenApiResponse(description='身分認證失敗'),
@@ -520,7 +509,7 @@ class AddUser(APIView):
     )
 
     def post(self, request):
-        logger.info('新增帳號(公司)')
+        logger.info('新增帳號(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
         time_end = time.perf_counter()
@@ -536,84 +525,45 @@ class ModifyUser(APIView):
         result = {'status': 'NG'}
         try:
             params = request.POST
-            sub_domain = params.get('sub_domain', None)
-            open_area = params.get('open_area', None)
-            upload_file = request.FILES.get('upload_file', None)
             account = params.get('account', None)
-            state = params.get('state', 'true')
-            company_name = params.get('company_name', None)
-            company_id = params.get('company_id', None)
-            contact_person = params.get('contact_person', None)
+            name = params.get('name', None)
+            password = params.get('password', None)
+            password2 = params.get('password2', None)
             phone = params.get('phone', None)
-            state = json.loads(state)
+            delete = params.get('state', 'false')
+            delete = json.loads(delete)
+
+            #* 檢查密碼
+            check_password = True if (not password2) or (password2 and password == password2) else False
+            if not check_password:
+                result['msg'] = '確認密碼錯誤'
+                return result
 
             #* 帳號
             try:
                 user = User.objects.get(username=account)
-                user.first_name = contact_person
-                user.using = state
+                user.first_name = name
+                user.phone = phone
+                user.password = make_password(password)
+                if delete:
+                    user.is_active = 0
             except:
                 result['msg'] = '不存在的帳號'
                 return result
 
             #* 公司
-            cu_mapping = CompanyUserMapping.objects.get(user=user, is_admin=1)
-            cu_mapping.is_valid = state
-            cid = cu_mapping.company_id
-            company = Company.objects.get(id=cid)
-            company.company_name = company_name
-            company.company_id = company_id
-            company.sub_domain = sub_domain
-            company.contact_person = contact_person
-            company.phone = phone
-            if upload_file:
-                company.logo = upload_file
-            company.open_area_list = open_area
-            company.is_valid = state
-
-            #* 開放地區處理
-            open_area_list = []
-            city_code_dict = {}
-            code_list = []
-            if open_area:
-                for k, v in json.loads(open_area).items():
-                    if v:
-                        city_code_dict[k] = ''
-                        code_list.append(k)
-                try:
-                    url = 'https://lbor.wsos.com.tw/common/car/get_all_code/?select_type=0'
-                    r = requests.get(url)
-                    r = r.json()
-                    for city_code in city_code_dict:
-                        city_name = r[city_code]['city_name']
-                        city_code_dict[city_code] = city_name
-                        open_area_list.append(city_name)
-                except:
-                    logger.info('取地區代碼失敗')
-                    result['msg'] = '取地區代碼失敗'
-                    return result
-
-            company.open_area_list = open_area_list
+            if delete:
+                cu_mapping = CompanyUserMapping.objects.filter(user=user, is_admin=0, is_valid=True)
+                for i in cu_mapping:
+                    i.is_valid = 0
 
             with transaction.atomic():
                 user.save()
-                company.save()
-                cu_mapping.save()
-                if not state:
-                    OpenArea.objects.filter(company=company).update(is_valid=0)
-                elif open_area and city_code_dict:
-                    openarea_data = OpenArea.objects.filter(company=company, is_valid=1)
-                    re_code = []
-                    for i in openarea_data:
-                        if not i.open_area_code in code_list:
-                            i.is_valid = 0
-                            i.save()
-                        else:
-                            re_code.append(i.open_area_code)
-                    create_code_list = list(set(code_list) - set(re_code))
-                    for open_area_code in create_code_list:
-                        open_area_str = city_code_dict[open_area_code]
-                        OpenArea.objects.create(company=company, open_area_str=open_area_str, open_area_code=open_area_code)
+                #* 公司
+                if delete:
+                    cu_mapping = CompanyUserMapping.objects.filter(user=user, is_admin=0, is_valid=True)
+                    for i in cu_mapping:
+                        i.is_valid = 0
 
             result['status'] = 'OK'
             result['msg'] = '修改帳號資料成功'
@@ -623,9 +573,9 @@ class ModifyUser(APIView):
         return result
 
     @extend_schema(
-        summary='修改帳號(公司)',
-        description='修改帳號(公司)',
-        request=ModifyCompanySerializer,
+        summary='修改帳號(使用者)',
+        description='修改帳號(使用者)',
+        request=ModifyUserSerializer,
         responses={
             200: OpenApiResponse(description='ok'),
             401: OpenApiResponse(description='身分認證失敗'),
@@ -633,7 +583,7 @@ class ModifyUser(APIView):
     )
 
     def post(self, request):
-        logger.info('修改帳號(公司)')
+        logger.info('修改帳號(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
         time_end = time.perf_counter()
@@ -650,25 +600,16 @@ class GetUserInfo(APIView):
         try:
             params = request.POST
             account = params.get('account', None)
-
-            sql = f'''SELECT a.id, c.sub_domain, c.open_area_list, c.logo, a.username, a.using, c.company_name, c.company_id, c.contact_person, c.phone
-                    FROM vvip.users_user a
-                    left join vvip.users_companyusermapping b on b.user_id=a.id
-                    left join vvip.users_company c on c.id=b.company_id
-                    where a.username="{account}"'''
-            datas = User.objects.raw(sql)
-            for data in datas:
-                data_dict = {
-                            'sub_domain': data.sub_domain,
-                            'open_area': json.loads(data.open_area_list) if data.open_area_list else [],
-                            'logo': data.logo if data.logo else '',
-                            'account': data.username,
-                            'state': True if data.using else False,
-                            'company_name': data.company_name,
-                            'company_id': data.company_id,
-                            'contact_person': data.contact_person,
-                            'phone': data.phone
-                            }
+            try:
+                data = User.objects.get(username=account)
+            except:
+                result['msg'] = '不存在的帳號'
+                return result
+            data_dict = {
+                        'account': data.username,
+                        'name': data.first_name,
+                        'phone': data.phone
+                        }
 
             result['status'] = 'OK'
             result['msg'] = '取得帳號資訊成功'
@@ -679,8 +620,8 @@ class GetUserInfo(APIView):
         return result
 
     @extend_schema(
-        summary='取得帳號資訊(公司)',
-        description='取得帳號資訊(公司)',
+        summary='取得帳號資訊(使用者)',
+        description='取得帳號資訊(使用者)',
         request=GetCompanyInfoSerializer,
         responses={
             200: OpenApiResponse(description='ok'),
@@ -689,7 +630,7 @@ class GetUserInfo(APIView):
     )
 
     def post(self, request):
-        logger.info('取得帳號資訊(公司)')
+        logger.info('取得帳號資訊(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
         time_end = time.perf_counter()
