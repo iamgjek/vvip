@@ -25,3 +25,22 @@ class ModifyCompanySerializer(serializers.Serializer):
 
 class GetCompanyInfoSerializer(serializers.Serializer):
     account = serializers.CharField(default='dennis', help_text='帳號')
+
+class GetUserListSerializer(serializers.Serializer):
+    company_account = serializers.CharField(default='dennis1', help_text='公司帳號')
+
+class AddUserSerializer(serializers.Serializer):
+    company_account = serializers.CharField(default='dennis1', help_text='公司帳號')
+    account = serializers.CharField(default='dennis99', help_text='帳號')
+    password = serializers.CharField(default='1234', help_text='密碼')
+    password2 = serializers.CharField(default='1234', help_text='確認密碼')
+    name = serializers.CharField(default='一陣風', help_text='名稱')
+    phone = serializers.CharField(default='0987654321', help_text='電話')
+
+class ModifyUserSerializer(serializers.Serializer):
+    account = serializers.CharField(default='dennis', help_text='帳號')
+    password = serializers.CharField(default='1234', help_text='密碼')
+    password2 = serializers.CharField(default='1234', help_text='確認密碼')
+    name = serializers.CharField(default='一陣風', help_text='名稱')
+    phone = serializers.CharField(default='0987654321', help_text='電話')
+    delete = serializers.BooleanField(default=False, help_text='是否刪除')
