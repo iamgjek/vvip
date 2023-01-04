@@ -921,7 +921,7 @@ th {
     margin-top: 30px;
     width: 36%;
 }
-.swal2-actions {
+/* .swal2-actions {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
@@ -952,7 +952,7 @@ th {
     font-size: 1.5em;
     letter-spacing: 2px;
     font-weight: 300;
-}
+} */
 
 .svg01 {
     position: absolute;
