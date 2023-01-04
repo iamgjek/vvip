@@ -544,7 +544,8 @@ class ModifyUser(APIView):
                 user = User.objects.get(username=account)
                 user.first_name = name
                 user.phone = phone
-                user.password = make_password(password)
+                if password:
+                    user.password = make_password(password)
                 if delete:
                     user.is_active = 0
             except:
