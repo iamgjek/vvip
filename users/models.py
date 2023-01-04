@@ -54,6 +54,7 @@ class Company(models.Model):
     company_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='公司名稱')
     company_id = models.CharField(max_length=10, null=True, blank=True, verbose_name='統編')
     sub_domain = models.CharField(max_length=100, null=True, blank=True, verbose_name='子域')
+    open_area_list = CustomJSONField(default=list, blank=True, null=True, verbose_name='開放地區清單')
     contact_person = models.CharField(max_length=100, null=True, blank=True, verbose_name='聯絡人')
     phone = models.CharField(max_length=30, null=True, blank=True, verbose_name='電話')
     logo = models.ImageField(null=True, blank=True, upload_to=path_and_rename, storage=get_storage(), verbose_name='上傳logo')
