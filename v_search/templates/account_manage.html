@@ -54,7 +54,7 @@
                         <button class="btn btn-primary">新增</button>
                     </div>
                 </div>
-                <table class="my-4 table">
+                <table class="my-4 table table-bordered">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -64,8 +64,8 @@
                     </thead>
                     <tbody>
                         <tr v-for="(row, rowIdx) in dataBox">
-                            <th>(( (nowPage-1) * onepageNum + rowIdx ))</th>
-                            <td v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
+                            <th>(( (nowPage-1) * onepageNum + rowIdx + 1 ))</th>
+                            <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
                             <th><button class="btn btn-outline-secondary">編輯</button></th>
                         </tr>
                         <tr v-if="!dataBox.length">
