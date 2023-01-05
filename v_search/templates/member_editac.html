@@ -107,9 +107,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-inline-block">
+                <div class="">
                     <button class="btn btn-primary" @click="editAccount()">確認</button>
-                    <button class="btn btn-primary float-end" @click="delAccount()">刪除帳號</button>
+                    <button class="btn btn-danger float-end" @click="delAccount()">刪除帳號</button>
                 </div>
             </div>
         </div>
@@ -156,16 +156,31 @@
                 },
                 editAccount(){
                     var T = this;
+                    this.dataForm.delete = false;
                     new HTTPreq("/users/modify_user/", "fd").posta(this.dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         Swal.fire(res.msg);
                     });
                 },
                 delAccount(){
-                    var T = this; // @@@@
-                    new HTTPreq("/users/delete_user/", "fd").posta(this.dataForm).then(rcv => {
-                        var res = supfnc.toJSON(rcv.result);
-                        Swal.fire(res.msg);
+                    var T = this;
+                    Swal.fire({
+                        icon: "warning",
+                        title: "確認刪除？",
+                        text: "此操作無法復原",
+                        showConfirmButton: false,
+                        showCancelButton: true,
+                        cancelButtonText: "取消",
+                        showDenyButton: true,
+                        denyButtonText: "刪除",
+                    }).then((r)=>{
+                        if(r.isDenied){
+                            // T.dataForm.delete = true;
+                            new HTTPreq("/users/delete_user/", "fd").posta(T.dataForm).then(rcv => {
+                                var res = supfnc.toJSON(rcv.result);
+                                Swal.fire(res.msg);
+                            });
+                        }
                     });
                 },
             },
