@@ -66,7 +66,7 @@
                             <div class="px-2">
                                 <h5>帳號</h5>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account">
+                                    <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
                                 </div>
                             </div>
                             <div class="px-2">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="d-inline-block">
-                    <button class="btn btn-primary">確認</button>
+                    <button class="btn btn-primary" @click="resetPW()">確認</button>
                 </div>
             </div>
         </div>
@@ -100,12 +100,13 @@
 
     {% block script %}
     <script>
+        const pwpwpw = "{{ user.username }}";
         const baseapp = Vue.createApp({
             delimiters: ['((', '))'],
             data() {
                 return {
                     dataForm:{
-                        account: "",
+                        account: pwpwpw,
                         password: "",
                         password2: "",
                     }
@@ -118,6 +119,13 @@
                         if(res.status == "OK"){
                             window.location.href = "/";
                         }
+                    });
+                },
+                resetPW(){
+                    // @@@@
+                    this.dataForm.account = pwpwpw;
+                    new HTTPreq("/v_search/reset/", "fd").geta().then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
                     });
                 },
             },
