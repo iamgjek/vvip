@@ -340,6 +340,8 @@ class GetCompanyInfo(APIView):
             params = request.POST
             account = params.get('account', None)
 
+            city_list = {'臺北市': 'A', '基隆市': 'C', '新北市': 'F', '桃園市': 'H', '新竹市': 'O', '新竹縣': 'J', '臺中市': 'B', '苗栗縣': 'K', '彰化縣': 'N', '南投縣': 'M',
+                        '雲林縣': 'P', '臺南市': 'D', '高雄市': 'E', '嘉義市': 'I', '嘉義縣': 'Q', '屏東縣': 'T', '宜蘭縣': 'G', '花蓮縣': 'U', '臺東縣': 'V'}
             sql = f'''SELECT a.id, c.sub_domain, c.open_area_list, c.logo, a.username, a.using, c.company_name, c.company_id, c.contact_person, c.phone
                     FROM vvip.users_user a
                     left join vvip.users_companyusermapping b on b.user_id=a.id
@@ -347,9 +349,11 @@ class GetCompanyInfo(APIView):
                     where a.username="{account}"'''
             datas = User.objects.raw(sql)
             for data in datas:
+                city_data = json.loads(data.open_area_list) if data.open_area_list else []
+                city_dict = {city_list[i]: True for i in city_data} if city_data else {}
                 data_dict = {
                             'sub_domain': data.sub_domain,
-                            'open_area': json.loads(data.open_area_list) if data.open_area_list else [],
+                            'open_area': city_dict,
                             'logo': data.logo if data.logo else '',
                             'account': data.username,
                             'state': True if data.using else False,
