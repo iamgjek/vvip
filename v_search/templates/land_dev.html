@@ -804,7 +804,7 @@
                                                 <p>(( data[0].uid || '' ))</p>
                                             </td>
                                             <td data="戶籍地址" class="left">
-                                                <p>(( data[0].戶籍地址address_re || '(空白)' ))</p>
+                                                <p>(( data[0].address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
                                                 <p>(( data[0].bday || '' ))</p>
@@ -828,7 +828,7 @@
                                                 <p>(( data[0].$所有權註記 || '' ))</p>
                                             </td>
                                             <td data="身份標籤">
-                                                <p>(( data[0].$身份標籤 || '' ))</p>
+                                                <p>(( data[0].uid_tag || '' ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
@@ -848,6 +848,7 @@
                                                             <th role="button" @click="sortf($event, data, 'right_str')">權利範圍</th>
                                                             <th role="button" @click="sortf($event, data, 'shared_size')">持分坪數</th>
                                                             <th role="button" @click="sortf($event, data, 'present_value')">持分現值</th>
+                                                            <th role="button" @click="sortf($event, data, 'build_num')">地上建物筆數</th>
                                                             <th role="button" @click="sortf($event, data, 'creditors_rights')" class="br2"  style="text-align:left;">他項權利(其他註記)</th>
                                                         </tr>
                                                     </thead>
@@ -865,6 +866,7 @@
                                                             <td data="權利範圍">(( line.right_str || '' ))</td>
                                                             <td data="持分坪數">(( (line.shared_size / 3.30579).round(2) || '' ))</td>
                                                             <td data="持分現值">(( line.present_value?.chUnit(1, 2) || '' ))</td>
+                                                            <td data="地上建物筆數">(( line.build_num || '' ))</td>
                                                             <td data="他項權利(其他註記)"  style="text-align:left;">
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
