@@ -335,6 +335,13 @@ class GetSearchResponseV3View(APIView):
         "other": '12'
         }
 
+    uid_tag_out = {
+        0: "未知",
+        1: "本國人",
+        2: "外國人",
+        3: "港澳中國居民",
+        }
+    
     def check_int(self, num):        
         if isinstance(num, (int, float)) == True:
             return num
@@ -426,6 +433,10 @@ class GetSearchResponseV3View(APIView):
                     new_str = need
         return new_str
 
+    def apply_uid_tag(self, uid_tag):
+        data = self.uid_tag_out.get(uid_tag)
+        return data
+
     def apply_owner_type(self, owner_type):
         data = self.ownership_out.get(owner_type)
         return data
@@ -486,7 +497,7 @@ class GetSearchResponseV3View(APIView):
                             T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                             T2.build_num, T2.owner_type, T2.urban_type ,T2.owners_num, T2.land_zone_code, \
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
-                            T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
+                            T1.uid, T1.uid_tag, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
                             T1.reg_reason, T1.right_type, T1.case_type, T1.restricted_type \
                             "
@@ -565,6 +576,7 @@ class GetSearchResponseV3View(APIView):
                     pass
 
             data['owner_type'] = data['owner_type'].apply(self.apply_owner_type)
+            data['uid_tag']  = data['uid_tag'].apply(self.apply_uid_tag)
             data['creditors_rights'] = data['creditors_rights'].apply(self.apply_creditors_rights)
             # group
             try:
@@ -918,7 +930,7 @@ class GetSearchResponseV3View(APIView):
                     T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                     T2.build_num, T2.owner_type, \
                     T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
-                    T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
+                    T1.uid, T1.uid_tag, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                     T1.is_valid, T1.remove_time \
                     FROM \
                     diablo.t_search_lkeyregnolist T1 \
