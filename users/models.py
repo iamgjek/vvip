@@ -70,6 +70,9 @@ class Company(models.Model):
             models.Index(fields=['is_valid']),
         ]
 
+    def __str__(self):
+        return '{}'.format(self.company_name)
+
 class OpenArea(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True, on_delete=models.CASCADE, verbose_name='公司')
     open_area_str = models.CharField(max_length=100, null=True, blank=True, verbose_name='開放地區字串')
