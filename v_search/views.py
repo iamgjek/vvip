@@ -81,6 +81,16 @@ class LandDevView(NormalTemplateView):
             return redirect('/')
         return render(request, self.template_name, context=context)
 
+class AccountManageLoginView(NormalTemplateView):
+    TAG = '[AccountManageLoginView]'
+    template_name = 'account_manage_login.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if not self.request.user.is_anonymous:
+            return redirect('/v_search/account_manage/')
+        return render(request, self.template_name, context=context)
+
 class AccountManageView(NormalTemplateView):
     TAG = '[AccountManageView]'
     template_name = 'account_manage.html'
