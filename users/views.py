@@ -145,6 +145,14 @@ class AddCompany(APIView):
             contact_person = params.get('contact_person', None)
             phone = params.get('phone', None)
 
+            if not company_name:
+                result['msg'] = '公司名稱不能為空'
+                return result
+
+            if not account:
+                result['msg'] = '帳號不能為空'
+                return result
+
             #* 檢查密碼
             check_password = True if (not password2) or (password2 and password == password2) else False
             if not check_password:
@@ -468,6 +476,10 @@ class AddUser(APIView):
             password2 = params.get('password2', None)
             name = params.get('name', None)
             phone = params.get('phone', None)
+
+            if not account:
+                result['msg'] = '帳號不能為空'
+                return result
 
             #* 檢查密碼
             check_password = True if (not password2) or (password2 and password == password2) else False
