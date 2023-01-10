@@ -9,20 +9,25 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
     {% endblock %}
+    <style>
+        body {
+            background: url("/static/images/bg.jpg") #fff0!important;
+        }
+    </style>
 </head>
 <body>
     {% block body %}
-    <div id="vue_app" class="cont flex-column" style="min-height: 100vh;">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div id="vue_app" class="cont">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding:8px 19px!important">
             <div class="container-fluid">
                 <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item bi"><a href="#">土地開發</a></li>
+                        <li class="breadcrumb-item bi"><a href="/v_search/land_dev/" class="bia">土地開發</a></li>
                     </ol>
                 </nav>
             </div>
-            <div class="d-flex">
+            <div class="d-flex df">
                 <a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown" data-bs-target="usermenu" aria-expanded="false">
                     {% if user.first_name == '' %}
                     {{ user.username }}
@@ -62,25 +67,28 @@
             <div class="form1 row">
                 <h3 class="text-center h3bottom">變更密碼</h3>
                     <div class="width50">
-      
-                            <div class="px-2">
+                        <div class="row">
+                            <div class="px-2 col">
                                 <label>帳號</label>
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
                                 </div>
                             </div>
-                            <div class="px-2">
+                        </div>
+                        <div class="row">
+                            <div class="px-2 col">
                                 <label>密碼</label>
                                 <div class="input-group mb-3">
                                     <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
                                 </div>
                             </div>
-                            <div class="px-2">
+                            <div class="px-2 col">
                                 <label>確認密碼</label>
                                 <div class="input-group mb-3">
                                     <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
                                 </div>
                             </div>
+                        </div>
   
                     </div>
 

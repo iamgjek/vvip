@@ -13,16 +13,16 @@
 <body>
     {% block body %}
     <div id="vue_app" class="cont flex-column" style="min-height: 100vh;">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding:8px 19px!important">
             <div class="container-fluid">
                 <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item bi"><a href="#">土地開發</a></li>
+                        <li class="breadcrumb-item bi"><a href="http://www.vvips.com.tw/v_search/land_dev/" class="bia">土地開發</a></li>
                     </ol>
                 </nav>
             </div>
-            <div class="d-flex">
+            <div class="d-flex df">
                 <a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown" data-bs-target="usermenu" aria-expanded="false">
                     {% if user.first_name == '' %}
                     {{ user.username }}
@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/v_search/account_edit/" id="buttonForLogout" class="btn dropdown-item">
+                        <a href="/v_search/member_aclist/" id="buttonForLogout" class="btn dropdown-item">
                             <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;帳號管理
                         </a>
                     </li>
@@ -61,36 +61,44 @@
             <div class="form1 row">
                 <h3 class="text-center h3bottom">編輯帳號</h3>
                         <div class="width50">
-                            <div class="px-2">
-                                <label>帳號</label>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
-                                </div>
+                            <div class="row">
+                              <div class="px-2 col">
+                                  <label>帳號</label>
+                                  <div class="input-group mb-3">
+                                      <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
+                                  </div>
+                              </div>
                             </div>
-                            <div class="px-2">
-                                <label>密碼</label>
-                                <div class="input-group mb-3">
-                                    <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
-                                </div>
-                            </div>
-                            <div class="px-2">
-                                <label>確認密碼</label>
-                                <div class="input-group mb-3">
-                                    <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
-                                </div>
+                            <div class="row">                        
+                              <div class="px-2 col">
+                                  <label>密碼</label>
+                                  <div class="input-group mb-3">
+                                      <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
+                                  </div>
+                              </div>
+                              <div class="px-2 col">
+                                  <label>確認密碼</label>
+                                  <div class="input-group mb-3">
+                                      <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
+                                  </div>
+                              </div>
                             </div>
                             <hr class="hr"/>
-                            <div class="px-2">
-                                <label>名稱</label>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
-                                </div>
+                            <div class="row">
+                              <div class="px-2 col">
+                                  <label>名稱</label>
+                                  <div class="input-group mb-3">
+                                      <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
+                                  </div>
+                              </div>
                             </div>
-                            <div class="px-2">
-                                <label>電話</label>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
-                                </div>
+                            <div class="row">
+                              <div class="px-2 col">
+                                  <label>電話</label>
+                                  <div class="input-group mb-3">
+                                      <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
+                                  </div>
+                              </div>
                             </div>
                         </div>
 
