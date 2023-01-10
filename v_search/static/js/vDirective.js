@@ -900,7 +900,7 @@ baseapp.directive('password', {
         var eye = document.createElement("i");
         var eyeL = ["far", "fa-eye", "position-absolute", "end-0", "top-50", "translate-middle"];
         for(var c in eyeL) eye.classList.add(eyeL[c]);
-        eye.style.zIndex = "9999";
+        // eye.style.zIndex = "9999";
         eye.style.marginRight = window.getComputedStyle(el.parentElement, null).getPropertyValue("padding-right");
         eye.setAttribute("role", "button");
         
