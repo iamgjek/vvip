@@ -12,13 +12,13 @@
 </head>
 <body>
     {% block body %}
-    <div id="vue_app" class="cont d-flex flex-column" style="min-height: 100vh;">
+    <div id="vue_app" class="cont flex-column" style="min-height: 100vh;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item bi"><a href="#">VVIP</a></li>
+                        <li class="breadcrumb-item bi"><a href="#">土地開發</a></li>
                     </ol>
                 </nav>
             </div>
@@ -51,7 +51,7 @@
             </div>
         </nav>
 
-        <div class="container wrap p-4">
+        <div class="container wrap">
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
@@ -59,6 +59,7 @@
                 </ol>
             </nav>
 
+<<<<<<< HEAD
             <div class="d-flex flex-row-reverse">
                 <div class="">
                     <a href="/v_search/member_newac/"><button class="btn btn-primary">新增</button></a>
@@ -66,6 +67,9 @@
             </div>
 
             <table class="my-4 table table-bordered">
+=======
+            <table class="my-4 table table-bordered table1">
+>>>>>>> c8c30c59b16346db08bf33bd3e47e6c530024d7c
                 <thead>
                     <tr>
                         <th>#</th>
@@ -75,9 +79,13 @@
                 </thead>
                 <tbody>
                     <tr v-for="(row, rowIdx) in dataBox">
-                        <th>(( (nowPage-1) * onepageNum + rowIdx + 1 ))</th>
+                        <td>(( (nowPage-1) * onepageNum + rowIdx + 1 ))</td>
                         <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
+<<<<<<< HEAD
                         <th><a :href="'/v_search/member_editac?account=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
+=======
+                        <td><button class="btn btn-outline-secondary">編輯</button></td>
+>>>>>>> c8c30c59b16346db08bf33bd3e47e6c530024d7c
                     </tr>
                     <tr v-if="!dataBox.length">
                         <td :colspan="titleOrder.length+2" class="text-center">無資料</td>

@@ -12,13 +12,13 @@
 </head>
 <body>
     {% block body %}
-    <div id="vue_app" class="cont d-flex flex-column" style="min-height: 100vh;">
+    <div id="vue_app" class="cont flex-column" style="min-height: 100vh;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item bi"><a href="#">VVIP</a></li>
+                        <li class="breadcrumb-item bi"><a href="#">土地開發</a></li>
                     </ol>
                 </nav>
             </div>
@@ -51,47 +51,45 @@
             </div>
         </nav>
         
-        <div class="container wrap p-4">
+        <div class="container wrap">
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
+<<<<<<< HEAD
                     <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
+=======
+                    <li class="breadcrumb-item"><a href="#">首頁</a></li>
+                    <li class="breadcrumb-item active">帳號管理</li>
+>>>>>>> c8c30c59b16346db08bf33bd3e47e6c530024d7c
                     <li class="breadcrumb-item active">變更密碼</li>
                 </ol>
             </nav>
-            <div class="my-4">
-                <h2>變更密碼</h2>
-                <div>
-                    <div class="">
-                        <div class="d-flex">
+            <div class="form1 row">
+                <h3 class="text-center h3bottom">變更密碼</h3>
+                    <div class="width50">
+      
                             <div class="px-2">
-                                <h5>帳號</h5>
+                                <label>帳號</label>
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
                                 </div>
                             </div>
                             <div class="px-2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="d-flex">
-                            <div class="px-2">
-                                <h5>密碼</h5>
+                                <label>密碼</label>
                                 <div class="input-group mb-3">
                                     <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
                                 </div>
                             </div>
                             <div class="px-2">
-                                <h5>確認密碼</h5>
+                                <label>確認密碼</label>
                                 <div class="input-group mb-3">
                                     <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
                                 </div>
                             </div>
-                        </div>
+  
                     </div>
-                </div>
-                <div class="d-inline-block">
-                    <button class="btn btn-primary" @click="resetPW()">確認</button>
+
+                <div class="d-inline-block width70">
+                    <button class="btn btn-primary width102 btnaa" @click="resetPW()">確認</button>
                 </div>
             </div>
         </div>
