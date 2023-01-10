@@ -15,7 +15,7 @@
     <div id="vue_app" class="cont d-flex flex-column" style="min-height: 100vh;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand logo1" href="#"></a>
+                <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item bi"><a href="#">VVIP</a></li>
@@ -43,7 +43,7 @@
         <div class="d-flex flex-grow-1">
             <div class="left_content" style="width: 300px;">
                 <ul class="list-group">
-                    <li class="list-group-item"><i class="fa-solid fa-house"></i><a href="/v_search/account_manage">帳號管理</a></li>
+                    <li class="list-group-item"><i class="fa-solid fa-house"></i><a href="/v_search/account_manage/">帳號管理</a></li>
                     <li class="list-group-item"><i class="fa-solid fa-gauge-high"></i>Dashboard</li>
                 </ul>
             </div>
@@ -51,7 +51,7 @@
                 <div class="d-flex">
                     <h2 class="flex-grow-1">帳號管理</h2>
                     <div>
-                        <a href="/v_search/account_add"><button class="btn btn-primary">新增</button></a>
+                        <a href="/v_search/account_add/"><button class="btn btn-primary">新增</button></a>
                     </div>
                 </div>
                 <table class="my-4 table table-bordered">
@@ -66,7 +66,7 @@
                         <tr v-for="(row, rowIdx) in dataBox">
                             <th>(( (nowPage-1) * onepageNum + rowIdx + 1 ))</th>
                             <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
-                            <th><a :href="'/v_search/account_edit?id=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
+                            <th><a :href="'/v_search/account_edit?account=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
                         </tr>
                         <tr v-if="!dataBox.length">
                             <td :colspan="titleOrder.length + 2" class="text-center">無資料</td>

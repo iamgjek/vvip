@@ -15,7 +15,7 @@
     <div id="vue_app" class="cont d-flex flex-column" style="min-height: 100vh;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand logo1" href="#"></a>
+                <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item bi"><a href="#">VVIP</a></li>
@@ -53,8 +53,8 @@
         <div class="container wrap p-4">
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                    <li class="breadcrumb-item active">帳號管理</li>
+                    <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
+                    <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
                     <li class="breadcrumb-item active">編輯帳號</li>
                 </ol>
             </nav>
@@ -140,18 +140,18 @@
                         }
                     });
                 },
-                getAccountData(){
+                getAccountData(auto = true){
                     if(!this.dataForm.account.length) {
                         Swal.fire("請輸入帳號");
                         return;
                     }
                     var T = this; // @@@@
-                    new HTTPreq("/users/get_user/", "fd").posta({account: this.dataForm.account}).then(rcv => {
+                    new HTTPreq("/users/get_user_info/", "fd").posta({account: this.dataForm.account}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
                             for(var i in res.data) T.dataForm[i] = res.data[i];
                         }
-                        Swal.fire(res.msg);
+                        if(!auto) Swal.fire(res.msg);
                     });
                 },
                 editAccount(){
@@ -176,7 +176,7 @@
                     }).then((r)=>{
                         if(r.isDenied){
                             // T.dataForm.delete = true;
-                            new HTTPreq("/users/delete_user/", "fd").posta(T.dataForm).then(rcv => {
+                            new HTTPreq("/users/modify_user/", "fd").posta(T.dataForm).then(rcv => {
                                 var res = supfnc.toJSON(rcv.result);
                                 Swal.fire(res.msg);
                             });
@@ -185,7 +185,7 @@
                 },
             },
             mounted(){
-                this.dataForm.account = supfnc.getHrefArg().id;
+                this.dataForm.account = supfnc.getHrefArg().account;
                 this.getAccountData();
             },
             created(){},
