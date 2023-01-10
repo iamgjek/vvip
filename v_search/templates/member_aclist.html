@@ -71,7 +71,7 @@
                     <tr v-for="(row, rowIdx) in dataBox">
                         <th>(( (nowPage-1) * onepageNum + rowIdx + 1 ))</th>
                         <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
-                        <th><button class="btn btn-outline-secondary">編輯</button></th>
+                        <th><a :href="'/v_search/member_editac?id=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
                     </tr>
                     <tr v-if="!dataBox.length">
                         <td :colspan="titleOrder.length+2" class="text-center">無資料</td>

@@ -184,7 +184,10 @@
                     });
                 },
             },
-            mounted(){},
+            mounted(){
+                this.dataForm.account = supfnc.getHrefArg().id;
+                this.getAccountData();
+            },
             created(){},
             updated(){},
             beforeUpdate(){},

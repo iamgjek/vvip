@@ -771,7 +771,6 @@
                                         <th role="button" @click="sortf($event, person_searchRes, 'length')" scope="col" style="width:10%;">土地總筆數</th>
                                         <th role="button" @click="sortf($event, person_searchRes, 'shared_size_t')" scope="col" style="width:5%;">持分總坪數</th>
                                         <th role="button" @click="sortf($event, person_searchRes, 'shared_value_t')" scope="col" style="width:5%;">持分總現值</th>
-                                        <th role="button" @click="sortf($event, person_searchRes, '0.$建物總筆數')" scope="col" style="width:5%;">建物總筆數</th>
                                         <th role="button" @click="sortf($event, person_searchRes, '0.$電話')" scope="col" style="width:5%;">電話</th>
                                         <th role="button" @click="sortf($event, person_searchRes, '0.$所有權註記')" scope="col" style="width:10%;">所有權註記</th>
                                         <th role="button" @click="sortf($event, person_searchRes, '0.$身份標籤')" scope="col" style="width:10%;" class="br2">身份標籤</th>
@@ -804,7 +803,7 @@
                                                 <p>(( data[0].uid || '' ))</p>
                                             </td>
                                             <td data="戶籍地址" class="left">
-                                                <p>(( data[0].戶籍地址address_re || '(空白)' ))</p>
+                                                <p>(( data[0].address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
                                                 <p>(( data[0].bday || '' ))</p>
@@ -817,9 +816,6 @@
                                             </td>
                                             <td data="持分總現值">
                                                 <p>(( data.shared_value_t ))</p>
-                                            </td>
-                                            <td data="建物總筆數">
-                                                <p>(( data[0].$建物總筆數 || '' ))</p>
                                             </td>
                                             <td data="電話">
                                                 <p>(( data[0].$電話 || '' ))</p>
@@ -840,7 +836,7 @@
                                                             <th role="button" @click="sortf($event, data, 'area_name')">行政區</th>
                                                             <th role="button" @click="sortf($event, data, 'region_name')" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
                                                             <th role="button" @click="sortf($event, data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
-                                                            <th role="button" @click="sortf($event, data, '@登記次序')">登記次序</th>
+                                                            <th role="button" @click="sortf($event, data, 'regno')">登記次序</th>
                                                             <th role="button" @click="sortf($event, data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
                                                             <th role="button" @click="sortf($event, data, 'reg_reason_str')">登記原因</th>
                                                             <th role="button" @click="sortf($event, data, 'land_area')">土地面積(坪)</th>
@@ -857,7 +853,7 @@
                                                             <td data="行政區">(( line.area_name || '' ))</td>
                                                             <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">(( line.region_name || '' ))</td>
                                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line.lno || '' ))</td>
-                                                            <td data="登記次序">(( line.$登記次序 || '' ))</td>
+                                                            <td data="登記次序">(( line.regno || '' ))</td>
                                                             <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
                                                             <td data="登記原因">(( line.reg_reason_str || '' ))</td>
                                                             <td data="土地面積">(( (line.land_area / 3.30579).round(2) || '' ))</td>

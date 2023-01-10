@@ -43,7 +43,7 @@
         <div class="d-flex flex-grow-1 w-75">
             <div class="left_content" style="width: 300px;">
                 <ul class="list-group">
-                    <li class="list-group-item"><i class="fa-solid fa-house"></i>帳號管理</li>
+                    <li class="list-group-item"><i class="fa-solid fa-house"></i><a href="/v_search/account_manage">帳號管理</a></li>
                     <li class="list-group-item"><i class="fa-solid fa-gauge-high"></i>Dashboard</li>
                 </ul>
             </div>
@@ -105,7 +105,7 @@
                         </div>
                         <div class="px-2">
                             <h5>取得帳號資料</h5>
-                            <div class="btn btn-outline-secondary" @click="getAccountData()">載入</div>
+                            <div class="btn btn-outline-secondary" @click="getAccountData(false)">載入</div>
                         </div>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                         }
                     });
                 },
-                getAccountData(){
+                getAccountData(auto = true){
                     if(!this.dataForm.account.length) {
                         Swal.fire("請輸入帳號");
                         return;
@@ -192,7 +192,7 @@
                         if(res.status == "OK"){
                             for(var i in res.data) T.dataForm[i] = res.data[i];
                         }
-                        Swal.fire(res.msg);
+                        if(!auto) Swal.fire(res.msg);
                     });
                 },
                 editAccountData(){
@@ -211,7 +211,10 @@
                     })
                 }
             },
-            mounted(){},
+            mounted(){
+                this.dataForm.account = supfnc.getHrefArg().id;
+                this.getAccountData();
+            },
             created(){},
             updated(){},
             beforeUpdate(){},
