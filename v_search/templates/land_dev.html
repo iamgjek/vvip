@@ -1124,6 +1124,7 @@
                     });
                 },
                 serverSearch(){
+                    if(this.loading) return;
                     var T = this;
                     if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
                         Swal.fire("請選擇至段小段或計劃案")
@@ -1139,6 +1140,7 @@
 
                     this.searchForm.land.region.land_number = this.landbuildNumberFix(this.searchForm.land.region.land_number, "l").res.join(",");
 
+                    T.getSearchOptionsList = T.getSearchOptions();
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
                         if(rcv.status == 200){
@@ -1174,7 +1176,6 @@
                             T.person_nowPage = 0;
                             Vue.nextTick(()=>{T.person_nowPage = 1;});
 
-                            T.getSearchOptionsList = T.getSearchOptions();
                             T.serverError = 0;
                         }
                         else{
@@ -1248,7 +1249,10 @@
                     tmp = ["不拘", "排除", "只有"].getV(this.searchForm.land.condition.ownershipType)
                     if(tmp) r.push(tmp + "公同共有");
                     // 使用分區
-                    tmp = this.searchForm.land.condition.inCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, []);
+                    tmp = [];
+                    if(this.searchForm.land.condition.common_land) tmp.push("道路用地");
+                    if(this.searchForm.land.condition.road_land) tmp.push("公共設施保留地");
+                    tmp = [...tmp, this.searchForm.land.condition.inCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity2.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     if(tmp.length) r.push(tmp.join(" "));

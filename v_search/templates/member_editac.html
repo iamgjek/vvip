@@ -53,18 +53,8 @@
         <div class="container wrap">
             <nav aria-label="breadcrumb" class="bb">
                 <ol class="breadcrumb">
-<<<<<<< HEAD
                     <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
                     <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
-=======
-<<<<<<< HEAD
-                    <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
-                    <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
-=======
-                    <li class="breadcrumb-item"><a href="#">首頁</a></li>
-                    <li class="breadcrumb-item">帳號管理</li>
->>>>>>> c8c30c59b16346db08bf33bd3e47e6c530024d7c
->>>>>>> 0ba5aab8fbf1afe2507cfe806f2acba35a205ca7
                     <li class="breadcrumb-item active">編輯帳號</li>
                 </ol>
             </nav>
@@ -172,11 +162,7 @@
                         denyButtonText: "刪除",
                     }).then((r)=>{
                         if(r.isDenied){
-<<<<<<< HEAD
                             T.dataForm.delete = true;
-=======
-                            // T.dataForm.delete = true;
->>>>>>> 0ba5aab8fbf1afe2507cfe806f2acba35a205ca7
                             new HTTPreq("/users/modify_user/", "fd").posta(T.dataForm).then(rcv => {
                                 var res = supfnc.toJSON(rcv.result);
                                 Swal.fire(res.msg);
