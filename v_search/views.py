@@ -814,28 +814,29 @@ class GetSearchResponseV3View(APIView):
             road_land = base_condition.get('road_land', None)
             common_land = base_condition.get('common_land', None)
             # print(road_land, common_land)
-            # print(in_city)
-            # print(out_city)
-            # print(outCity2)
             # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
             total_con = []
-            # if in_city or out_city or outCity2 or road_land or common_land :
-            if in_city:
-                con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))
+            # self.total_df['urban_name'] = self.total_df['urban_name'].fillna('')
+            # self.total_df['land_zone'] = self.total_df['land_zone'].fillna('')
+            # self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
+
+            if in_city or out_city:
+                # 搜尋2個欄位
+                con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city), na=False)
                 total_con.append(con1)
-            if out_city:
-                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))   
+                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city), na=False)   
                 total_con.append(con2)
+
             if outCity2:
-                con3 = self.total_df['urban_name'].str.startswith(tuple(outCity2))
+                con3 = self.total_df['urban_name'].str.startswith(tuple(outCity2), na=False)
                 total_con.append(con3)
             if road_land:
                 con4 = self.total_df['land_zone_code']=='C11'
                 total_con.append(con4)
             if common_land:
-                con5 = self.total_df['land_zone_code'].str.startswith('C')
+                con5 = self.total_df['land_zone_code'].str.startswith('C', na=False)
                 total_con.append(con5)
-                
+
             if total_con:
                 self.total_df = self.total_df[reduce(operator.or_, total_con)]
 
