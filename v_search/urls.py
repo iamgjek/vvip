@@ -19,6 +19,7 @@ urlpatterns = [
     re_path(r'^get_area/$', views.GetAreaListView.as_view(), name='get_area'),
     re_path(r'^get_region/$', views.GetRegionListView.as_view(), name='get_region'),
 
+    re_path(r'^account_manage_login/$', views.AccountManageLoginView.as_view(), name='account_manage_login'),
     re_path(r'^account_manage/$', views.AccountManageView.as_view(), name='account_manage'),
     re_path(r'^account_edit/$', views.AccountEditView.as_view(), name='account_edit'),
     re_path(r'^account_add/$', views.AccountAddView.as_view(), name='account_add'),

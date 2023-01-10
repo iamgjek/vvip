@@ -91,7 +91,7 @@
                         <div class="px-2">
                             <h5>帳號</h5>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account">
+                                <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
                             </div>
                         </div>
                         <div class="px-2">
@@ -102,10 +102,6 @@
                                     <option :value="true">啟用</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="px-2">
-                            <h5>取得帳號資料</h5>
-                            <div class="btn btn-outline-secondary" @click="getAccountData(false)">載入</div>
                         </div>
                     </div>
                 </div>
