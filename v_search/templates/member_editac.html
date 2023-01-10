@@ -32,7 +32,7 @@
                     <svg  class="svg5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
                 </a>
                 <ul id="usermenu" class="dropdown-menu dropdown-menu-end">
-                    <li>
+                    <li class="d-none">
                         <a href="/v_search/member_pw/" id="buttonForLogout" class="btn dropdown-item">
                             <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;變更密碼
                         </a>
@@ -57,9 +57,14 @@
                     <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
                     <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
 =======
+<<<<<<< HEAD
+                    <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
+                    <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
+=======
                     <li class="breadcrumb-item"><a href="#">首頁</a></li>
                     <li class="breadcrumb-item">帳號管理</li>
 >>>>>>> c8c30c59b16346db08bf33bd3e47e6c530024d7c
+>>>>>>> 0ba5aab8fbf1afe2507cfe806f2acba35a205ca7
                     <li class="breadcrumb-item active">編輯帳號</li>
                 </ol>
             </nav>
@@ -69,7 +74,7 @@
                             <div class="px-2">
                                 <label>帳號</label>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account">
+                                    <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
                                 </div>
                             </div>
                             <div class="px-2">
@@ -167,7 +172,11 @@
                         denyButtonText: "刪除",
                     }).then((r)=>{
                         if(r.isDenied){
+<<<<<<< HEAD
+                            T.dataForm.delete = true;
+=======
                             // T.dataForm.delete = true;
+>>>>>>> 0ba5aab8fbf1afe2507cfe806f2acba35a205ca7
                             new HTTPreq("/users/modify_user/", "fd").posta(T.dataForm).then(rcv => {
                                 var res = supfnc.toJSON(rcv.result);
                                 Swal.fire(res.msg);

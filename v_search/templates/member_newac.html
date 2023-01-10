@@ -32,7 +32,7 @@
                     <svg  class="svg5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
                 </a>
                 <ul id="usermenu" class="dropdown-menu dropdown-menu-end">
-                    <li>
+                    <li class="d-none">
                         <a href="/v_search/member_pw/" id="buttonForLogout" class="btn dropdown-item">
                             <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;變更密碼
                         </a>
@@ -82,17 +82,17 @@
                                     <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
                                 </div>
                             </div>
-                            <hr/ class="hr">
+                            <hr class="hr"/>
                             <div class="px-2">
                                 <label>名稱</label>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
+                                    <input type="text" class="form-control" placeholder="名稱" v-model="dataForm.name">
                                 </div>
                             </div>
                             <div class="px-2">
                                 <label>電話</label>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
+                                    <input type="text" class="form-control" placeholder="電話" v-model="dataForm.phone">
                                 </div>
                             </div>
                         </div>
