@@ -246,8 +246,10 @@ class ModifyCompany(APIView):
             #* 帳號
             try:
                 user = User.objects.get(username=account)
-                user.first_name = contact_person
-                user.phone = phone
+                if contact_person:
+                    user.first_name = contact_person
+                if phone:
+                    user.phone = phone
                 user.using = state
             except:
                 result['msg'] = '不存在的帳號'
@@ -258,14 +260,18 @@ class ModifyCompany(APIView):
             cu_mapping.is_valid = state
             cid = cu_mapping.company_id
             company = Company.objects.get(id=cid)
-            company.company_name = company_name
-            company.company_id = company_id
-            company.sub_domain = sub_domain
-            company.contact_person = contact_person
-            company.phone = phone
+            if company_name:
+                company.company_name = company_name
+            if company_id:
+                company.company_id = company_id
+            if sub_domain:
+                company.sub_domain = sub_domain
+            if contact_person:
+                company.contact_person = contact_person
+            if phone:
+                company.phone = phone
             if upload_file:
                 company.logo = upload_file
-            company.open_area_list = open_area
             company.is_valid = state
 
             #* 開放地區處理
@@ -558,8 +564,10 @@ class ModifyUser(APIView):
             #* 帳號
             try:
                 user = User.objects.get(username=account)
-                user.first_name = name
-                user.phone = phone
+                if name:
+                    user.first_name = name
+                if phone:
+                    user.phone = phone
                 if password:
                     user.password = make_password(password)
                 if delete:
