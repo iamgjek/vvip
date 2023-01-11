@@ -94,6 +94,7 @@ class HTTPreq{
             }
         }
         Xreq.send(sd);
+        this.Xreq = Xreq;
     }
 
     returnValue(){
