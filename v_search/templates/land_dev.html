@@ -1143,6 +1143,9 @@
                     T.getSearchOptionsList = T.getSearchOptions();
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
                         T.loading = 0;
+                        T.sortOption = "";
+                        T.sortPreElement = "";
+
                         if(rcv.status == 200){
                             var res = supfnc.toJSON(rcv.result);
                             console.log(res);
@@ -1169,7 +1172,7 @@
                                 owner_data[i].shared_size_t = shared_size_t.round(2);
                                 owner_data[i].shared_value_t = shared_value_t.chUnit(1, 2);
                                 
-                                owner_data[i]._key = "k" + i.replace(new RegExp("[~!@#$%^&*()?<>/\\]"), "g");
+                                owner_data[i]._key = "k" + i.replace(new RegExp("[~!@#$%^&*()?<>/\\\\]"), "g");
                                 T.person_searchRes.push(owner_data[i]);
                             }
                             T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
