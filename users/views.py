@@ -412,8 +412,7 @@ class GetUserList(APIView):
     def process(self, request):
         result = {'status': 'NG'}
         try:
-            params = request.GET
-            company_account = params.get('company_account', None)
+            company_account = self.username
             if not company_account:
                 sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
                         left join vvip.users_user b on b.id=a.user_id
@@ -460,6 +459,7 @@ class GetUserList(APIView):
     )
 
     def get(self, request):
+        self.username = User.objects.get(username=request.user.get_username()).username
         logger.info('取帳號列表(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
