@@ -37,7 +37,7 @@ def get_storage():
     return file_storage
 
 class User(AbstractUser):
-    using = models.BooleanField(default=True, verbose_name='是否啟用')
+    using = models.BooleanField(default=False, verbose_name='是否啟用')
     phone = models.CharField(max_length=30, null=True, blank=True, verbose_name='電話')
     user_token = models.UUIDField(default=uuid4, unique=True, verbose_name='使用者公鑰')
 
