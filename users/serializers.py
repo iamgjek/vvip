@@ -30,7 +30,6 @@ class GetUserListSerializer(serializers.Serializer):
     company_account = serializers.CharField(default='dennis1', help_text='公司帳號')
 
 class AddUserSerializer(serializers.Serializer):
-    company_account = serializers.CharField(default='dennis1', help_text='公司帳號')
     account = serializers.CharField(default='dennis99', help_text='帳號')
     password = serializers.CharField(default='1234', help_text='密碼')
     password2 = serializers.CharField(default='1234', help_text='確認密碼')
