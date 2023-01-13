@@ -149,34 +149,34 @@
                 </ol>
             </nav>
             <div class="row r1">
-                <div class="row">
+                <div class="row rwd1">
                     <label class="col-form-label w-80 text-center1" for="edit-text-name-id">搜尋</label>
                     <div class="col w-200">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.city" @change="getArea(searchForm.land.region.city)">
+                        <select class="form-control custom-select col-sm-12 w-10 width98" v-model="searchForm.land.region.city" @change="getArea(searchForm.land.region.city)">
                             <option :value="null" selected>縣市</option>
                             <option :value="key" v-for="(value, key) in cityList"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col w-200">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.area" @change="getSection(searchForm.land.region.area), getPlan(searchForm.land.region.area)">
+                        <select class="form-control custom-select col-sm-12 w-10 width98" v-model="searchForm.land.region.area" @change="getSection(searchForm.land.region.area), getPlan(searchForm.land.region.area)">
                             <option :value="null" selected>行政區</option>
                             <option :value="key" v-for="(value, key) in areaList[searchForm.land.region.city]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col w-200">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.section" @change="searchForm.land.region.plan=null">
+                        <select class="form-control custom-select col-sm-12 w-10 width98" v-model="searchForm.land.region.section" @change="searchForm.land.region.plan=null">
                             <option :value="null" selected>段小段</option>
                             <option :value="key" v-for="(value, key) in sectionList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col w-200">
-                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.region.plan" @change="searchForm.land.region.section=null">
+                        <select class="form-control custom-select col-sm-12 w-10 width98" v-model="searchForm.land.region.plan" @change="searchForm.land.region.section=null">
                             <option :value="null" selected>計劃案</option>
                             <option :value="key" v-for="(value, key) in planList[searchForm.land.region.area]"> ((value)) </option>
                         </select>
                     </div>
                     <div class="col w-200">
-                        <div class="">
+                        <div class="width98">
                             <input class="form-control" :class="{'is-invalid': !landbuildNumberFix(searchForm.land.region.land_number, 'l').ok}" placeholder="地號" v-model="searchForm.land.region.land_number">
                         </div>
                         <div class="dropdown d-none">
@@ -202,7 +202,7 @@
                     </div>
 
                     <div class="col w-200">
-                        <div class="dropdown">
+                        <div class="dropdown width98">
                             <button class="btn dropdown-toggle custom-select on on1 left" type="button"
                                 data-toggle="dropdown" data-submenu>
                                 使用分區
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
-                                    <div class="dropdown-menu dmshow1">
+                                    <div class="dropdown-menu dmshow1 rwd2">
                                         <button class="dropdown-item" type="button" v-for="(i, idx) in inCity" @click.stop>
                                             <input type="checkbox" class="form-check-input" :id="'inCity' + idx" v-model="searchForm.land.condition.inCity[i]">
                                             <label class="m-0 w-100" :for="'inCity' + idx">(( i ))</label>
@@ -234,7 +234,7 @@
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都外</button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu rwd2">
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用分區</button>
                                             <div class="dropdown-menu">
@@ -260,7 +260,7 @@
                     </div>
 
                     <div class="col w-200 w-as">
-                        <div class="dropdown">
+                        <div class="dropdown  width98">
                             <button class="btn dropdown-toggle custom-select on1 left" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
@@ -283,12 +283,14 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="w-80 float-end right2">
                         <button class="btn btn1 w-81 btn002" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
                         </button>
                     </div>
+                    <div class="rwdad"></div>
                     <div class="cw-125 float-end right1">
                         <button type="button" class="btn btn-primary btn001" @click="serverSearch()" :disabled="loading"><svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/>
                             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -415,7 +417,7 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
-                                            <div class="row pp2">
+                                            <div class="row pp2 v5">
                                                 <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.land.condition.presentLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
                                                 <input type="" class="form-control col-sm-2 v2" placeholder="0" v-model="searchForm.land.condition.presentUpperLimit">
@@ -435,7 +437,7 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
-                                            <div class="pp2 row">
+                                            <div class="pp2 row v5">
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.other.p_part_valueLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">萬-</label>
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.other.p_part_valueUpperLimit">
@@ -456,7 +458,7 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
-                                            <div class="pp2 row">
+                                            <div class="pp2 row v5">
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.other.p_part_areaLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">坪-</label>
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.other.p_part_areaUpperLimit">
@@ -511,7 +513,7 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <form class="p3 pp">
-                                            <div class="pp2 row">
+                                            <div class="pp2 row v5">
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.condition.ownershipNumLowerLimit">
                                                 <label class="col-form-label la1" for="edit-text-name-id">人-</label>
                                                 <input type="" class="form-control col-sm-2" placeholder="0" v-model="searchForm.land.condition.ownershipNumUpperLimit">
@@ -923,13 +925,13 @@
                 <div class="row bg3">
                     <div class="col-sm-4">
                         <div class="bg2 justify-content-between">
-                            <div class="bg4 align-self-center px-2">設定搜尋範圍<span>&gt;</span></div>
+                            <div class="bg4 align-self-center px-2">設定搜尋範圍</div>
                             <img class="align-self-start" src="/static/images/step0.png">
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="bg2 justify-content-between">
-                            <div class="bg5 align-self-center px-2">查看開發範圍<span>&gt;</span></div>
+                            <div class="bg5 align-self-center px-2">查看開發範圍</div>
                             <img class="align-self-start" src="/static/images/step1.png">
                         </div>
                     </div>
