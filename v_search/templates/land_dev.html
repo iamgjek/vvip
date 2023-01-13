@@ -112,7 +112,7 @@
                     </ol>
                 </nav>
             </div>
-            <div class="d-flex">
+            <div class="d-flex5">
                 <a href="#" type="button" class="btn dropdown-toggle w-150" data-toggle="dropdown" aria-expanded="false">
                     {% if user.first_name == '' %}
                     {{ user.username }}
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="dropdown dropright dropdown-submenu">
                                     <button class="dropdown-item dropdown-toggle" type="button">都內</button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu dmshow1">
                                         <button class="dropdown-item" type="button" v-for="(i, idx) in inCity" @click.stop>
                                             <input type="checkbox" class="form-check-input" :id="'inCity' + idx" v-model="searchForm.land.condition.inCity[i]">
                                             <label class="m-0 w-100" :for="'inCity' + idx">(( i ))</label>
@@ -246,7 +246,7 @@
                                         </div>
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用地類別</button>
-                                            <div class="dropdown-menu">
+                                            <div class="dropdown-menu dmshow1">
                                                 <button class="dropdown-item" type="button" v-for="(i, idx) in outCity2" @click.stop>
                                                     <input type="checkbox" class="form-check-input" :id="'outCity2' + idx" v-model="searchForm.land.condition.outCity2[i]">
                                                     <label class="m-0 w-100" :for="'outCity2' + idx"p>(( i ))</label>
@@ -732,7 +732,7 @@
                             </table>
                         </div>
                         <div class="footer1">
-                            <div class="row">
+                            <div class="row row8">
                                 <div class="input-group">
                                     <span class="input-group-text border-0" style="background-color: #f5f5f5;">每頁：</span>
                                     <select class="custom-select" v-model="onepageNum"><option v-for="i in pageNumList" :value="i">((i))</option></select>
@@ -744,13 +744,15 @@
                                     <nav aria-label="Page navigation example">
                                         <ul class="pagination">
                                             <li class="page-item">
-                                                <span class="page-link" @click="nowPage--">上一頁</span>
+                                                <span id="page-link3" class="page-link" @click="nowPage--">上一頁</span>
+                                                <span id="page-link1" class="page-link" @click="nowPage--"><</span>
                                             </li>
                                             <li class="page-item" :class="{active:nowPage==startPageBtn+i}" v-for="i in 9..minmax(1,totalPage)" @click="nowPage=startPageBtn+i">
                                                 <span class="page-link">(( startPageBtn+i ))</span>
                                             </li>
                                             <li class="page-item">
-                                                <span class="page-link" @click="nowPage++">下一頁</span>
+                                                <span id="page-link4" class="page-link" @click="nowPage++">下一頁</span>
+                                                <span id="page-link2" class="page-link" @click="nowPage++">></span>
                                             </li>
                                         </ul>
                                     </nav>
