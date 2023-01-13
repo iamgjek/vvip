@@ -6,6 +6,18 @@ body {
     background: url(../images/bg.jpg);
     background: #f5f5f5;
     color: #3c4043;
+    font-family:"Microsoft JhengHei";
+}
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+html {
+    position: relative;
+    height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 html, body {
@@ -103,14 +115,21 @@ footer {
     padding-top: 17px;
     position: fixed;
     bottom: 0;
-    z-index: 1;
+    z-index: 999;
 }
-
+#page-link1{
+    display: none;
+}
+#page-link2{
+    display: none;
+}
 .bg-light {
     background-color: #444 !important;
     box-shadow: 0 2px 10px 0 rgb(0 0 0 / 15%);
 }
-
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    color: #9f9f9f;
+}
 .tabc {
     left: -11px;
     position: relative;
@@ -157,6 +176,18 @@ footer {
 }
 .right{
     text-align: right;
+}
+.navbar {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
 }
 .r1 {
     position: relative;
@@ -335,6 +366,7 @@ footer {
 .p-tab {
     position: absolute;
     right: 9px;
+    bottom: 0;
 }
 .h3bottom {
     padding-bottom: 0.5rem;
@@ -373,6 +405,10 @@ footer {
     position: relative;
     /*right: 15px;*/
 }
+.d-flex5 {
+    position: absolute;
+    right: -6px;
+}
 .d-flex a:hover{
     color:#fff;
 }
@@ -397,9 +433,9 @@ footer {
 
 .bi a {
     position: relative;
-    top: 9px;
+    top: 12px;
     color: #e9e9e9;
-    margin-top: -1px;
+    font-size: 16px;
 }
 .bia {
     position: relative;
@@ -410,6 +446,10 @@ footer {
     top: -1px!important;
     left: 2px!important;
 }
+.ddd{
+    position: relative;
+    top: 4px;
+}
 .c6 {
     right: -6px;
     position: absolute;
@@ -417,6 +457,10 @@ footer {
     top: -0.5px;
     border-radius: 0 0.25rem 0.25rem 0;
     width: 80px;
+}
+.select{
+    max-height: 250px;
+    overflow: auto;
 }
 .btnaa{
     font-size: 1.2rem;
@@ -532,7 +576,8 @@ label {
     display: inline-block;
     margin-left: 6px;
     margin-bottom: 3px;
-    font-size: .8rem;
+    /* font-size: .8rem; */
+    color: #444;
 }
 .t-top1 {
     color: #757575;
@@ -635,8 +680,9 @@ th {
     background-image: -webkit-gradient(linear,0 0,0 100%,from(#f2f2f2),to(#fff));
     background-image: -webkit-linear-gradient(top,#f2f2f2,#fff);
     background-image: -o-linear-gradient(top,#f2f2f2,#fff);
-    background-image: linear-gradient(to bottom,#f2f2f2,#fff);
+    background-image: linear-gradient(to bottom,#f7f7f7,#fff);
     background-repeat: repeat-x;
+    /* border-bottom: 2px solid #ebebeb; */
 }
 .table3 tbody tr:nth-child(n) {
     transition: all .125s ease-in-out;
@@ -760,6 +806,11 @@ th {
 .hr {
     border-top: 1px solid #c3c3c3;
 }
+.dmshow1{
+    height: 20rem;
+    min-height: 10rem;
+    overflow: auto;
+}
 .input-group{
     width: initial;
 }
@@ -816,7 +867,7 @@ th {
 }
 
 .dropdown-toggle {
-    color: #343a40;
+    color: #444;
     /* border: 1px solid #ced4da; */
 }
 
@@ -882,12 +933,12 @@ th {
    border-radius: 0!important;
 } */
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 1px;
 }
 
 ::-webkit-scrollbar-button {
     background: transparent;
-    border-radius: 4px;
+    border-radius: 1px;
 }
 
 ::-webkit-scrollbar-track-piece {
@@ -895,7 +946,7 @@ th {
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 4px;
+    border-radius: 1px;
     background-color: #e8e8e8;
     border: 1px solid #e8e8e8;
 }
@@ -908,6 +959,13 @@ th {
     color: #fff;
     background-color: #337ab7;
     border-color: #337ab7;
+}
+.page5{
+    position: relative;
+    right: 0;
+    float: right;
+    top: -10px;
+}
 }
 .page-link {
     color: #337ab7;
@@ -962,6 +1020,7 @@ th {
 .w-150 {
     width: 150px;
     color: #e9e9e9;
+    font-size: 14px;
 }
 .w-150:hover {
     color: #fff;
@@ -974,6 +1033,7 @@ th {
 
 .h3 {
     margin-top: 1.5rem;
+    margin-bottom: 0;
 }
 
 .text-center1 {
@@ -1309,6 +1369,7 @@ th {
         position: relative;
         right: 39px;
     }
+    
 }
 @media screen and (max-width: 1200px) {
     .bg2 img {
@@ -1328,6 +1389,28 @@ th {
     }
 }
 @media screen and (max-width: 1000px) {
+    .p-tab {
+        top: initial;
+        bottom: 0;
+    }
+    
+    .h3{
+        width: calc(100% - 83px)!important;
+        font-size: 1rem;
+    }
+    .a01 {
+        min-height: 35px;
+        margin-bottom: 0;
+    }
+
+    .grey{
+        font-size: 18px;
+        top: -1px;
+        padding-top: 3px;
+    }
+    .p-tab {
+        top: initial;
+    }
     .df {
         position: relative;
         top: 0;
@@ -1335,9 +1418,19 @@ th {
     }
     .form1{
         width: 100%;
+        margin-left: 0;
+    }
+    .width2 {
+        width: 100%;
+        margin: 0 auto;
+    }
+    .pagination {
+        position: relative;
+        right: 16px;
     }
     .mntable {
-        overflow: auto;
+        width: 100%;
+        margin: 0 auto;
     }
     .w-200 {
         flex-basis: auto;
@@ -1345,6 +1438,8 @@ th {
     .d-flex {
         right: 0;
         position:absolute;
+        left: initial!important;
+        top: 16px!important;
     }
     .text-center1 {
         text-align: left;
@@ -1374,6 +1469,9 @@ th {
         background-repeat: no-repeat;
         background-size: contain;
     }
+    .footer2{
+        position: absolute!important;
+    }
     .bgrwD{
         max-width: 100%;
         right: 0;
@@ -1381,11 +1479,100 @@ th {
     }
 }
 @media screen and (max-width: 768px) {
+    .grey {
+        display: -moz-inline-box;
+        display: -webkit-inline-box;
+        -moz-box-orient: horizontal;
+        -webkit-box-orient: horizontal;
+        margin-bottom: 6px;
+    }
+    .width2 {
+        width: 100%;
+        margin: 0 auto;
+    }
+    .mntable {
+
+        width: 100%;
+        margin: 0 auto;
+    }
     .bg1 {
         padding-bottom: 89%;
     }
+    .page-link {
+        padding: 8px;
+    }
+    .pagination {
+        font-size: 14px;
+    }
+    .input-group-text {
+        font-size: 14px;
+    }
+    .input-group{
+        font-size: 14px;
+    }
+    
 }
 @media screen and (max-width: 580px) {
+    .row8 {
+        margin: 0 auto;
+    }
+    #page-link1{
+        display: block;
+    }
+    #page-link2{
+        display: block;
+    }
+    #page-link3{
+        display: none;
+    }
+    #page-link4{
+        display: none;
+    }
+    .svg5 {
+        background: #f0ad4e;
+        right: 20px;
+        position: relative;
+    }
+    .btn002 {
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        right: 0;
+        left: initial;
+    }
+    .w-150 {
+        width: 0;
+        font-size: 0;
+    }
+    .logo1 {
+        background: url("https://www.yeshome.net.tw/static/images/yeslogo-m.png") 0 0;
+        width: 40px;
+        height: 40px;
+        background-size: 100%;
+        padding: 0;
+        margin-right: 0;
+    }
+    .pagination {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    .form {
+        width: 380px;;
+        top: 200px;
+        left: 50%;
+        margin-left: 4px;
+        padding: 25px;
+
+    }
+    .footer {
+        flex-direction: column-reverse;
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+    .input-group-text {
+        margin-bottom: 30px;
+    }
     .bg1 {
         height: 100%;
     }
@@ -1399,9 +1586,8 @@ th {
         bottom: 0;
     }
     .a01 {
-        min-height: 50px;
-        max-height: 100px;
-        margin-bottom: 2.5rem;
+        min-height: 100%;
+        max-height: 100%;
     }
     .bg1 {
         padding-bottom: 50%;
@@ -1412,18 +1598,99 @@ th {
     h4{
         font-size: 18px;
     }
+    .df {
+        top: initial!important;
+        left: initial!important;
+    }
+    .bs{
+        margin-left: -15px;
+    }
+    .footer1{
+        flex-direction: column;
+        margin-bottom: 0;
+    }
 }
 
 @media screen and (max-width: 480px) {
+    
+    .width2 {
+        width: 100%;
+    }
+    .mntable {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .form {
+        width: 300px;
+        top: 80px;
+        left: 50%;
+        margin-left: 4px;
+        padding: 25px;
+    }
     .font-weight-bold {
         font-size: 28px;
     }
     h4{
         font-size: 18px;
     }
+    .pagination {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    .pagination {
+        right: 0;
+    }
+    .p-tab {
+        top: initial;
+        bottom: 0;
+    }
+
+    .cont1{
+        min-height: 100vh;
+        margin-bottom: 10vh;
+    }
+
+.form1 {
+    top: 10px;
+    }
+    
+}
+@media only screen and (min-width: 1020px) and (max-width: 1024px) {
+    .form{
+        top: 50px;
+    } 
 }
 @media only screen and (min-width: 1000px) and (max-width: 1600px) {
     .bg1 { 
         background-position: -370px 0;
     } 
-} 
+}
+
+@media screen and (max-width: 280px) { 
+.form {
+    width: 230px;
+    top: 50px;
+    left: 50%;
+    margin-left: 4px;
+    padding: 25px;
+}
+.form {
+    width: 230px;
+    top: 50px;
+    left: 50%;
+    margin-left: 4px;
+    padding: 20px 10px;
+}
+.pagination {
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+}
+
+@media (max-width: 991.98px){
+.navbar-expand-lg>.container, .navbar-expand-lg>.container-fluid {
+    padding-right: 0;
+    padding-left: 0;
+}
+}

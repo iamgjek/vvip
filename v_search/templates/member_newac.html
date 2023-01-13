@@ -12,17 +12,17 @@
 </head>
 <body>
     {% block body %}
-    <div id="vue_app" class="cont flex-column" style="min-height: 100vh;">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding:8px 19px!important">
+    <div id="vue_app" class="cont flex-column">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item bi"><a href="http://www.vvips.com.tw/v_search/land_dev/" class="bia">土地開發</a></li>
+                        <li class="breadcrumb-item bi"><a href="/v_search/land_dev/" class="bia">土地開發</a></li>
                     </ol>
                 </nav>
             </div>
-            <div class="d-flex df">
+            <div class="d-flex5">
                 <a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown" data-bs-target="usermenu" aria-expanded="false">
                     {% if user.first_name == '' %}
                     {{ user.username }}
@@ -110,6 +110,9 @@
             </div>
         </div>
     </div>
+    <footer class="col-12 text-md-center footer">
+        <p>COPYRIGHT © 2022元宏創新服務股份有限公司</p>
+    </footer>
     {% endblock %}
 
     {% block script %}
