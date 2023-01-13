@@ -412,8 +412,7 @@ class GetUserList(APIView):
     def process(self, request):
         result = {'status': 'NG'}
         try:
-            params = request.GET
-            company_account = params.get('company_account', None)
+            company_account = self.username
             if not company_account:
                 sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
                         left join vvip.users_user b on b.id=a.user_id
@@ -430,7 +429,7 @@ class GetUserList(APIView):
                 sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
                         left join vvip.users_user b on b.id=a.user_id
                         left join vvip.users_company c on c.id=a.company_id
-                        where a.company_id={company_id} and a.is_admin=0;
+                        where a.company_id={company_id} and a.is_admin=0 and a.is_valid=1;
                         '''
             users = User.objects.raw(sql)
             data_list = []
@@ -460,6 +459,7 @@ class GetUserList(APIView):
     )
 
     def get(self, request):
+        self.username = User.objects.get(username=request.user.get_username()).username
         logger.info('取帳號列表(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
@@ -476,7 +476,7 @@ class AddUser(APIView):
         result = {'status': 'NG'}
         try:
             params = request.POST
-            company_account = params.get('company_account', None)
+            company_account = self.username
             account = params.get('account', None)
             password = params.get('password', None)
             password2 = params.get('password2', None)
@@ -503,7 +503,11 @@ class AddUser(APIView):
                 company_id = User.objects.raw(sql)[0].id
             else:
                 company_id = 1
-            company = Company.objects.get(id=company_id, is_valid=1)
+            try:
+                company = Company.objects.get(id=company_id, is_valid=1)
+            except:
+                result['msg'] = '非公司帳號，無此操作權限'
+                return result
 
             with transaction.atomic():
                 try:
@@ -531,6 +535,7 @@ class AddUser(APIView):
     )
 
     def post(self, request):
+        self.username = User.objects.get(username=request.user.get_username()).username
         logger.info('新增帳號(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)

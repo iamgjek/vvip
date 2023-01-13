@@ -89,6 +89,9 @@
                         if(res.status == "OK"){
                             window.location.href = "/v_search/land_dev/";
                         }
+                        else{
+                            Swal.fire(res.msg);
+                        }
                     });
                 }
             },
