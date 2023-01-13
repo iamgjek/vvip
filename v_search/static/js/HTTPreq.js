@@ -87,7 +87,7 @@ class HTTPreq{
                 sd = new FormData();
                 for(var i in data){
                     // sd.append(i, data[i]);
-                    if(Array.isArray(data[i]) || data[i].constructor == Object) sd.append(i, JSON.stringify(data[i]));
+                    if(Array.isArray(data[i]) || data[i]?.constructor == Object) sd.append(i, JSON.stringify(data[i]));
                     else sd.append(i, data[i]);
                     // [Object, Array].includes(data[i] && data[i].constructor) ? sd.append(i, JSON.stringify(data[i])) : sd.append(i, data[i]);
                 }
