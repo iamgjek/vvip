@@ -237,7 +237,7 @@
                                     <div class="dropdown-menu rwd2">
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用分區</button>
-                                            <div class="dropdown-menu">
+                                            <div class="dropdown-menu rwd3">
                                                 <button class="dropdown-item" type="button" v-for="(i, idx) in outCity" @click.stop>
                                                     <input type="checkbox" class="form-check-input" :id="'outCity' + idx" v-model="searchForm.land.condition.outCity[i]">
                                                     <label class="m-0 w-100" :for="'outCity' + idx">(( i ))</label>
@@ -246,7 +246,7 @@
                                         </div>
                                         <div class="dropdown dropright dropdown-submenu">
                                             <button class="dropdown-item dropdown-toggle" type="button">使用地類別</button>
-                                            <div class="dropdown-menu dmshow1">
+                                            <div class="dropdown-menu dmshow1 rwd3">
                                                 <button class="dropdown-item" type="button" v-for="(i, idx) in outCity2" @click.stop>
                                                     <input type="checkbox" class="form-check-input" :id="'outCity2' + idx" v-model="searchForm.land.condition.outCity2[i]">
                                                     <label class="m-0 w-100" :for="'outCity2' + idx"p>(( i ))</label>
@@ -284,14 +284,14 @@
                         </div>
                     </div>
                     
-                    <div class="w-80 float-end right2">
+                    <div class="colrwd w-80 float-end right2">
                         <button class="btn btn1 w-81 btn002" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
                         </button>
                     </div>
                     <div class="rwdad"></div>
-                    <div class="cw-125 float-end right1">
+                    <div class="colrwd cw-125 float-end right1">
                         <button type="button" class="btn btn-primary btn001" @click="serverSearch()" :disabled="loading"><svg class="w-ab" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF"><path d="M0 0h24v24H0z" fill="none"/>
                             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                         </svg>搜尋</button>
