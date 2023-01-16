@@ -436,6 +436,7 @@ footer {
     top: 12px;
     color: #e9e9e9;
     font-size: 16px;
+    left: -30px;
 }
 .bia {
     position: relative;
@@ -817,6 +818,9 @@ th {
 .col-form-label {
     text-align: right;
 }
+.width98{
+    width: 98%!important;
+}
 .width100{
     width: 100%;
     margin: 0 auto;
@@ -1020,7 +1024,7 @@ th {
 .w-150 {
     width: 150px;
     color: #e9e9e9;
-    font-size: 14px;
+    font-size: 16px;
 }
 .w-150:hover {
     color: #fff;
@@ -1184,6 +1188,15 @@ th {
     background: linear-gradient(to bottom, #4ebeff, #3075ca);*/
 
 }
+.btn003 {
+    border: 1px solid #1f6099;
+
+    background: #337ab7;
+    /*background: -webkit-gradient(linear, left top, left bottom, from(#4ebeff), to(#3075ca));
+    background: -moz-linear-gradient(top, #4ebeff, #3075ca);
+    background: linear-gradient(to bottom, #4ebeff, #3075ca);*/
+
+}
 .svg5{
     background: #f0ad4e;
 }
@@ -1224,7 +1237,7 @@ th {
     /*background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#b3b3b3));
     background: -moz-linear-gradient(top, #ffffff, #b3b3b3);
     background: linear-gradient(to bottom, #ffffff, #b3b3b3);*/
-    width: 85px;
+    width: 100%;
 }
 .btn002:hover,
 .btn002:focus {
@@ -1276,6 +1289,19 @@ th {
     color: #787878;
 }
 @media screen and (max-width: 1100px) {
+    .pp{
+        min-width: 100%;
+    }
+    .v4 {
+        padding-right: 2rem;
+    }
+    .v5{
+        padding-right: 1em;
+    }
+    .dropdown-menu{
+        width: 100%;
+    }
+    
     .pad {
         padding: 3rem;
     }
@@ -1306,7 +1332,7 @@ th {
     }
 
     .w-as {
-        margin-right: 0;
+        /* margin-right: 0; */
     }
 }
 .font-weight-bold {
@@ -1388,7 +1414,33 @@ th {
         overflow: auto;
     }
 }
+@media screen and (max-width: 1100px) {
+    .rwd1{
+        /* position: relative; */
+        left: 5px;
+    }
+    .rwd2{
+        position: relative;
+        left: 0!important;
+    }
+    .btn-group{
+        width: 100%!important;
+    }
+    .btn001 {
+        width: 100%;
+    }
+    
+}
+
 @media screen and (max-width: 1000px) {
+    .w-as {
+        margin-right: 0;
+    }
+    .rwdad{
+        width: 100%;
+        height: 2.5rem;
+    }
+
     .p-tab {
         top: initial;
         bottom: 0;
@@ -1445,16 +1497,26 @@ th {
         text-align: left;
     }
     .right1{
-        right: 0;
+        position: absolute;
+        bottom: 0;
+        width: 95%;
+        margin: 0 auto;
+        text-align: center;
+        margin-bottom: 0.8rem;
+        right: 29px;
+        bottom: 2px;
     }
     .right2{
+        right: 0;
+        position: relative;
+        top: 0;
         right: 0;
     }
 
     .w-80,
     .w-125 {
-        width: 100px;
-        padding-right: 5px;
+        width: 100%;
+        padding-right: 20px;
         padding-left: 5px;
         margin-bottom: 10px;
     }
@@ -1513,6 +1575,13 @@ th {
     
 }
 @media screen and (max-width: 580px) {
+    .right1 {
+        width: 92.5%;
+        right: 27px;
+    }
+    .bi a {
+        left: -55px;
+    }
     .row8 {
         margin: 0 auto;
     }
@@ -1546,12 +1615,14 @@ th {
         font-size: 0;
     }
     .logo1 {
-        background: url("https://www.yeshome.net.tw/static/images/yeslogo-m.png") 0 0;
-        width: 40px;
-        height: 40px;
-        background-size: 100%;
-        padding: 0;
-        margin-right: 0;
+        /* background: url("https://www.yeshome.net.tw/static/images/yeslogo-m.png") 0 0; */
+        /* width: 40px; */
+        /* height: 40px; */
+        /* background-size: 100%; */
+        /* padding: 0; */
+        /* margin-right: 0; */
+        position: relative;
+        left: -22px;
     }
     .pagination {
         font-size: 12px;
@@ -1612,6 +1683,17 @@ th {
 }
 
 @media screen and (max-width: 480px) {
+    .btn001 {
+        width: 91.3%;
+    }
+    .w-80, .w-125 {
+        padding-right: 12px;
+        padding-left: 5px;
+    }
+    .right1 {
+        right: 3px;
+        width: 100%;
+    }
     
     .width2 {
         width: 100%;
@@ -1651,10 +1733,17 @@ th {
         margin-bottom: 10vh;
     }
 
-.form1 {
+    .form1 {
     top: 10px;
     }
-    
+    .btn00 {
+        width: 100%;
+    }
+}
+@media only screen and (min-width: 1000px) and (max-width: 1100px) {
+    .form{
+        top: 50px;
+    } 
 }
 @media only screen and (min-width: 1020px) and (max-width: 1024px) {
     .form{
