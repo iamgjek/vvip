@@ -945,7 +945,7 @@
             </div>
         </div>
     </div>
-    
+
     {% endblock %}
     {% block script %}
     <script>
@@ -1173,7 +1173,7 @@
                                 owner_data[i].shared_size_t = shared_size_t.round(2);
                                 owner_data[i].shared_value_t = shared_value_t.chUnit(1, 2);
                                 
-                                owner_data[i]._key = "k" + i.replace(new RegExp("[~!@#$%^&*()?<>/\\\\]"), "g");
+                                owner_data[i]._key = "k" + i.replace(new RegExp("[~!@#$%^&*()?<>/\\\\]", "g"), "");
                                 T.person_searchRes.push(owner_data[i]);
                             }
                             T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
