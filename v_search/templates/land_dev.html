@@ -1189,7 +1189,7 @@
                 },
                 landbuildNumberFix(str, lbtype){
                     lb = ["b", "build"].includes(lbtype.toLowerCase()) ? [5, 3] : [4, 4];
-                    var lbnum = str.replace(new RegExp("\\s"), "g").split(","), sublbnum, tmp, next;
+                    var lbnum = str.replace(new RegExp("\\s", "g"), "").split(","), sublbnum, tmp, next;
                     var ok = true, res = [];
                     for(var i in lbnum){
                         next = false;
