@@ -18,4 +18,14 @@ urlpatterns = [
     re_path(r'^get_city/$', views.GetCityListView.as_view(), name='get_city'),
     re_path(r'^get_area/$', views.GetAreaListView.as_view(), name='get_area'),
     re_path(r'^get_region/$', views.GetRegionListView.as_view(), name='get_region'),
+
+    re_path(r'^account_manage_login/$', views.AccountManageLoginView.as_view(), name='account_manage_login'),
+    re_path(r'^account_manage/$', views.AccountManageView.as_view(), name='account_manage'),
+    re_path(r'^account_edit/$', views.AccountEditView.as_view(), name='account_edit'),
+    re_path(r'^account_add/$', views.AccountAddView.as_view(), name='account_add'),
+
+    re_path(r'^member_pw/$', views.MemberPwView.as_view(), name='member_pw'),
+    re_path(r'^member_aclist/$', views.MemberAclistView.as_view(), name='member_aclist'),
+    re_path(r'^member_newac/$', views.MemberNewacView.as_view(), name='member_newac'),
+    re_path(r'^member_editac/$', views.MemberEditacView.as_view(), name='member_editac'),
 ]

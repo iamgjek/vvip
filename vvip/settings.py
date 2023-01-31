@@ -276,7 +276,12 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        'common': {
+        # 'common': {
+        #     'handlers': ['console', 'file'],
+        #     'level': LOG_LEVEL,
+        #     'propagate': False,
+        # },
+        'users': {
             'handlers': ['console', 'file'],
             'level': LOG_LEVEL,
             'propagate': False,
@@ -289,4 +294,4 @@ LOGGING = {
     },
 }
 
-
+AUTH_USER_MODEL = 'users.User'

@@ -1,4 +1,3 @@
-const illiegalChar = "\\/:*?\"\'<>|\n\b\0\t";
 class supfnc{
     static getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -19,22 +18,22 @@ class supfnc{
 
     static toJSON = (arg, option) => {
         try{
-            arg = arg.replace(RegExp(option, 'g'),"");
-            return JSON.parse(arg.replace(/\&amp;/g, "&").replace(/\&\#39;/g, "\""));
+            arg = arg.replace(new RegExp(option, 'g'),""); 
+            return JSON.parse(arg.replace(new RegExp("\\&amp;", 'g'), "&").replace(new RegExp("\\&\\#39;", 'g'), "\""));
         }
         catch(e){
             try{
-                var ch = {}, tmp;
-                arg = arg.replace(/(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])/g, (x) => {
+                var ch = {}, tmp; // /(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])/g
+                arg = arg.replace(new RegExp("(?<=[^\\])\"(\\\"|[^\"])*\'+(\\\"|[^\"])*\"(?=[^\\])", 'g'), (x) => {
                     tmp = "@"+this.randAlphabet(10);
                     ch[tmp] = x;
                     return tmp;
-                });
-                arg = arg.replace(/(?<=(([:,{]|[^\\])\s*))\'|(?<=[^\\])\'(?=(\s*([:,}])))/g, "\"");
+                }); // /(?<=(([:,{]|[^\\])\s*))\'|(?<=[^\\])\'(?=(\s*([:,}])))/g
+                arg = arg.replace(new RegExp("(?<=(([:,{]|[^\\])\\s*))\'|(?<=[^\\])\'(?=(\\s*([:,}])))", 'g'), "\"");
                 for(var i in ch){
                     arg = arg.replace(i, ch[i]);
                 }
-                return JSON.parse(arg.replace(/\&amp;/g, "&").replace(/\&\#39;/g, "\""));
+                return JSON.parse(arg.replace(new RegExp("\\&amp;", 'g'), "&").replace(new RegExp("\\&\\#39;", 'g'), "\""));
             }
             catch(e){
                 console.log(arg, e);
@@ -45,10 +44,7 @@ class supfnc{
 
     static remove_illiegalChar = (str) => {
         if (typeof str != "string") return "";
-        for (var i in illiegalChar) {
-            str = str.replace(new RegExp(illiegalChar[i].replace("\\", "\\\\").replace("|", "\\|").replace("?", "\\?").replace("*", "\\*") + '+', "g"), "");
-        }
-        return str;
+        return str.replace(new RegExp("[\\\\/:*?\"\'<>|\\n\\b\\0\\t]", "g"), "");
     }
 
     static taiwanTime = (time) => {
@@ -121,9 +117,10 @@ class supfnc{
         var el = document.createElement(tagName), tmp;
         for(var i in options){
             if(i == "class"){
-                tmp = options.class;
-                if(typeof options.class == "string") tmp = tmp.split(" ");
-                if(Array.isArray(options.class)) for(var j in tmp) el.classList.add(tmp[j]);
+                tmp = [];
+                if(typeof options.class == "string") tmp = options.class.split(" ");
+                else if(Array.isArray(options.class)) tmp = options.class;
+                for(var j in tmp) el.classList.add(tmp[j]);
             }
             else if(i == "style"){
                 for(var j in options.style){

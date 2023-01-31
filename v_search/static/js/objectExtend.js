@@ -337,7 +337,7 @@ Object.defineProperty(
         enumerable: false,
         writable: true,
         value: function () {
-            return this.slice();
+            return JSON.parse(JSON.stringify(this));
         }
     }
 );
@@ -474,14 +474,24 @@ Object.defineProperty(
         configurable: true,
         enumerable: false,
         writable: true,
-        value: function () {
+        value: function (type, rnum = 0) {
             var un = [], num = this, rtn = "", unitCh = ["", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載", "極"];
             while(num >= 1){
                 un.push(num%1E4);
                 num = Math.floor(num/1E4);
             }
-            for(var i in un){
-                if(un[i]) rtn = un[i] + unitCh[i] + rtn;
+            if(type == 1){
+                for(var i=un.length; i>=0; i--){
+                    if(un[i]){
+                        rtn = ((un[i] + (un[i-1]||0)/1E4).round(rnum)) + unitCh[i];
+                        break;
+                    }
+                }
+            }
+            else{
+                for(var i in un){
+                    if(un[i]) rtn = un[i] + unitCh[i] + rtn;
+                }
             }
             return rtn;
         }
@@ -609,8 +619,8 @@ Object.defineProperty(
         configurable: true,
         enumerable: false,
         writable: true,
-        value: function () {
-            return parseFloat(this).chUnit();
+        value: function (type, num) {
+            return parseFloat(this).chUnit(type, num);
         }
     }
 );

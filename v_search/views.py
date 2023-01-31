@@ -1,6 +1,9 @@
 import json
 import logging
 import time
+import operator
+
+from functools import reduce
 from datetime import date, datetime, timedelta
 
 import numpy as np
@@ -31,7 +34,7 @@ from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
-DB_NAME = 'diablo_test'
+DB_NAME = 'diablo'
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -71,6 +74,86 @@ class IndexView(NormalTemplateView):
 class LandDevView(NormalTemplateView):
     TAG = '[LandDevView]'
     template_name = 'land_dev.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class AccountManageLoginView(NormalTemplateView):
+    TAG = '[AccountManageLoginView]'
+    template_name = 'account_manage_login.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if not self.request.user.is_anonymous:
+            return redirect('/v_search/account_manage/')
+        return render(request, self.template_name, context=context)
+
+class AccountManageView(NormalTemplateView):
+    TAG = '[AccountManageView]'
+    template_name = 'account_manage.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class AccountEditView(NormalTemplateView):
+    TAG = '[AccountEditView]'
+    template_name = 'account_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class AccountAddView(NormalTemplateView):
+    TAG = '[AccountAddView]'
+    template_name = 'account_add.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberPwView(NormalTemplateView):
+    TAG = '[MemberPwView]'
+    template_name = 'member_pw.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberAclistView(NormalTemplateView):
+    TAG = '[MemberAclistView]'
+    template_name = 'member_aclist.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberNewacView(NormalTemplateView):
+    TAG = '[MemberNewacView]'
+    template_name = 'member_newac.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(*args, **kwargs)
+        if self.request.user.is_anonymous:
+            return redirect('/')
+        return render(request, self.template_name, context=context)
+
+class MemberEditacView(NormalTemplateView):
+    TAG = '[MemberEditacView]'
+    template_name = 'member_editac.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(*args, **kwargs)
@@ -262,6 +345,13 @@ class GetSearchResponseV3View(APIView):
         "other": '12'
         }
 
+    uid_tag_out = {
+        0: "未知",
+        1: "本國人",
+        2: "外國人",
+        3: "港澳中國居民",
+        }
+    
     def check_int(self, num):        
         if isinstance(num, (int, float)) == True:
             return num
@@ -353,9 +443,18 @@ class GetSearchResponseV3View(APIView):
                     new_str = need
         return new_str
 
+    def apply_uid_tag(self, uid_tag):
+        data = self.uid_tag_out.get(uid_tag)
+        return data
+
     def apply_owner_type(self, owner_type):
         data = self.ownership_out.get(owner_type)
         return data
+
+    def apply_owners_num(self, df_data, lbkey_dict):
+        get_owner_num = lbkey_dict.get(df_data['lbkey'], 0)
+
+        return get_owner_num
 
     def apply_creditors_rights(self, creditors_rights):
         data = []        
@@ -375,10 +474,16 @@ class GetSearchResponseV3View(APIView):
                     FROM \
                     diablo.{tr1} T1 \
                     left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} limit 10000 \
-                    "
-                    # 500000
-
+                    WHERE {where_sql} LIMIT 100000 \
+        #             "
+        #             # 500000
+        # sql_str =  "\
+        #             SELECT {col} \
+        #             FROM \
+        #             diablo.{tr1} T1 \
+        #             left join (select city_name,area_name,region_name,lno,national_land_zone,plan_name,land_zone,urban_name,land_area,land_notice_value,build_num,owner_type,urban_type ,owners_num, land_zone_code,lkey from diablo.{t2} T2 WHERE {where_sql} LIMIT 3000) T2 on T1.lbkey =  T2.{lbk} \
+        #             WHERE {where_sql} and T1.remove_time is null"
+        
         condition = ''
         if condition_list:
             for ind, i in enumerate(condition_list):
@@ -400,11 +505,11 @@ class GetSearchResponseV3View(APIView):
             select_colunm = "\
                             T2.city_name, T2.area_name, T2.region_name, T2.lno, \
                             T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
-                            T2.build_num, T2.owner_type, \
+                            T2.build_num, T2.owner_type, T2.urban_type ,T2.owners_num, T2.land_zone_code, \
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
-                            T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
+                            T1.uid, T1.uid_tag, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                             T1.is_valid, T1.remove_time, \
-                            T1.reg_reason, T1.right_type, T2.owners_num, T1.case_type, T1.restricted_type, T2.urban_type \
+                            T1.reg_reason, T1.right_type, T1.case_type, T1.restricted_type \
                             "
 
         sql = sql_str.format(
@@ -414,6 +519,7 @@ class GetSearchResponseV3View(APIView):
                             lbk = self.col_set_lbkey,
                             where_sql = condition,
                             limit = self.data_limit)
+        # print(sql)
         return sql
 
     def set_sql_db(self, lbtype, sb='sr'):
@@ -480,6 +586,7 @@ class GetSearchResponseV3View(APIView):
                     pass
 
             data['owner_type'] = data['owner_type'].apply(self.apply_owner_type)
+            data['uid_tag']  = data['uid_tag'].apply(self.apply_uid_tag)
             data['creditors_rights'] = data['creditors_rights'].apply(self.apply_creditors_rights)
             # group
             try:
@@ -523,73 +630,51 @@ class GetSearchResponseV3View(APIView):
 
             #!!!!! TODO 多筆單筆要調整!!!!!
             # 地號子母號
-            dataType = self.check_int((base_region.get('dataType', None)))
-            # # 單筆
-            # if dataType == 0:
-            #     d_single = base_region.get('landNumberSingle', None)
-            #     fsl = []
-            #     result_list, star_list = self.re_regionV2(d_single)
-            #     if result_list:
-            #         rel = []
-            #         for re_reg in result_list:
-            #             a1 = '"{}"'.format(re_reg)
-            #             rel.append(a1)
-            #         fin = ','.join(rel)
-            #         fst_1 = 'T2.lno in ({})'.format(fin)
-            #         fsl.append(fst_1)
-            #     if star_list:
-            #         st_list = []
-            #         for reg in star_list:
-            #             if isinstance(reg, tuple):
-            #                 bt1 = reg[0]
-            #                 bt2 = reg[1]
-            #                 st = '(T2.lno between "{}" and "{}")'.format(bt1, bt2)
-            #                 st_list.append(st)
-            #         fst_2 = ' or '.join(st_list)
-            #         fsl.append(fst_2)
-            #     if fsl:
-            #         fsr = ' or '.join(fsl)
-            #         # land_qs_list.append('and ({})'.format(fsr))
-            
-            # # 多筆
-            # elif dataType == 1:
-            #     # print('多筆')
-            #     d_Multiple = base_region.get('landNumberMultiple', None)
-            #     fsl = []
-            #     result_list, star_list = self.re_regionV2(d_Multiple)
-            #     if result_list:
-            #         rel = []
-            #         for re_reg in result_list:
-            #             a1 = '"{}"'.format(re_reg)
-            #             rel.append(a1)
-            #         fin = ','.join(rel)
-            #         fst_1 = 'T2.lno in ({})'.format(fin)
-            #         fsl.append(fst_1)
-            #     if star_list:
-            #         st_list = []
-            #         for reg in star_list:
-            #             if isinstance(reg, tuple):
-            #                 bt1 = reg[0]
-            #                 bt2 = reg[1]
-            #                 st = '(T2.lno between "{}" and "{}")'.format(bt1, bt2)
-            #                 st_list.append(st)
-            #         fst_2 = ' or '.join(st_list)
-            #         fsl.append(fst_2)
-            #     if fsl:
-            #         fsr = ' or '.join(fsl)
-            #         land_qs_list.append('and ({})'.format(fsr))
+            dataType = -1
+            land_number = base_region.get('land_number', None)
+            if land_number:
+                if land_number.find(',') != -1:
+                    dataType = 1
+                elif land_number.find('~') != -1:
+                    dataType = 2
+                elif len(land_number) > 1:
+                    dataType = 0
+                print(f'{land_number}, 型態:{dataType}')
 
-            # # 區間
-            # elif dataType == 2:
-            #     try:
-            #         d_Multiple_L = base_region.get('landNumberLowerLimit', None)
-            #         d_Multiple_U = base_region.get('landNumberUpperLimit', None)
-            #         low = self.re_regionV2(d_Multiple_L)[0][0]
-            #         up = self.re_regionV2(d_Multiple_U)[0][0]
-            #         if low and up:                    
-            #             land_qs_list.append('and T2.lno between "{llo}" and "{uup}"'.format(llo=low, uup=up))
-            #     except:
-            #         pass
+                # 單筆
+                if dataType == 0:
+                    d_single = land_number # base_region.get('landNumberSingle', None)
+                    fsl = []
+                    result_list, star_list = self.re_regionV2(d_single)
+                    if result_list:
+                        if len(result_list) > 0:
+                            print(result_list)
+                            self.total_df = self.total_df[self.total_df['lno']==result_list[0]]
+
+                # 多筆
+                elif dataType == 1:
+                    # print('多筆')
+                    d_Multiple = land_number # base_region.get('landNumberMultiple', None)
+                    result_list, star_list = self.re_regionV2(d_Multiple)
+                    if result_list:
+                        if len(result_list) > 0:
+                            self.total_df = self.total_df[self.total_df['lno'].str.startswith(tuple(result_list))]
+
+                # 區間
+                elif dataType == 2:
+                    try:
+                        low_n = land_number.split('~')[0]
+                        up_n = land_number.split('~')[1]
+                        low, _ = self.re_regionV2(low_n)
+                        up, _ = self.re_regionV2(up_n)
+                        if len(low) and len(up):   
+                            low_str = low[0]
+                            up_str = up[0]
+                            self.total_df = self.total_df[self.total_df['lno'].between(low_str, up_str)]
+
+                    except Exception as e:
+                        print(e)
+                        pass
 
             # 國土分區 多筆
             n_land_zone = base_region.get('national_land_zone', None)
@@ -603,13 +688,12 @@ class GetSearchResponseV3View(APIView):
                 for x, v in registerReason.items():
                     x = int(x)
                     v = int(v)
+                    # x_real = x + 1
                     if v:
-                        if x == 11:
-                            reg_list.append(12)
-                        else:
-                            reg_list.append(x)
+                        reg_list.append(x)
                 if reg_list:
                     self.total_df = self.total_df[self.total_df['reg_reason'].isin(reg_list)]
+
             # 權屬樣態
             ownership = base_condition.get('ownership')
             if ownership:
@@ -641,12 +725,12 @@ class GetSearchResponseV3View(APIView):
                 pass
             else:
                 if isinstance(o_num_up, int) == True and isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[(self.total_df['owners_num']<=o_num_up) & (self.total_df['owners_num']>=o_num_low)]
+                    self.total_df = self.total_df[(self.total_df['owner_num_real']<=o_num_up) & (self.total_df['owner_num_real']>=o_num_low)]
 
                 elif isinstance(o_num_low, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']>=o_num_low]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']>=o_num_low]
                 elif isinstance(o_num_up, int) == True:
-                    self.total_df = self.total_df[self.total_df['owners_num']<=o_num_up]
+                    self.total_df = self.total_df[self.total_df['owner_num_real']<=o_num_up]
 
             # 面積分類 總 持分 平均持分 ==========================
             areaType = self.check_int(base_condition.get('areaType'))
@@ -729,45 +813,48 @@ class GetSearchResponseV3View(APIView):
             except Exception as e:
                 print(f'面積錯誤 ：{e}')
 
+            # 去小數
             self.total_df['land_area'] = pd.to_numeric(self.total_df['land_area'], errors='coerce').round(2)
             self.total_df['shared_size'] = pd.to_numeric(self.total_df['shared_size'], errors='coerce').round(2)
-
-            # 公告現值
-            vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
-            vp_upper = self.check_int(base_condition.get('vp_UpperLimit', None))
-            self.total_df['land_notice_value'] = pd.to_numeric(self.total_df['land_notice_value'], errors='coerce')
-            if vp_lower == 0 and vp_upper == 0:
-                pass
-            else:
-                if isinstance(vp_lower, int) == True and isinstance(vp_upper, int) == True:
-                    self.total_df = self.total_df[(self.total_df['land_notice_value']<=vp_upper) & (self.total_df['land_notice_value']>=vp_lower)]
-                elif isinstance(vp_lower, int) == True:
-                    self.total_df = self.total_df[self.total_df['land_notice_value']>=vp_lower]
-                elif isinstance(vp_upper, int) == True:
-                    self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
-
-
 
             # 使用區分類
             in_city = [self.use_zone_re(x) for x, v in base_condition.get('inCity', {}).items() if v]
             out_city = [self.use_zone_re(x) for x, v in base_condition.get('outCity', {}).items() if v]
             outCity2 = [self.use_zone_re(x) for x, v in base_condition.get('outCity2', {}).items() if v]
-            
-            # print(in_city)
-            # print(out_city)
-            # print(outCity2)
+            road_land = base_condition.get('road_land', None)
+            common_land = base_condition.get('common_land', None)
+            # print(road_land, common_land)
             # print(self.total_df.loc[:, ['lbkey', 'urban_name', 'land_zone', 'right_type', 'owner_type']])
-            if in_city or out_city:
-                # self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(in_city))]
-                con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city))
-                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city))
-                self.total_df = self.total_df[(con1 | con2)]
-            if outCity2:
-                self.total_df = self.total_df[self.total_df['urban_name'].str.startswith(tuple(outCity2))]
+            total_con = []
+            # self.total_df['urban_name'] = self.total_df['urban_name'].fillna('')
+            # self.total_df['land_zone'] = self.total_df['land_zone'].fillna('')
+            # self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
 
-            # 個人持分總值
-            vp_lower = self.check_int(base_condition.get('vp_LowerLimit', None))
-            vp_upper = self.check_int(base_condition.get('vp_UpperLimit', None))
+            if in_city or out_city:
+                # 搜尋2個欄位
+                con1 = self.total_df['urban_name'].str.contains('|'.join(in_city+out_city), na=False)
+                total_con.append(con1)
+                con2 = self.total_df['land_zone'].str.contains('|'.join(in_city+out_city), na=False)   
+                total_con.append(con2)
+
+            if outCity2:
+                con3 = self.total_df['urban_name'].str.startswith(tuple(outCity2), na=False)
+                total_con.append(con3)
+            if road_land:
+                con4 = self.total_df['land_zone_code']=='C11'
+                total_con.append(con4)
+            if common_land:
+                con5 = self.total_df['land_zone_code'].str.startswith('C', na=False)
+                total_con.append(con5)
+
+            if total_con:
+                self.total_df = self.total_df[reduce(operator.or_, total_con)]
+
+            # 公告現值
+            vp_lower = self.check_int(base_condition.get('presentLowerLimit', None))
+            vp_upper = self.check_int(base_condition.get('presentUpperLimit', None))
+            vp_lower = vp_lower * 10000
+            vp_upper = vp_upper * 10000
             self.total_df['land_notice_value'] = pd.to_numeric(self.total_df['land_notice_value'], errors='coerce')
             if vp_lower == 0 and vp_upper == 0:
                 pass
@@ -779,22 +866,24 @@ class GetSearchResponseV3View(APIView):
                 elif isinstance(vp_upper, int) == True:
                     self.total_df = self.total_df[self.total_df['land_notice_value']<=vp_upper]
 
+            # 總公告
+            self.total_df['total_vp'] = self.total_df['land_area'] * self.total_df['land_notice_value']
+
+
     def clean_other_data(self, base_other):
 
         # 他項設定:他項標記
-        cast_type = self.check_int(base_other.get('otherRemark', 0))
-        if cast_type in [0, None, 'None', 'null']:
+        cast_type = self.check_int(base_other.get('otherRemark', None))
+        if cast_type in [None, 'None', 'null']:
             pass
         else:
-            # common_query.append('and T1.case_type = {}'.format(cast_type))
             self.total_df = self.total_df[self.total_df['case_type']==cast_type]
 
         # 他項設定:限制登記
         restricted_type = self.check_int(base_other.get('restrictedRegistration', None))
-        if restricted_type in [0, None, 'None', 'null']:
+        if restricted_type in [None, 'None', 'null']:
             pass
         else:
-            # common_query.append('and T1.restricted_type = {}'.format(restricted_type))
             self.total_df = self.total_df[self.total_df['restricted_type']==restricted_type]
 
         # 年齡範圍
@@ -803,13 +892,26 @@ class GetSearchResponseV3View(APIView):
         # 國籍
         country = self.check_int(base_other.get('country', None))
         
-        # 個人持分總值
+        # 個人持分總值 ｜ 持分現值
         pv_lower = self.check_int(base_other.get('p_part_valueLowerLimit', None))
         pv_upper = self.check_int(base_other.get('p_part_valueUpperLimit', None))
+        pv_lower = pv_lower * 10000
+        pv_upper = pv_upper * 10000
 
-        # 個人持分總面積
-        pa_lower = self.check_int(base_other.get('p_part_areaLowerLimit', None))
-        pa_upper = self.check_int(base_other.get('p_part_areaUpperLimit', None))
+        self.total_df['present_value'] = self.total_df['shared_size'] * self.total_df['land_notice_value']
+        if pv_lower == 0 and pv_upper == 0:
+            pass
+        else:
+            if isinstance(pv_lower, int) == True and isinstance(pv_upper, int) == True:
+                self.total_df = self.total_df[(self.total_df['present_value']<=pv_upper) & (self.total_df['present_value']>=pv_lower)]
+            elif isinstance(pv_lower, int) == True:
+                self.total_df = self.total_df[self.total_df['present_value']>=pv_lower]
+            elif isinstance(pv_upper, int) == True:
+                self.total_df = self.total_df[self.total_df['present_value']<=pv_upper]
+
+        self.total_df['present_value'] = self.total_df['present_value'].fillna(0.0)
+        self.total_df['present_value'] = pd.to_numeric(self.total_df['present_value'], errors='coerce').round(2)
+
 
         # 持有年限
         holding_period = self.check_int(base_other.get('holding_period', None))
@@ -839,7 +941,7 @@ class GetSearchResponseV3View(APIView):
                     T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                     T2.build_num, T2.owner_type, \
                     T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
-                    T1.uid, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
+                    T1.uid, T1.uid_tag, T1.address_re, T1.bday, T1.right_str, T1.shared_size, T1.creditors_rights, \
                     T1.is_valid, T1.remove_time \
                     FROM \
                     diablo.t_search_lkeyregnolist T1 \
@@ -851,25 +953,36 @@ class GetSearchResponseV3View(APIView):
             result = self.format_data_layout_fake_data(subscriberecords_qs)
         else:
             # vvip 搜尋優化 條件只下行政區====================================
+            st1 = time.perf_counter()
             area = base_region.get('area', None)
             section = base_region.get('section', None)
             if section:
-                self.query_list.append('and T1.lbkey like "{}%"'.format(section))
+                self.query_list.append('and T2.lkey like "{}%"'.format(section))
             elif area:
-                self.query_list.append('and T1.lbkey like "{}%"'.format(area))
+                self.query_list.append('and T2.lkey like "{}%"'.format(area))
             sql = self.sql_str_combin(self.query_list)
             # print(sql)
-            subscriberecords_qs, headers = get_dba(sql, "diablo_test")
-            print(f'搜尋總筆數:{len(subscriberecords_qs)}')
+            subscriberecords_qs, headers = get_dba(sql_cmd=sql, db_name=DB_NAME)
+            st2 = time.perf_counter()
+            print(f'sql時間: {st2-st1} 搜尋總筆數:{len(subscriberecords_qs)}')
             # ============================================================
             if not subscriberecords_qs:
                 return result
             # df預處理
             self.total_df = pd.DataFrame(subscriberecords_qs)
-            self.total_df = self.total_df[self.total_df['is_valid']!=0]
+            self.total_df = self.total_df[self.total_df['is_valid'] != 0]
             self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
+            # self.total_df = self.total_df.dropna(subset=['name'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
+            self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
+            if self.total_df.empty:
+                return result
+            new_total_df = self.total_df.copy()
+            new_total_df = new_total_df.groupby('lbkey')
+            lbkey_dict = new_total_df.size().to_dict()
+            self.total_df['owner_num_real'] = self.total_df.apply(self.apply_owners_num, axis=1, args=(lbkey_dict, ))
+
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
 
@@ -884,7 +997,11 @@ class GetSearchResponseV3View(APIView):
 
             print(f'輸出總筆數：{len(self.total_df)}')
 
-            self.total_df[['land_area', 'shared_size']] = self.total_df[['land_area', 'shared_size']].fillna(0)
+            fillna_str = ['bday', 'national_land_zone', 'remove_time', 'land_zone_code']
+            fillna_zero = ['land_area', 'shared_size', 'build_num']
+            self.total_df[fillna_zero] = self.total_df[fillna_zero].fillna(0)
+            self.total_df[fillna_str] = self.total_df[fillna_str].fillna('')
+            self.total_df = self.total_df.fillna(0)
             result = self.format_data_layout(self.total_df)
         return result
 
@@ -904,7 +1021,7 @@ class GetSearchResponseV3View(APIView):
             raise ParseError('格式錯誤')
         else:
             # 預設參數
-            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type']
+            self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type', 'remove_time']
 
             try:
                 max_data = info_config.objects.get(lbtype='Max')

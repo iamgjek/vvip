@@ -37,8 +37,7 @@
     <div id="vue_app" class="cont" style="min-height: 100vh;">
         <div class="wrap">
             <form class="form row">
-                <div class="logo text-center"><img src="/static/images/257logo.png"></div>
-                <h5 class="text-center">257房地</h5>
+                <h2 class="text-center">VVIP 管理後台</h2>
                 <div class="form-group">
                     <div class="col">
                         <input class="form-control text-box single-line" type="text" placeholder="請輸入帳號" v-model="loginData.login" @keydown.enter="login()">
@@ -65,6 +64,9 @@
             </form>
         </div>
     </div>
+    <footer class="col-12 text-md-center footer">
+        <p>COPYRIGHT © 2022 YesHome</p>
+    </footer>
     {% endblock %}
     {% block script %}
     <script>
@@ -85,9 +87,6 @@
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
                             window.location.href = "/v_search/land_dev/";
-                        }
-                        else{
-                            Swal.fire(res.msg);
                         }
                     });
                 }

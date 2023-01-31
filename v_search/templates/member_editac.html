@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <style>
+        body{
+          width: 100%;
+          height: 100%;
+          overflow-x: hidden;
+          background: url("/static/images/bg2.jpg")!important;
+          background-repeat: no-repeat;
+          background-position: center bottom;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    <div id="vue_app" class="cont flex-column">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid" style="margin-left: 3.2px;">
+                <a class="navbar-brand logo1" href="/v_search/land_dev/"></a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item bi ddd"><a href="/v_search/land_dev/" class="bia">土地開發</a></li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex5">
+                <a href="#" type="button" class="btn dropdown-toggle w-150" data-bs-toggle="dropdown" data-bs-target="usermenu" aria-expanded="false">
+                    {% if user.first_name == '' %}
+                    {{ user.username }}
+                    {% else %}
+                    {{ user.first_name }}
+                    {% endif %}
+                    <svg  class="svg5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
+                </a>
+                <ul id="usermenu" class="dropdown-menu dropdown-menu-end">
+                    <li class="d-none">
+                        <a href="/v_search/member_pw/" id="buttonForLogout" class="btn dropdown-item">
+                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;變更密碼
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/v_search/member_aclist/" id="buttonForLogout" class="btn dropdown-item">
+                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;帳號管理
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="buttonForLogout" class="btn dropdown-item" @click="logout()">
+                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container wrap">
+            <nav aria-label="breadcrumb" class="bb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/v_search/land_dev/">首頁</a></li>
+                    <li class="breadcrumb-item active"><a href="/v_search/member_aclist/">帳號管理</a></li>
+                    <li class="breadcrumb-item active">編輯帳號</li>
+                </ol>
+            </nav>
+            <div class="form1 row">
+                <h3 class="text-center h3bottom">編輯帳號</h3>
+                        <div class="width50">
+                            <div class="row">
+                                <div class="px-2 col">
+                                    <label>帳號</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">                        
+                                <div class="px-2 col">
+                                    <label>密碼</label>
+                                    <div class="input-group mb-3">
+                                        <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
+                                    </div>
+                                </div>
+                                <div class="px-2 col">
+                                    <label>確認密碼</label>
+                                    <div class="input-group mb-3">
+                                        <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="hr"/>
+                            <div class="row">
+                                <div class="px-2 col">
+                                    <label>名稱</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="px-2 col">
+                                    <label>電話</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                <div class="width70">
+                    <button class="btn btn-primary btn003 width100 btnaa" @click="editAccount()">確認</button>
+                    <button class="btn btn-danger float-end width101 btnaa" @click="delAccount()">刪除帳號</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block script %}
+    <script>
+        const baseapp = Vue.createApp({
+            delimiters: ['((', '))'],
+            data() {
+                return {
+                    dataForm:{
+                        account: "",
+                        password: "",
+                        password2: "",
+                        name: "",
+                        phone: "",
+                    }
+                }
+            },
+            methods: {
+                logout(){
+                    new HTTPreq("/v_search/logout/", "fd").geta().then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                        if(res.status == "OK"){
+                            window.location.href = "/";
+                        }
+                    });
+                },
+                getAccountData(auto = true){
+                    if(!this.dataForm.account.length) {
+                        Swal.fire("請輸入帳號");
+                        return;
+                    }
+                    var T = this; // @@@@
+                    new HTTPreq("/users/get_user_info/", "fd").posta({account: this.dataForm.account}).then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                        if(res.status == "OK"){
+                            for(var i in res.data) T.dataForm[i] = res.data[i];
+                        }
+                        if(!auto) Swal.fire(res.msg);
+                    });
+                },
+                editAccount(){
+                    var T = this;
+                    this.dataForm.delete = false;
+                    new HTTPreq("/users/modify_user/", "fd").posta(this.dataForm).then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                        Swal.fire(res.msg);
+                    });
+                },
+                delAccount(){
+                    var T = this;
+                    Swal.fire({
+                        icon: "warning",
+                        title: "確認刪除？",
+                        text: "此操作無法復原",
+                        showConfirmButton: false,
+                        showCancelButton: true,
+                        cancelButtonText: "取消",
+                        showDenyButton: true,
+                        denyButtonText: "刪除",
+                    }).then((r)=>{
+                        if(r.isDenied){
+                            T.dataForm.delete = true;
+                            new HTTPreq("/users/modify_user/", "fd").posta(T.dataForm).then(rcv => {
+                                var res = supfnc.toJSON(rcv.result);
+                                Swal.fire(res.msg);
+                            });
+                        }
+                    });
+                },
+            },
+            mounted(){
+                this.dataForm.account = supfnc.getHrefArg().account;
+                this.getAccountData();
+            },
+            created(){},
+            updated(){},
+            beforeUpdate(){},
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>
