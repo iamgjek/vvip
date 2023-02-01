@@ -1049,20 +1049,8 @@ class GetSearchResponseV3View(APIView):
             print(f'查詢總時間 : {qt2 - qt1}')
         return Response(result)
 
-class GetLogoView(APIView):
+class GetLogoView(View):
     TAG = "[GetLogoView]"
-
-    authentication_classes = (CsrfExemptSessionAuthentication, )
-
-    @extend_schema(
-        summary='取logo',
-        description='取logo',
-        request=None,
-        responses={
-            200: OpenApiResponse(description='ok'),
-            401: OpenApiResponse(description='身分認證失敗'),
-        },
-    )
 
     def get(self, request):
         # urls = 'http://www.vvips.com.tw/v_search/land_dev/'
