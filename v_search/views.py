@@ -1049,16 +1049,28 @@ class GetSearchResponseV3View(APIView):
             print(f'查詢總時間 : {qt2 - qt1}')
         return Response(result)
 
-class GetLogoView(View):
+class GetLogoView(APIView):
     TAG = "[GetLogoView]"
+
+    authentication_classes = (CsrfExemptSessionAuthentication, )
+
+    @extend_schema(
+        summary='取logo',
+        description='取logo',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
 
     def get(self, request):
         # urls = 'http://www.vvips.com.tw/v_search/land_dev/'
         urls = request.build_absolute_uri('/')[:-1].strip("/")
+        logo = 'https://yeshome-diablo.s3.amazonaws.com/media/2023/02/01/1c8dd914332d4c42bcfae452904a3de5.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJ6PPQE6TSBKPLYUA%2F20230201%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20230201T031614Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=c4d1bf64bb99f37992f11307e555576163bfb3954165d3e8d3cffd4f960b772f'
         if '.vvips.com.tw' in urls:
             sub_domain = urls.split('.vvips.com.tw')[0].split('//')[1]
-            logo = Company.objects.filter(sub_domain=sub_domain, is_valid=1)[0].logo.url
-        else:
-            logo = Company.objects.filter(sub_domain='kent', is_valid=1)[0].logo.url
-        print(logo)
+            logos = Company.objects.filter(sub_domain=sub_domain, is_valid=1)
+            if logos:
+                logo = logos[0].logo.url
         return Response(logo)
