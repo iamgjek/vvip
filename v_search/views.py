@@ -32,6 +32,7 @@ from rest_framework.views import APIView
 from t_search.models import info_config
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
+from users.models import Company
 
 logger = logging.getLogger(__name__)
 DB_NAME = 'diablo'
@@ -1047,3 +1048,29 @@ class GetSearchResponseV3View(APIView):
             qt2 = time.perf_counter()
             print(f'查詢總時間 : {qt2 - qt1}')
         return Response(result)
+
+class GetLogoView(APIView):
+    TAG = "[GetLogoView]"
+
+    authentication_classes = (CsrfExemptSessionAuthentication, )
+
+    @extend_schema(
+        summary='取logo',
+        description='取logo',
+        request=None,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
+
+    def get(self, request):
+        # urls = 'http://www.vvips.com.tw/v_search/land_dev/'
+        urls = request.build_absolute_uri('/')[:-1].strip("/")
+        if '.vvips.com.tw' in urls:
+            sub_domain = urls.split('.vvips.com.tw')[0].split('//')[1]
+            logo = Company.objects.filter(sub_domain=sub_domain, is_valid=1)[0].logo.url
+        else:
+            logo = Company.objects.filter(sub_domain='kent', is_valid=1)[0].logo.url
+        print(logo)
+        return Response(logo)
