@@ -140,7 +140,7 @@ footer {
     width: 135px;
     height: 60px;
     /* margin: 0px auto; */
-    background: url(../images/257logo.png) 0 0;
+    /* background: url(../images/257logo.png) 0 0; */
     background-size: 100%;
 }
 
@@ -382,6 +382,9 @@ footer {
 }
 .logo {
     margin-bottom: 1rem;
+    height: 115px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .logo img{
     width: 65%;
