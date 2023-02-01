@@ -61,6 +61,11 @@
         <script src="/static/js/vDirective.js"></script>
         <script>
             const vm = baseapp.mount("#vue_app");
+            
+            new HTTPreq("/v_search/get_logo/").geta().then((rcv)=>{
+                [...document.getElementsByClassName("logo")].forEach((e)=>{e.style.backgroundImage = `url(${rcv.result})`});
+                [...document.getElementsByClassName("logo1")].forEach((e)=>{e.style.backgroundImage = `url(${rcv.result})`});
+            });
         </script>
     </body>
 </html>

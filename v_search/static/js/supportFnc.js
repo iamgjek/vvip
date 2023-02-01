@@ -116,6 +116,7 @@ class supfnc{
     static createElement(tagName, options){
         var el = document.createElement(tagName), tmp;
         for(var i in options){
+            if(!options[i]) continue;
             if(i == "class"){
                 tmp = [];
                 if(typeof options.class == "string") tmp = options.class.split(" ");
