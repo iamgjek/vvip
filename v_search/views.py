@@ -1061,4 +1061,4 @@ class GetLogoView(View):
             logos = Company.objects.filter(sub_domain=sub_domain, is_valid=1)
             if logos:
                 logo = logos[0].logo.url
-        return Response(logo)
+        return HttpResponse(json.dumps(logo, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
