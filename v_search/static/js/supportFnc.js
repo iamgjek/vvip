@@ -1,4 +1,3 @@
-const illiegalChar = "\\/:*?\"\'<>|\n\b\0\t";
 class supfnc{
     static getCookie = (name) => {
         const value = `; ${document.cookie}`;
@@ -45,10 +44,7 @@ class supfnc{
 
     static remove_illiegalChar = (str) => {
         if (typeof str != "string") return "";
-        for (var i in illiegalChar) {
-            str = str.replace(new RegExp(illiegalChar[i].replace("\\", "\\\\").replace("|", "\\|").replace("?", "\\?").replace("*", "\\*") + '+', "g"), "");
-        }
-        return str;
+        return str.replace(new RegExp("[\\\\/:*?\"\'<>|\\n\\b\\0\\t]", "g"), "");
     }
 
     static taiwanTime = (time) => {
@@ -120,6 +116,7 @@ class supfnc{
     static createElement(tagName, options){
         var el = document.createElement(tagName), tmp;
         for(var i in options){
+            if(!options[i]) continue;
             if(i == "class"){
                 tmp = [];
                 if(typeof options.class == "string") tmp = options.class.split(" ");

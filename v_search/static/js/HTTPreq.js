@@ -23,12 +23,16 @@ class HTTPreq{
     }
 
     post(data){
-        this.sendReq("POST", data);
-        return this;
+        var T = this;
+        return new Promise((resolve) => {
+            T.posta(data).then(rcv => resolve(rcv));
+        });
     }
     get(data){
-        this.sendReq("GET", data);
-        return this;
+        var T = this;
+        return new Promise((resolve) => {
+            T.geta(data).then(rcv => resolve(rcv));
+        });
     }
 
     setUrl(url){
