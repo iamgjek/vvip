@@ -633,11 +633,12 @@ class GetSearchResponseV3View(APIView):
                         data_list.append(f'{lbkey};{regno}')
                 if data_list:
                     lbkey_regno_sql = ''
+                    nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
                     for i in data_list:
                         lbkey = i.split(';')[0]
                         regno = i.split(';')[1]
                         lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
-                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a5, c.a9 FROM telem.i_search_citron a 
+                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a5, c.a6, c.a9 FROM telem.i_search_citron a 
                             left join telem.i_search_babaco b on a.c2=b.b4
                             left join telem.i_search_abiu c on a.c2=c.a8
                             where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
@@ -647,11 +648,13 @@ class GetSearchResponseV3View(APIView):
                         regno = i['c5']
                         lbkey_regno = lbkey + ';' + regno
                         bday = aes_decrypt(i['a5']).replace('*', '') + '年****'
+                        uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
                         name = aes_decrypt(i['a9'])
                         phone = aes_decrypt(i['b5'])
                         if not lbkey_regno in data_dict:
                             data_dict[lbkey_regno] = {
                                                     'bday': bday,
+                                                    'uid_tag': uid_tag,
                                                     'name': name,
                                                     'phone': [phone]
                                                     }
@@ -670,6 +673,7 @@ class GetSearchResponseV3View(APIView):
                         for s, i in enumerate(v):
                             if data_t:
                                 result_owner[k][s]['bday'] = data_t['bday']
+                                result_owner[k][s]['uid_tag'] = data_t['uid_tag']
                                 result_owner[k][s]['name'] = data_t['name']
                                 result_owner[k][s]['phone'] = data_t['phone']
                 # print(result_owner)
