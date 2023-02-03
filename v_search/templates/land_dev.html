@@ -822,7 +822,7 @@
                                                 <p>(( data.shared_value_t ))</p>
                                             </td>
                                             <td data="電話">
-                                                <p>(( data[0].$電話 || '' ))</p>
+                                                <p v-for="ph in data[0]?.phone">(( ph ))</p>
                                             </td>
                                             <td data="所有權註記">
                                                 <p>(( data[0].$所有權註記 || '' ))</p>
