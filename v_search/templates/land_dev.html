@@ -700,7 +700,7 @@
                                         <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15" class="cc2">
                                                 <table class="table3">
-                                                    <thead>
+                                                    <thead class="header2">
                                                         <tr>
                                                             <th role="button" @click="sortf($event, data, 'regno')" class="br1">登記次序</th>
                                                             <th role="button" @click="sortf($event, data, 'reg_date_str')" nowrap="nowrap" style="white-space:nowrap;">登記日期</th>
@@ -774,7 +774,7 @@
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                         <div class="row mntable">
                             <table class="table1 table-expandable">
-                                <thead>
+                                <thead class="header">
                                     <tr class="tabletop">
                                         <th role="button" @click="sortf($event, person_searchRes, '0.name')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">所有權人</th>
                                         <th role="button" @click="sortf($event, person_searchRes, '0.uid')" scope="col" style="width:10%;">統一編號</th>
@@ -842,7 +842,7 @@
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15" class="cc2">
                                                 <table class="table3">
-                                                    <thead>
+                                                    <thead class="header2">
                                                         <tr>
                                                             <th role="button" @click="sortf($event, data, 'city_name')"  nowrap="nowrap" style="white-space:nowrap;" class="br1">縣市</th>
                                                             <th role="button" @click="sortf($event, data, 'area_name')">行政區</th>

@@ -845,6 +845,12 @@ th {
 .header{
     position: sticky;
     top: 0;
+    z-index: 2;
+}
+.header2{
+    position: sticky;
+    top: 49px;
+    z-index: 1;
 }
 .dmshow1{
     height: 20rem;
