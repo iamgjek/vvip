@@ -1055,7 +1055,8 @@ class GetLogoView(View):
     def get(self, request):
         # urls = 'http://www.vvips.com.tw/v_search/land_dev/'
         urls = request.build_absolute_uri('/')[:-1].strip("/")
-        logo = 'https://yeshome-diablo.s3.amazonaws.com/media/2023/02/01/1c8dd914332d4c42bcfae452904a3de5.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAJ6PPQE6TSBKPLYUA%2F20230201%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20230201T031614Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=c4d1bf64bb99f37992f11307e555576163bfb3954165d3e8d3cffd4f960b772f'
+        #* 預設
+        logo = Company.objects.get(id=1).logo.url
         if '.vvips.com.tw' in urls:
             sub_domain = urls.split('.vvips.com.tw')[0].split('//')[1]
             logos = Company.objects.filter(sub_domain=sub_domain, is_valid=1)
