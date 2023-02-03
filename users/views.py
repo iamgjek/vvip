@@ -42,7 +42,7 @@ def check_role(request):
     #* role_dict = {0: 'Administrator(元宏本身)', 1: Manager(店東或廠商主管), 2: Operator(廠商旗下的業務), 3: other(非此sub_domain下的帳號)}
     check_user = CompanyUserMapping.objects.filter(user_id=user_id, is_valid=1)
     if check_user:
-        role = 3 if company_id or check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
+        role = 3 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
     else:
         role = 0
     return role
