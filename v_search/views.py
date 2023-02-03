@@ -1,21 +1,23 @@
+import base64
 import json
 import logging
-import time
 import operator
-
-from functools import reduce
+import sys
+import time
 from datetime import date, datetime, timedelta
+from functools import reduce
 
 import numpy as np
 import pandas as pd
 import requests
+from Crypto.Cipher import AES
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          JsonResponse)
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 from drf_spectacular.utils import (OpenApiCallback, OpenApiExample,
@@ -30,12 +32,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from t_search.models import info_config
+from users.models import Company
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer
 from v_search.util import CustomJsonEncoder, get_dba
-from users.models import Company
 
 logger = logging.getLogger(__name__)
-DB_NAME = 'diablo'
+DB_NAME = 'diablo_test'
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -573,6 +575,18 @@ class GetSearchResponseV3View(APIView):
         return result
 
     def format_data_layout(self, data):
+        def aes_decrypt(text):
+            try:
+                key = 'WJ5HdW2Ns45F9s6M'
+                key = key.encode('utf8')
+                cryptor = AES.new(key, AES.MODE_ECB)
+                text = base64.b64decode(text)
+                plain_text = cryptor.decrypt(text).decode()
+                plain_text = plain_text.rstrip('\0')
+            except:
+                plain_text = None
+            return plain_text
+
         result_land = {}
         result_owner = {}
         result = {'land_data': {}, 'owner_data': {}}
@@ -606,9 +620,62 @@ class GetSearchResponseV3View(APIView):
                     dict_key = f'{gp_index[0]}_{gp_index[1]}_{gp_index[2]}'
                     group_owner_data = df_group_owner.get_group(gp_index).to_dict('records')
                     result_owner[dict_key] = group_owner_data
-                    result['owner_data'] = result_owner
+
+
+                #! 箇吱卜沖
+                data_dict = {}
+                data_t_dict = {}
+                data_list = []
+                for k, v in result_owner.items():
+                    for i in v:
+                        lbkey = i["lbkey"]
+                        regno = i["regno"]
+                        data_list.append(f'{lbkey};{regno}')
+                if data_list:
+                    lbkey_regno_sql = ''
+                    for i in data_list:
+                        lbkey = i.split(';')[0]
+                        regno = i.split(';')[1]
+                        lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
+                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a5, c.a9 FROM telem.i_search_citron a 
+                            left join telem.i_search_babaco b on a.c2=b.b4
+                            left join telem.i_search_abiu c on a.c2=c.a8
+                            where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
+                    datas, _ = get_dba(sql_cmd=sql, db_name='diablo_test')
+                    for i in datas:
+                        lbkey = i['c4']
+                        regno = i['c5']
+                        lbkey_regno = lbkey + ';' + regno
+                        bday = aes_decrypt(i['a5']).replace('*', '') + '年****'
+                        name = aes_decrypt(i['a9'])
+                        phone = aes_decrypt(i['b5'])
+                        if not lbkey_regno in data_dict:
+                            data_dict[lbkey_regno] = {
+                                                    'bday': bday,
+                                                    'name': name,
+                                                    'phone': [phone]
+                                                    }
+                        else:
+                            data_dict[lbkey_regno]['phone'].append(phone)
+
+                    for k, v in result_owner.items():
+                        for s, i in enumerate(v):
+                            lbkey = i["lbkey"]
+                            regno = i["regno"]
+                            lbkey_regno = lbkey + ';' + regno
+                            data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
+
+                    for k, v in result_owner.items():
+                        data_t = data_t_dict[k]
+                        for s, i in enumerate(v):
+                            if data_t:
+                                result_owner[k][s]['bday'] = data_t['bday']
+                                result_owner[k][s]['name'] = data_t['name']
+                                result_owner[k][s]['phone'] = data_t['phone']
+                # print(result_owner)
+                result['owner_data'] = result_owner
             except Exception as e:
-                print(f'輸出錯誤 {e}')
+                print(e, 'exception in line', sys.exc_info()[2].tb_lineno)
         return result
 
     def clean_region_data(self, base_region):
@@ -977,6 +1044,7 @@ class GetSearchResponseV3View(APIView):
             # self.total_df = self.total_df.dropna(subset=['name'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
             self.total_df['land_zone_code'] = self.total_df['land_zone_code'].fillna('')
+            self.total_df['phone'] = ''
             if self.total_df.empty:
                 return result
             new_total_df = self.total_df.copy()
@@ -1003,6 +1071,7 @@ class GetSearchResponseV3View(APIView):
             self.total_df[fillna_zero] = self.total_df[fillna_zero].fillna(0)
             self.total_df[fillna_str] = self.total_df[fillna_str].fillna('')
             self.total_df = self.total_df.fillna(0)
+
             result = self.format_data_layout(self.total_df)
         return result
 

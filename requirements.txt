@@ -53,6 +53,8 @@ python-decouple==3.6
 # AWS
 boto3
 
+pycryptodome
+
 # pdf 製作
 # xhtml2pdf
 
