@@ -14,9 +14,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
-    
+    <link href='/static/css/table-fixed-header.css' rel='stylesheet' />
+    <script src="/static/js/jquery-1.7.2.min.js"></script>
+    <script src='/static/js/table-fixed-header.js'></script>
     <script src="/static/js/index.js"></script>
-    <script src="/static/js/freeze-table.js"></script>
+    <!--script src="/static/js/freeze-table.js"></script>
 	<script>
 	$(document).ready(function() {
 
@@ -50,6 +52,12 @@
 	  });
 	});
 	</script>
+    <script language='javascript' type='text/javascript'>
+        $(document).ready(function(){
+          $('.table-fixed-header').fixedHeader();
+        });
+    </script-->
+ 
     <script>
         $(function () {
             $("#password1").peeper({
@@ -284,7 +292,7 @@
                         </div>
                     </div>
                     
-                    <div class="colrwd w-80 float-end right2">
+                    <div class="col w-80 float-end right2">
                         <button class="btn btn1 w-81 btn002" data-toggle="collapse" href="#collapseExample"
                             role="button" aria-expanded="false" aria-controls="collapseExample">
                             進階
@@ -608,10 +616,10 @@
                 <div class="tab-content width2" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         <div class="row mntable">
-                            <table cellspacing="0"  id="table-basic" class="table1 table-expandable  mntable">
-                                <thead>
-                                    <tr class="tabletop">
-                                        <th role="button" @click="sortf($event, searchRes, '0.city_name')" scope="col" style="width:5%" class="br1">縣市</th>
+                            <table  id="mytable" cellspacing="0" class=" table1 ttable table-bordered table-fixed-header">
+                                <thead class="header">
+                                    <tr>
+                                        <th role="button" @click="sortf($event, searchRes, '0.city_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">縣市</th>
                                         <th role="button" @click="sortf($event, searchRes, '0.area_name')" scope="col" style="width:5%">行政區</th>
                                         <th role="button" @click="sortf($event, searchRes, '0.region_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
                                         <th role="button" @click="sortf($event, searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
@@ -646,7 +654,7 @@
                                     </tr>
                                     <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                         <tr data-node="treetable-1">
-                                            <td data="縣市">
+                                            <td class="td-left" data="縣市"nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>(( data[0].city_name || '(空白)' ))</p>
                                             </td>
                                             <td data="行政區">
@@ -655,7 +663,7 @@
                                             <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>(( data[0].region_name || '(空白)' ))</p>
                                             </td>
-                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;">
+                                            <td data="地號" nowrap="nowrap" style="white-space:nowrap;" class="fw500">
                                                 <p>
                                                     <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '' ))</a>
                                                     <span v-else>(( data[0].lno || '' ))</span>
@@ -685,12 +693,12 @@
                                             <td data="權屬種類">
                                                 <p>(( data[0].owner_type || '' ))</p>
                                             </td>
-                                            <td data="所有權人">
+                                            <td  class="td-right" data="所有權人">
                                                 <p>(( data.length || 0 ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
-                                            <td colspan="15">
+                                            <td colspan="15" class="cc2">
                                                 <table class="table3">
                                                     <thead>
                                                         <tr>
@@ -800,8 +808,8 @@
                                     </tr>
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
-                                            <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;text-align: left;">
-                                                <p><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '' ))</a></p>
+                                            <td data="所有權人" nowrap="nowrap" class="fw500" style="white-space:nowrap;text-align: left;">
+                                                <p class="pstyle"><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '' ))</a></p>
                                             </td>
                                             <td data="統一編號">
                                                 <p>(( data[0].uid || '' ))</p>
@@ -832,11 +840,11 @@
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
-                                            <td colspan="15">
-                                                <table class="table11">
+                                            <td colspan="15" class="cc2">
+                                                <table class="table3">
                                                     <thead>
                                                         <tr>
-                                                            <th role="button" @click="sortf($event, data, 'city_name')" class="br1">縣市</th>
+                                                            <th role="button" @click="sortf($event, data, 'city_name')"  nowrap="nowrap" style="white-space:nowrap;" class="br1">縣市</th>
                                                             <th role="button" @click="sortf($event, data, 'area_name')">行政區</th>
                                                             <th role="button" @click="sortf($event, data, 'region_name')" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
                                                             <th role="button" @click="sortf($event, data, 'lno')" nowrap="nowrap" style="white-space:nowrap;">地號</th>
@@ -854,7 +862,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="line in data">
-                                                            <td data="縣市">(( line.city_name || '' ))</td>
+                                                            <td data="縣市" nowrap="nowrap" style="white-space:nowrap;">(( line.city_name || '' ))</td>
                                                             <td data="行政區">(( line.area_name || '' ))</td>
                                                             <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">(( line.region_name || '' ))</td>
                                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line.lno || '' ))</td>
@@ -1189,7 +1197,7 @@
                 },
                 landbuildNumberFix(str, lbtype){
                     lb = ["b", "build"].includes(lbtype.toLowerCase()) ? [5, 3] : [4, 4];
-                    var lbnum = str.replace(new RegExp("\\s", "g"), "").split(","), sublbnum, tmp, next;
+                    var lbnum = str.replace(new RegExp("\\s"), "g").split(","), sublbnum, tmp, next;
                     var ok = true, res = [];
                     for(var i in lbnum){
                         next = false;
@@ -1256,7 +1264,7 @@
                     tmp = [];
                     if(this.searchForm.land.condition.common_land) tmp.push("道路用地");
                     if(this.searchForm.land.condition.road_land) tmp.push("公共設施保留地");
-                    tmp = [...tmp, ...this.searchForm.land.condition.inCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
+                    tmp = [...tmp, this.searchForm.land.condition.inCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity2.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     if(tmp.length) r.push(tmp.join(" "));
