@@ -63,8 +63,11 @@
             const vm = baseapp.mount("#vue_app");
             
             new HTTPreq("/v_search/get_logo/").geta().then((rcv)=>{
-                [...document.getElementsByClassName("logo")].forEach((e)=>{e.style.backgroundImage = `url(${rcv.result})`});
-                [...document.getElementsByClassName("logo1")].forEach((e)=>{e.style.backgroundImage = `url(${rcv.result})`});
+                var res = supfnc.toJSON(rcv.result);
+                var company_name = document.getElementById("company_name");
+                if(company_name) company_name.innerHTML = res.company_name;
+                [...document.getElementsByClassName("logo")].forEach((e)=>{e.style.backgroundImage = `url(${res.logo})`});
+                [...document.getElementsByClassName("logo1")].forEach((e)=>{e.style.backgroundImage = `url(${res.logo})`});
             });
         </script>
     </body>
