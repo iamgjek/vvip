@@ -68,6 +68,7 @@
                 if(company_name) company_name.innerHTML = res.company_name;
                 [...document.getElementsByClassName("logo")].forEach((e)=>{e.style.backgroundImage = `url(${res.logo})`});
                 [...document.getElementsByClassName("logo1")].forEach((e)=>{e.style.backgroundImage = `url(${res.logo})`});
+                [...document.getElementsByTagName("title")].forEach((e)=>{e.innerHTML = res.company_name;});
             });
         </script>
     </body>

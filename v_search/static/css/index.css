@@ -393,6 +393,7 @@ footer {
     height: 115px;
     background-repeat: no-repeat;
     background-position: center;
+    background-size: contain;
 }
 .logo img{
     width: 65%;
