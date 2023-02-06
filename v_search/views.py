@@ -173,7 +173,7 @@ class LoginView(View):
             passwd = request.POST.get('password')
             remember = request.POST.get('remember')
             user = authenticate(username=account, password=passwd)
-            if user is not None:
+            if user is not None and user.using:
                 login(request, user)
                 if remember !='true':
                     request.session.set_expiry(0)
