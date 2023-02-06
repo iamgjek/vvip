@@ -248,6 +248,7 @@ class ModifyCompany(APIView):
                 company_id = params.get('company_id', None)
                 contact_person = params.get('contact_person', None)
                 phone = params.get('phone', None)
+                logo = params.get('logo', None)
                 state = json.loads(state)
 
                 #* 帳號
