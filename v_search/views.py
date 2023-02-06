@@ -1127,7 +1127,7 @@ class GetLogoView(View):
 
     def get(self, request):
         urls = request.build_absolute_uri('/')[:-1].strip("/")
-        urls = 'http://257.vvips.com.tw/'
+        # urls = 'http://257.vvips.com.tw/'
         #* 預設
         company = Company.objects.get(id=1)
         logo = company.logo.url
