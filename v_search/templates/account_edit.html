@@ -78,9 +78,9 @@
                 <hr/>
                 <div class="">
                     <div class="px-2">
-                        <h5>上傳logo <span class="ms-3 fs-6 text-secondary" role="button" @click="showImg()">查看當前logo</span></h5>
+                        <h5>上傳logo <span class="ms-3 fs-6 text-secondary" role="button" @click="showImg(dataForm.logo)">查看當前logo</span></h5>
                         <div class="input-group mb-3">
-                            <input type="file" class="form-control" placeholder="請選擇檔案" v-model="dataForm.upload_file">
+                            <input id="upload_file" type="file" class="form-control" placeholder="請選擇檔案">
                         </div>
                     </div>
                 </div>
@@ -193,6 +193,7 @@
                 },
                 editAccountData(){
                     var T = this;
+                    this.dataForm.upload_file = document.getElementById("upload_file").files?.[0];
                     new HTTPreq("/users/modify_company/", "fd").posta(this.dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         Swal.fire(res.msg);
