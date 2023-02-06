@@ -1126,8 +1126,8 @@ class GetLogoView(View):
     TAG = "[GetLogoView]"
 
     def get(self, request):
-        # urls = 'http://www.vvips.com.tw/v_search/land_dev/'
         urls = request.build_absolute_uri('/')[:-1].strip("/")
+        urls = 'http://257.vvips.com.tw/'
         #* 預設
         company = Company.objects.get(id=1)
         logo = company.logo.url
@@ -1136,7 +1136,9 @@ class GetLogoView(View):
             sub_domain = urls.split('.vvips.com.tw')[0].split('//')[1]
             company_data = Company.objects.filter(sub_domain=sub_domain, is_valid=1)
             if company_data:
-                logo = company_data[0].logo.url
-                company_name = company_data[0].company_name
+                if company_data[0].logo:
+                    logo = company_data[0].logo.url
+                if company_data[0].company_name:
+                    company_name = company_data[0].company_name
         result = {'logo': logo, 'company_name': company_name}
         return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
