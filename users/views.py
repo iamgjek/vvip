@@ -441,13 +441,13 @@ class GetUserList(APIView):
                     sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
                             left join vvip.users_user b on b.id=a.user_id
                             left join vvip.users_company c on c.id=a.company_id
-                            where a.company_id={company_id} and a.is_admin=0 and a.is_valid=1;
+                            where a.company_id={company_id} and a.is_admin=0 and a.is_valid=1 and b.using=1;
                             '''
                 else:
                     sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
                             left join vvip.users_user b on b.id=a.user_id
                             left join vvip.users_company c on c.id=a.company_id
-                            where a.is_admin=0 and a.is_valid=1;
+                            where a.is_admin=0 and a.is_valid=1 and b.using=1;
                             '''
                 users = User.objects.raw(sql)
                 data_list = []
