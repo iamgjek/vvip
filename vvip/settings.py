@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+40=cx1=%@eo4w-1v663)&kp$+-^cd20#ki0r2%l5uur2_ln)5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -92,12 +92,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-if DEBUG:
-    MIDDLEWARE.insert(0,  'debug_toolbar.middleware.DebugToolbarMiddleware')
-    INTERNAL_IPS = [
-        "127.0.0.1",
-    ]
 
 ROOT_URLCONF = 'vvip.urls'
 
@@ -244,6 +238,11 @@ try:
 except ImportError:
     pass
 
+if DEBUG == True:
+    MIDDLEWARE.insert(0,  'debug_toolbar.middleware.DebugToolbarMiddleware')
+    INTERNAL_IPS = [
+        "127.0.0.1",
+    ]
 
 LOG_LEVEL = 'INFO'
 if DEBUG == True:
