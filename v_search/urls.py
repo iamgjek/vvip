@@ -28,4 +28,6 @@ urlpatterns = [
     re_path(r'^member_aclist/$', views.MemberAclistView.as_view(), name='member_aclist'),
     re_path(r'^member_newac/$', views.MemberNewacView.as_view(), name='member_newac'),
     re_path(r'^member_editac/$', views.MemberEditacView.as_view(), name='member_editac'),
+
+    re_path(r'^get_logo/$', views.GetLogoView.as_view(), name='get_logo'),
 ]

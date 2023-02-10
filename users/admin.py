@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display=('username', 'last_login', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser', 'date_joined')
     fields = ['username', 'password', 'last_login', 'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'is_superuser', 'date_joined']
     search_fields = ['username']
-    readonly_fields = ['username']
+    # readonly_fields = ['username']
 
 admin.site.register(models.User, UserAdmin)
 
