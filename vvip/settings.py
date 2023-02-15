@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    "debug_toolbar",
     'v_search',
     'users',
     't_search',
@@ -237,6 +238,11 @@ try:
 except ImportError:
     pass
 
+if DEBUG == True:
+    MIDDLEWARE.insert(0,  'debug_toolbar.middleware.DebugToolbarMiddleware')
+    INTERNAL_IPS = [
+        "127.0.0.1",
+    ]
 
 LOG_LEVEL = 'INFO'
 if DEBUG == True:
