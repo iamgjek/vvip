@@ -28,6 +28,8 @@ urlpatterns = [
     re_path(r'^member_aclist/$', views.MemberAclistView.as_view(), name='member_aclist'),
     re_path(r'^member_newac/$', views.MemberNewacView.as_view(), name='member_newac'),
     re_path(r'^member_editac/$', views.MemberEditacView.as_view(), name='member_editac'),
-
+    #* 取得logo
     re_path(r'^get_logo/$', views.GetLogoView.as_view(), name='get_logo'),
+    #* 總歸戶
+    re_path(r'^personal_property/$', views.PersonalPropertyView.as_view(), name='personal_property'),
 ]
