@@ -1180,11 +1180,11 @@ class PersonalPropertyView(APIView):
             if lbtype == 'L':
                 sql = f'''SELECT * FROM diablo.t_search_lkeyregnolist a
                     left join diablo.t_search_lmlandlist b on a.lbkey=b.lkey
-                    where a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
+                    where property_type!=1 and a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
             elif lbtype == 'B':
                 sql = f'''SELECT * FROM diablo.t_search_bkeyregnolist a
                     left join diablo.t_search_bmbuildlist b on a.lbkey=b.bkey
-                    where a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
+                    where property_type!=1 and a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
             else:
                 result['msg'] = '型態錯誤'
                 return result
