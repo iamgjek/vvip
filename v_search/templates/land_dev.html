@@ -881,7 +881,7 @@
                                                                 <p v-for="person in line.creditors_rights">(( person ))</p>
                                                             </td>
                                                         </tr>
-                                                        <tr>
+                                                        <tr v-if="!data.personal_property && data?.[0]?.owner_type != '公法人'">
                                                             <td colspan="14" class="text-left">
                                                                 <button class="btn btn-sm btn-primary" @click="personal_property(data.key, dataIdx)">查詢總歸戶</button>
                                                             </td>
@@ -1378,9 +1378,12 @@
                     new HTTPreq("/v_search/personal_property/", "fd").posta({key: key, lbtype: "L"}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(rcv.status === 200){
-                            T.person_searchResBox[dataIdx].length = 0;
-                            for(var i in res.owner_data){
-                                T.person_searchResBox[dataIdx].push(res.owner_data[i]);
+                            T.person_searchResBox[dataIdx].personal_property = 1;
+                            if(res.owner_data.length){
+                                T.person_searchResBox[dataIdx].length = 0;
+                                for(var i in res.owner_data){
+                                    T.person_searchResBox[dataIdx].push(res.owner_data[i]);
+                                }
                             }
                         }
                     });
