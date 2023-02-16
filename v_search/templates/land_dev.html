@@ -657,49 +657,49 @@
                                     <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                         <tr data-node="treetable-1">
                                             <td class="td-left" data="縣市" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].city_name || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.city_name || '(空白)' ))</p>
                                             </td>
                                             <td data="行政區">
-                                                <p>(( data[0].area_name || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.area_name || '(空白)' ))</p>
                                             </td>
                                             <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].region_name || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.region_name || '(空白)' ))</p>
                                             </td>
                                             <td data="地號" nowrap="nowrap" style="white-space:nowrap;" class="fw500">
                                                 <p>
-                                                    <a v-if="data[0].is_valid" :href="'#' + data[0].region_name + data[0].lno" data-toggle="collapse">(( data[0].lno || '' ))</a>
-                                                    <span v-else>(( data[0].lno || '' ))</span>
+                                                    <a v-if="data?.[0].is_valid" :href="'#' + data?.[0].region_name + data?.[0].lno" data-toggle="collapse">(( data?.[0]?.lno || '' ))</a>
+                                                    <span v-else>(( data?.[0]?.lno || '' ))</span>
                                                 </p>
                                             </td>
                                             <td data="國土分區">
-                                                <p>(( data[0].national_land_zone || '' ))</p>
+                                                <p>(( data?.[0]?.national_land_zone || '' ))</p>
                                             </td>
                                             <td data="使用分區"class="left">
-                                                <p>(( data[0].land_zone || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.land_zone || '(空白)' ))</p>
                                             </td>
                                             <td data="使用地類別(計畫案名)"class="left">
-                                                <p>(( data[0].urban_name || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.urban_name || '(空白)' ))</p>
                                             </td>
                                             <td data="土地面積">
-                                                <p>(( (data[0].land_area / 3.30579).round(2) || '' ))</p>
+                                                <p>(( (data?.[0]?.land_area / 3.30579).round(2) || '' ))</p>
                                             </td>
                                             <td data="公告現值" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].land_notice_value?.format() || '' ))</p>
+                                                <p>(( data?.[0]?.land_notice_value?.format() || '' ))</p>
                                             </td>
                                             <td data="總公告" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].total_vp?.chUnit(1, 2) || '' ))</p>
+                                                <p>(( data?.[0]?.total_vp?.chUnit(1, 2) || '' ))</p>
                                             </td>
                                             <td data="地上建物" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].build_num || '' ))</p>
+                                                <p>(( data?.[0]?.build_num || '' ))</p>
                                             </td>
                                             <td data="權屬種類" nowrap="nowrap" style="white-space:nowrap;">
-                                                <p>(( data[0].owner_type || '' ))</p>
+                                                <p>(( data?.[0]?.owner_type || '' ))</p>
                                             </td>
                                             <td  class="td-right" data="所有權人" nowrap="nowrap" style="white-space:nowrap;">
                                                 <p>(( data.length || 0 ))</p>
                                             </td>
                                         </tr>
-                                        <tr :id="data[0].region_name + data[0].lno" class="collapse cell-1 row-child tablebg2">
+                                        <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
                                             <td colspan="15" class="cc2">
                                                 <table class="table3">
                                                     <thead class="header2">
@@ -811,16 +811,16 @@
                                     <template v-for="(data, dataIdx) in person_searchResBox">
                                         <tr data-node="treetable-1">
                                             <td data="所有權人" nowrap="nowrap" class="fw500" style="white-space:nowrap;text-align: left;">
-                                                <p class="pstyle"><a :href="'#' + data._key" data-toggle="collapse">(( data[0].name || '' ))</a></p>
+                                                <p class="pstyle"><a :href="'#' + data._key" data-toggle="collapse">(( data?.[0]?.name || '' ))</a></p>
                                             </td>
                                             <td data="統一編號">
-                                                <p>(( data[0].uid || '' ))</p>
+                                                <p>(( data?.[0]?.uid || '' ))</p>
                                             </td>
                                             <td data="戶籍地址" class="left">
-                                                <p>(( data[0].address_re || '(空白)' ))</p>
+                                                <p>(( data?.[0]?.address_re || '(空白)' ))</p>
                                             </td>
                                             <td data="出生日期">
-                                                <p>(( data[0].bday || '' ))</p>
+                                                <p>(( data?.[0]?.bday || '' ))</p>
                                             </td>
                                             <td data="土地總筆數">
                                                 <p>(( data?.length || '' ))</p>
@@ -832,13 +832,13 @@
                                                 <p>(( data.shared_value_t ))</p>
                                             </td>
                                             <td data="電話">
-                                                <p v-for="ph in data[0]?.phone">(( ph ))</p>
+                                                <p v-for="ph in data?.[0]?.phone">(( ph ))</p>
                                             </td>
                                             <td data="所有權註記">
-                                                <p>(( data[0].$所有權註記 || '' ))</p>
+                                                <p>(( data?.[0]?.$所有權註記 || '' ))</p>
                                             </td>
                                             <td data="身份標籤">
-                                                <p>(( data[0].uid_tag || '' ))</p>
+                                                <p>(( data?.[0]?.uid_tag || '' ))</p>
                                             </td>
                                         </tr>
                                         <tr :id="data._key" class="collapse cell-1 row-child tablebg2">
@@ -883,7 +883,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="14" class="text-left">
-                                                                <button class="btn btn-sm btn-primary" @click="personal_property(data._key, dataIdx)">查詢總歸戶</button>
+                                                                <button class="btn btn-sm btn-primary" @click="personal_property(data._key.slice(1), dataIdx)">查詢總歸戶</button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
