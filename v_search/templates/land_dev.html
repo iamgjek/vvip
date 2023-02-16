@@ -883,7 +883,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td colspan="14" class="text-left">
-                                                                <button class="btn btn-sm btn-primary" @click="personal_property(data._key.slice(1), dataIdx)">查詢總歸戶</button>
+                                                                <button class="btn btn-sm btn-primary" @click="personal_property(data.key, dataIdx)">查詢總歸戶</button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -1189,6 +1189,7 @@
                                 owner_data[i].shared_value_t = shared_value_t.chUnit(1, 2);
                                 
                                 owner_data[i]._key = "k" + i.replace(new RegExp("[~!@#$%^&*()?<>/\\\\]", "g"), "");
+                                owner_data[i].key = i;
                                 T.person_searchRes.push(owner_data[i]);
                             }
                             T.person_totalPage = Math.ceil(T.person_searchRes.length / T.person_onepageNum);
