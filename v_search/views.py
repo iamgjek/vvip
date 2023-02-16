@@ -1265,7 +1265,7 @@ class PersonalPropertyView(APIView):
                                     'name': name,
                                     'phone': [phone]
                                     }
-                    elif phone:
+                    elif phone and not phone in data_dict['phone']:
                         data_dict['phone'].append(phone)
                 if data_dict:
                     for i in owner_list:
