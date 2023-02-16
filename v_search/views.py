@@ -33,11 +33,24 @@ from rest_framework.views import APIView
 
 from t_search.models import info_config
 from users.models import Company
-from v_search.serializers import GetSearchSerializer, PlanNameSerializer
+from v_search.serializers import GetSearchSerializer, PlanNameSerializer, PersonalPropertySerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
 DB_NAME = 'diablo'
+
+def aes_decrypt(text):
+    try:
+        key = 'WJ5HdW2Ns45F9s6M'
+        key = key.encode('utf8')
+        cryptor = AES.new(key, AES.MODE_ECB)
+        text = base64.b64decode(text)
+        plain_text = cryptor.decrypt(text).decode()
+        plain_text = plain_text.rstrip('\0')
+    except:
+        plain_text = None
+    return plain_text
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -574,19 +587,8 @@ class GetSearchResponseV3View(APIView):
                 print(e)
         return result
 
+    #! 替換資料地方
     def format_data_layout(self, data):
-        def aes_decrypt(text):
-            try:
-                key = 'WJ5HdW2Ns45F9s6M'
-                key = key.encode('utf8')
-                cryptor = AES.new(key, AES.MODE_ECB)
-                text = base64.b64decode(text)
-                plain_text = cryptor.decrypt(text).decode()
-                plain_text = plain_text.rstrip('\0')
-            except:
-                plain_text = None
-            return plain_text
-
         result_land = {}
         result_owner = {}
         result = {'land_data': {}, 'owner_data': {}}
@@ -638,22 +640,25 @@ class GetSearchResponseV3View(APIView):
                         lbkey = i.split(';')[0]
                         regno = i.split(';')[1]
                         lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
-                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a5, c.a6, c.a9 FROM telem.i_search_citron a 
+                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8 FROM telem.i_search_citron a 
                             left join telem.i_search_babaco b on a.c2=b.b4
                             left join telem.i_search_abiu c on a.c2=c.a8
                             where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
-                    datas, _ = get_dba(sql_cmd=sql, db_name='diablo_test')
+                    datas, _ = get_dba(sql_cmd=sql)
                     for i in datas:
                         lbkey = i['c4']
                         regno = i['c5']
+                        uid = aes_decrypt(i['a8'])
                         lbkey_regno = lbkey + ';' + regno
-                        bday = aes_decrypt(i['a5']).replace('*', '') + '年****'
+                        bday = aes_decrypt(i['a10'])
+                        bdata = ''.join([bday[:3], '年'])
                         uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
                         name = aes_decrypt(i['a9'])
                         phone = aes_decrypt(i['b5'])
                         if not lbkey_regno in data_dict:
                             data_dict[lbkey_regno] = {
-                                                    'bday': bday,
+                                                    'uid': uid,
+                                                    'bday': bdata,
                                                     'uid_tag': uid_tag,
                                                     'name': name,
                                                     'phone': [phone]
@@ -672,6 +677,7 @@ class GetSearchResponseV3View(APIView):
                         data_t = data_t_dict[k]
                         for s, i in enumerate(v):
                             if data_t:
+                                result_owner[k][s]['uid'] = data_t['uid']
                                 result_owner[k][s]['bday'] = data_t['bday']
                                 result_owner[k][s]['uid_tag'] = data_t['uid_tag']
                                 result_owner[k][s]['name'] = data_t['name']
@@ -941,7 +947,6 @@ class GetSearchResponseV3View(APIView):
             # 總公告
             self.total_df['total_vp'] = self.total_df['land_area'] * self.total_df['land_notice_value']
 
-
     def clean_other_data(self, base_other):
 
         # 他項設定:他項標記
@@ -1020,7 +1025,7 @@ class GetSearchResponseV3View(APIView):
                     left join diablo.t_search_lmlandlist T2 on T1.lbkey =  T2.lkey \
                     WHERE T1.lbkey like "H_01_0001%" and T1.remove_time is null limit 50 \
                     '
-            print('測試資料')
+            # print('測試資料')
             subscriberecords_qs, headers = get_dba(sql_cmd=sql,db_name=DB_NAME)
             result = self.format_data_layout_fake_data(subscriberecords_qs)
         else:
@@ -1141,4 +1146,157 @@ class GetLogoView(View):
                 if company_data[0].company_name:
                     company_name = company_data[0].company_name
         result = {'logo': logo, 'company_name': company_name}
+        return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+
+class PersonalPropertyView(APIView):
+    TAG = "[PersonalPropertyView]"
+
+    authentication_classes = (CsrfExemptSessionAuthentication, )
+
+    def apply_creditors_rights(self, creditors_rights):
+        data = []        
+        if creditors_rights in ['None', 'none', None, np.NaN, []]:
+            return data
+
+        if creditors_rights:
+            data = creditors_rights.replace('\'', '\"')
+            data = json.loads(data)
+        return data
+
+    def process(self, request):
+        result = {'status': 'NG'}
+        try:
+            params = request.POST
+            key = params.get('key', None)
+            lbtype = params.get('lbtype', 'L')
+            if not key:
+                result['msg'] = '請輸入資料'
+                return result
+            # key = '劉＊＊_C100*****3_基隆市中正區義重里３鄰信七路３號'
+            key_split = key.split('_')
+            name = key_split[0]
+            uid = key_split[1]
+            address = key_split[2]
+            if lbtype == 'L':
+                sql = f'''SELECT * FROM diablo.t_search_lkeyregnolist a
+                    left join diablo.t_search_lmlandlist b on a.lbkey=b.lkey
+                    where a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
+            elif lbtype == 'B':
+                sql = f'''SELECT * FROM diablo.t_search_bkeyregnolist a
+                    left join diablo.t_search_bmbuildlist b on a.lbkey=b.bkey
+                    where a.name="{name}" and a.uid="{uid}" and a.address_re="{address}";'''
+            else:
+                result['msg'] = '型態錯誤'
+                return result
+            # print('測試資料')
+            datas, _ = get_dba(sql_cmd=sql,db_name=DB_NAME)
+            owner_type = {0: "不詳", 1: "自然人", 2: "私法人", 3: "公法人", 4: "非公有", 5: "部份公有"}
+            owner_list = []
+            lbkey_regno = []
+            if lbtype == 'L':
+                for i in datas:
+                    lbkey_regno.append(f'{i["lbkey"]};{i["regno"]}')
+                    data_dict = {
+                                "city_name": i['city_name'],
+                                "area_name": i['area_name'],
+                                "region_name": i['region_name'],
+                                "lno": i['lno'],
+                                "national_land_zone": i['national_land_zone'],
+                                "plan_name": i['plan_name'],
+                                "land_zone": i['land_zone'],
+                                "urban_name": i['urban_name'],
+                                "land_area": i['land_area'],
+                                "land_notice_value": float(i['land_notice_value']),
+                                "build_num": i['build_num'],
+                                "owner_type": owner_type[i['owner_type']],
+                                "land_zone_code": i['land_zone_code'],
+                                "lbkey": i['lbkey'],
+                                "regno": i['regno'],
+                                "reg_date_str": i['reg_date_str'],
+                                "reg_reason_str": i['reg_reason_str'],
+                                "name":i['name'],
+                                "uid": i['uid'],
+                                "uid_tag": '',
+                                "address_re": i['address_re'],
+                                "bday": '',
+                                "right_str": i['right_str'],
+                                "shared_size": i['shared_size'],
+                                "creditors_rights": self.apply_creditors_rights(i['creditors_rights']),
+                                "is_valid": i['is_valid'],
+                                "phone": [
+                                ],
+                                "owner_num_real": i['owners_num'],
+                                "total_vp": round(float(i['land_area']) * float(i['land_notice_value']), 2),
+                                "present_value": round(float(i['shared_size']) * float(i['land_notice_value']), 2)
+                                }
+                    owner_list.append(data_dict)
+            elif lbtype == 'B':
+                result['msg'] = '未實做'
+                return result
+            #! 箇吱卜沖
+            data_dict = {}
+            if lbkey_regno:
+                lbkey_regno_sql = ''
+                nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
+                for i in lbkey_regno:
+                    lbkey = i.split(';')[0]
+                    regno = i.split(';')[1]
+                    lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
+                sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8 FROM telem.i_search_citron a 
+                        left join telem.i_search_babaco b on a.c2=b.b4
+                        left join telem.i_search_abiu c on a.c2=c.a8
+                        where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
+                datas, _ = get_dba(sql_cmd=sql)
+                for i in datas:
+                    lbkey = i['c4']
+                    regno = i['c5']
+                    uid = aes_decrypt(i['a8'])
+                    lbkey_regno = lbkey + ';' + regno
+                    bday = aes_decrypt(i['a10'])
+                    bdata = ''.join([bday[:3], '年'])
+                    uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
+                    name = aes_decrypt(i['a9'])
+                    phone = aes_decrypt(i['b5']) if i['b5'] else ''
+                    if not data_dict:
+                        data_dict = {
+                                    'uid': uid,
+                                    'bday': bdata,
+                                    'uid_tag': uid_tag,
+                                    'name': name,
+                                    'phone': [phone]
+                                    }
+                    elif phone:
+                        data_dict['phone'].append(phone)
+                if data_dict:
+                    for i in owner_list:
+                        i['uid'] = data_dict['uid']
+                        i['bday'] = data_dict['bday']
+                        i['uid_tag'] = data_dict['uid_tag']
+                        i['name'] = data_dict['name']
+                        i['phone'] = data_dict['phone']
+            result['owner_data'] = owner_list
+            result['status'] = 'OK'
+            result['msg'] = '成功傳送資料'
+        except Exception as e:
+            print(e, 'exception in line', sys.exc_info()[2].tb_lineno)
+            result['msg'] = '發生不可預期的錯誤，請聯繫官方客服'
+        return result
+
+    @extend_schema(
+        summary='總歸戶',
+        description='總歸戶',
+        request=PersonalPropertySerializer,
+        responses={
+            200: OpenApiResponse(description='ok'),
+            401: OpenApiResponse(description='身分認證失敗'),
+        },
+    )
+
+    def post(self, request):
+        # self.user = User.objects.get(username=request.user.get_username())
+        logger.info('總歸戶')
+        time_start = time.perf_counter()
+        result = self.process(request)
+        time_end = time.perf_counter()
+        logger.info(f'花費時間：{time_end - time_start}秒')
         return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")

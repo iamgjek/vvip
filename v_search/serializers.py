@@ -10,3 +10,8 @@ class GetSearchSerializer(serializers.Serializer):
     lbtype = serializers.CharField(default="", help_text='')
     searchForm = serializers.JSONField(default=dict, help_text='條件json')
     fake_data = serializers.BooleanField(default=False, help_text='是否取用測試資料')
+
+
+class PersonalPropertySerializer(serializers.Serializer):
+    key = serializers.CharField(default="", help_text='比對歸戶字串')
+    lbtype = serializers.CharField(default="L", help_text='地建號型態')
