@@ -882,7 +882,9 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="14" class="text-left"><button class="btn btn-sm btn-primary">查詢總歸戶</button></td>
+                                                            <td colspan="14" class="text-left">
+                                                                <button class="btn btn-sm btn-primary" @click="personal_property(data._key, dataIdx)">查詢總歸戶</button>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -1369,6 +1371,18 @@
                         if(!data) break;
                         this.person_searchResBox.push(data);
                     }
+                },
+                personal_property(key, dataIdx){
+                    var T = this;
+                    new HTTPreq("/v_search/personal_property/", "fd").posta({key: key, lbtype: "L"}).then(rcv => {
+                        var res = supfnc.toJSON(rcv.result);
+                        if(rcv.status === 200){
+                            T.person_searchResBox[dataIdx].length = 0;
+                            for(var i in res.owner_data){
+                                T.person_searchResBox[dataIdx].push(res.owner_data[i]);
+                            }
+                        }
+                    });
                 },
             },
             mounted(){
