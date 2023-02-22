@@ -489,9 +489,8 @@ class GetSearchResponseV3View(APIView):
                     SELECT {col} \
                     FROM \
                     diablo.{tr1} T1 \
-                    left join diablo.{t2} T2 on T1.lbkey =  T2.{lbk} \
-                    WHERE {where_sql} LIMIT 100000 \
-        #             "
+                    left join diablo.{t2} T2 on T1.lbkey = T2.{lbk} \
+                    WHERE {where_sql} and T1.remove_time is null and T1.is_valid=1"  #! LIMIT 100000 解除限制
         #             # 500000
         # sql_str =  "\
         #             SELECT {col} \
@@ -1047,8 +1046,8 @@ class GetSearchResponseV3View(APIView):
                 return result
             # df預處理
             self.total_df = pd.DataFrame(subscriberecords_qs)
-            self.total_df = self.total_df[self.total_df['is_valid'] != 0]
-            self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
+            # self.total_df = self.total_df[self.total_df['is_valid'] != 0]
+            # self.total_df = self.total_df[pd.isna(self.total_df['remove_time'])==True]
             self.total_df = self.total_df.dropna(subset=['regno'], axis=0, how='any')
             # self.total_df = self.total_df.dropna(subset=['name'], axis=0, how='any')
             self.total_df['plan_name'] = self.total_df['plan_name'].fillna('')
@@ -1074,7 +1073,6 @@ class GetSearchResponseV3View(APIView):
             print(f'clean_other_data 處理後 ：{len(self.total_df)}')
 
             print(f'輸出總筆數：{len(self.total_df)}')
-
             fillna_str = ['bday', 'national_land_zone', 'remove_time', 'land_zone_code']
             fillna_zero = ['land_area', 'shared_size', 'build_num']
             self.total_df[fillna_zero] = self.total_df[fillna_zero].fillna(0)
