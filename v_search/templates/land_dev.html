@@ -1377,12 +1377,17 @@
                     var T = this;
                     new HTTPreq("/v_search/personal_property/", "fd").posta({key: key, lbtype: "L"}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
-                        if(rcv.status === 200){
+                        if(res.status === "OK"){
                             T.person_searchResBox[dataIdx].personal_property = 1;
                             if(res.owner_data.length){
                                 T.person_searchResBox[dataIdx].length = 0;
+                                var shared_size_t = 0, shared_value_t = 0;
                                 for(var i in res.owner_data){
+                                    shared_size_t += res.owner_data[i].shared_size / 3.30579;
+                                    shared_value_t += res.owner_data[i].present_value;
                                     T.person_searchResBox[dataIdx].push(res.owner_data[i]);
+                                    T.person_searchResBox[dataIdx].shared_size_t = shared_size_t.round(2);
+                                    T.person_searchResBox[dataIdx].shared_value_t = shared_value_t.chUnit(1, 2);
                                 }
                             }
                         }
