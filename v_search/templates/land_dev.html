@@ -1354,10 +1354,26 @@
                 },
                 setForm(index){
                     this.useSet = index;
+                    switch(index){
+                        case 0:
+                            this.searchForm.land.condition.ownershipType = 0;
+                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            break;
+                        case 1:
+                            this.searchForm.land.condition.road_land = true;
+                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            break;
+                        case 2:
+                            this.searchForm.land.condition.common_land = true;
+                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            break;
+                    }
                 },
             },
             mounted(){
+                var T = this;
                 ms[0] = this.multipleSelect;
+                setTimeout(() => T.setForm(0), 50);
             },
             created(){},
             updated(){},
