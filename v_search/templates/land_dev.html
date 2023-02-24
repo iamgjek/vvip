@@ -998,6 +998,7 @@
                     person_searchRes: [],
                     person_searchResBox: [],
 
+                    searchFormOrig: {},
                     searchForm:{
                         land:{
                             "region": {
@@ -1358,6 +1359,7 @@
                 },
                 setForm(index){
                     this.useSet = index;
+                    this.searchForm = this.searchFormOrig.duplicate();
                     switch(index){
                         case 0:
                             this.searchForm.land.condition.ownershipType = 0;
@@ -1377,6 +1379,7 @@
             mounted(){
                 var T = this;
                 ms[0] = this.multipleSelect;
+                this.searchFormOrig = this.searchForm.duplicate();
                 setTimeout(() => T.setForm(0), 50);
             },
             created(){},
