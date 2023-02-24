@@ -18,7 +18,7 @@
     <link href="/static/css/tabdrop.css" rel="stylesheet">
     <!-- <script src="/static/js/jquery-1.7.2.min.js"></script> -->
     <script src='/static/js/table-fixed-header.js'></script>
-    <script src="/static/js/index.js"></script>
+    <!-- <script src="/static/js/index.js"></script> -->
     <!-- <script src="/static/js/bootstrap-dropdown.js"></script> -->
     <!-- <script src="/static/js/bootstrap-tab.js"></script> -->
     <!-- <script src="/static/js/bootstrap-tabdrop.js"></script> -->
@@ -279,21 +279,19 @@
                                 <div class="row row-cols-auto row1">
                                     <label class="col-form-label w-80 text-center1" for="edit-text-name-id">使用狀況</label>
                                     <!--權屬-->
+                                    <!--FK-->
                                     <div class="w-200">
-                                        <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $('#bs1').multiselect({
-                                                    // enableHTML: true,
-                                                    nonSelectedText: '權屬',
-                                                    buttonWidth: '180px',
-                                                    numberDisplayed: 2,
-                                                    onChange:(q,w)=>{ms[0]("searchForm.land.condition.ownership." + q[0].value, w)}
-                                                });
-                                            });
-                                        </script>
-                                        <select id="bs1" multiple="multiple" class="form-select  custom-select col-sm-12 w-10" v-model="searchForm.land.condition.ownership">
-                                            <option :value="k" v-for="(v, k) in ownerShopList">(( v ))</option>
-                                        </select>
+                                        <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
+                                            <span class="text-nowrap">(( searchFormText.land.condition.ownership ))</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button v-for="(v, k) in ownerShopList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.condition.ownership[k]}">
+                                                <span class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'ownership'+k" v-model="searchForm.land.condition.ownership[k]">
+                                                    <label class="form-check-label" :for="'ownership'+k">(( v ))</label>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <!--公同共有-->
                                     <div class="w-200">
@@ -305,24 +303,22 @@
                                         </select>
                                     </div>
                                     <!--登記原因-->
+                                    <!--FK-->
                                     <div class="w-200">
-                                        <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $('#enable').multiselect({
-                                                    nonSelectedText: '登記原因',
-                                                    buttonWidth: '180px',
-                                                    numberDisplayed: 6,
-                                                    onChange:(q,w)=>{ms[0]("searchForm.land.condition.registerReason." + q[0].value, w)}
-                                                });
-                                            });
-                                        </script>
-                                        <select id="enable" multiple="multiple" class="form-select form-control col-sm-12 w-10" v-model="searchForm.land.condition.registerReason">
-                                            <option :value="idx+1" v-for="(i, idx) in registerReasonList">(( i ))</option>
-                                        </select>
+                                        <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
+                                            <span class="text-nowrap">(( searchFormText.land.condition.registerReason ))</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button v-for="(v, k) in registerReasonList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.condition.registerReason[k+1]}">
+                                                <span class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'registerReason'+k" v-model="searchForm.land.condition.registerReason[k+1]">
+                                                    <label class="form-check-label" :for="'registerReason'+k">(( v ))</label>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <!--持有年限-->
                                     <div class="w-200">
-                                        <!-- @@@@ -->
                                         <div class="dropdown on1">
                                             <button class="btn dropdown-toggle custom-select left" type="button"
                                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -352,36 +348,34 @@
                                         </div>
                                     </div>
                                     <!--國土區分-->
+                                    <!--FK-->
                                     <div class="w-200">
-                                        <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $('#bs3').multiselect({
-                                                    nonSelectedText: '國土區分',
-                                                    numberDisplayed: 6,
-                                                    buttonWidth: '180px',
-                                                    onChange:(q,w)=>{ms[0]("searchForm.land.region.national_land_zone." + q[0].value, w)}
-                                                });
-                                            });
-                                        </script>
-                                        <select id="bs3" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.national_land_zone" disabled>
-                                            <option :value="idx" v-for="(i ,idx) in national_land_zoneList">(( i ))</option>
-                                        </select>
+                                        <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
+                                            <span class="text-nowrap">(( searchFormText.land.region.national_land_zone ))</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button v-for="(v, k) in national_land_zoneList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.region.national_land_zone[k]}">
+                                                <span class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'national_land_zone'+k" v-model="searchForm.land.region.national_land_zone[k]">
+                                                    <label class="form-check-label" :for="'national_land_zone'+k">(( v ))</label>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <!--地上建物-->
+                                    <!--FK-->
                                     <div class="w-200">
-                                        <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $('#bs4').multiselect({
-                                                    nonSelectedText: '地上建物',
-                                                    numberDisplayed: 6,
-                                                    buttonWidth: '180px',
-                                                    onChange:(q,w)=>{ms[0]("searchForm.land.region.landbuild." + q[0].value, w)}
-                                                });
-                                            });
-                                        </script>
-                                        <select id="bs4" multiple="multiple" class="form-select form-control col" v-model="searchForm.land.region.landbuild" disabled>
-                                            <option :value="idx" v-for="(i ,idx) in landbuildList">(( i ))</option>
-                                        </select>
+                                        <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
+                                            <span class="text-nowrap">(( searchFormText.land.region.landbuild ))</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button v-for="(v, k) in landbuildList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.region.landbuild[k]}">
+                                                <span class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'landbuild'+k" v-model="searchForm.land.region.landbuild[k]">
+                                                    <label class="form-check-label" :for="'landbuild'+k">(( v ))</label>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <!--面積價值-->
@@ -463,25 +457,19 @@
                                         </select>
                                     </div>
                                     <!--國籍-->
+                                    <!--FK-->
                                     <div class="w-200">
-                                        <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $('#example-getting-started').multiselect({
-                                                    enableHTML: true,
-                                                    nonSelectedText: '國籍',
-                                                    buttonWidth: '180px',
-                                                    onChange:(q,w)=>{ms[0]("searchForm.land.other.country." + q[0].value, w)}
-                                                });
-                                            });
-                                        </script>
-                                        <select id="example-getting-started" multiple="multiple"
-                                            class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.country" disabled>
-                                            <option value="ALL">不拘</option>
-                                            <option value="TW">台灣</option>
-                                            <option value="VN">越南</option>
-                                            <option value="IN">印尼</option>
-                                            <option value="CH">中國</option>
-                                        </select>
+                                        <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
+                                            <span class="text-nowrap">(( searchFormText.land.other.country ))</span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button v-for="(v, k) in countryList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.other.country[k]}">
+                                                <span class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'country'+k" v-model="searchForm.land.other.country[k]">
+                                                    <label class="form-check-label" :for="'country'+k">(( v ))</label>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <!--所有權人數-->
                                     <div class="w-200">
@@ -1009,6 +997,7 @@
                                 "includeInvalid": 0, //包含失效
                                 "land_number": "", // 地號
                                 "national_land_zone": [], // 國土分區
+                                "landbuild": {},
                             },
                             "condition": {
                                 "registerReason": { // 登記原因
@@ -1281,7 +1270,7 @@
                     tmp = this.restrictedRegistrationList.getV(this.searchForm.land.other.restrictedRegistration-1);
                     if(tmp) r.push(tmp);
 
-                    return r;
+                    return r.filter(x => x);
                 },
                 sortf($event, tar, rou, dire = 1){
                     if(this.sortOption == rou + dire) dire ^= 1;
@@ -1363,15 +1352,15 @@
                     switch(index){
                         case 0:
                             this.searchForm.land.condition.ownershipType = 0;
-                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            this.searchForm.land.condition.ownership.natural = true;
                             break;
                         case 1:
                             this.searchForm.land.condition.road_land = true;
-                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            this.searchForm.land.condition.ownership.natural = true;
                             break;
                         case 2:
                             this.searchForm.land.condition.common_land = true;
-                            if(!this.searchForm.land.condition.ownership.natural) document.getElementsByClassName("multiselect-container dropdown-menu")[0].children[0].click();
+                            this.searchForm.land.condition.ownership.natural = true;
                             break;
                     }
                 },
@@ -1419,6 +1408,17 @@
                         this.searchForm.land.other.holding_period = `[${this.searchForm.land.other.holding_period_l*12},${nV*12}]`;
                     }
                 },
+            },
+            computed:{
+                searchFormText(){
+                    var T = this, r = this.searchForm.duplicate();
+                    r.land.condition.ownership = r.land.condition.ownership.reduce((a,e,i) => {if(e) a.push(T.ownerShopList[i]); return a;}, []).join("、") || "權屬";
+                    r.land.condition.registerReason = r.land.condition.registerReason.reduce((a,e,i) => {if(e) a.push(T.registerReasonList[i-1]); return a;}, []).join("、") || "登記原因";
+                    r.land.region.national_land_zone = r.land.region.national_land_zone.reduce((a,e,i) => {if(e) a.push(T.national_land_zoneList[i]); return a;}, []).join("、") || "國土區分";
+                    r.land.region.landbuild = r.land.region.landbuild.reduce((a,e,i) => {if(e) a.push(T.landbuildList[i]); return a;}, []).join("、") || "地上建物";
+                    r.land.other.country = r.land.other.country.reduce((a,e,i) => {if(e) a.push(T.countryList[i]); return a;}, []).join("、") || "國籍";
+                    return r;
+                }
             }
         });
 
