@@ -179,7 +179,7 @@
                 },
                 getAccountData(auto = true){
                     if(!this.dataForm.account.length) {
-                        Swal.fire("請輸入帳號");
+                        Swal.fire("請輸入帳號", "", "error");
                         return;
                     }
                     var T = this;
@@ -188,7 +188,7 @@
                         if(res.status == "OK"){
                             for(var i in res.data) T.dataForm[i] = res.data[i];
                         }
-                        if(!auto) Swal.fire(res.msg);
+                        if(!auto) Swal.fire(res.msg, "", "success");
                     });
                 },
                 editAccountData(){
@@ -196,7 +196,7 @@
                     this.dataForm.upload_file = document.getElementById("upload_file").files?.[0];
                     new HTTPreq("/users/modify_company/", "fd").posta(this.dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
-                        Swal.fire(res.msg);
+                        Swal.fire(res.msg, "", "success");
                     });
                 },
                 showImg(src){

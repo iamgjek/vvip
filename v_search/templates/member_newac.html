@@ -149,7 +149,7 @@
                     var T = this;
                     new HTTPreq("/users/add_user/", "fd").posta(this.dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
-                        Swal.fire(res.msg);
+                        Swal.fire(res.msg, "", "success");
                     });
                 },
             },

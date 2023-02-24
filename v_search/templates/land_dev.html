@@ -1102,7 +1102,7 @@
                     if(this.loading) return;
                     var T = this;
                     if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
-                        Swal.fire("請選擇至段小段或計劃案")
+                        Swal.fire("請選擇至段小段或計劃案", "", "error")
                         return;
                     }
                     this.loading = 1;

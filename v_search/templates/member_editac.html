@@ -147,7 +147,7 @@
                 },
                 getAccountData(auto = true){
                     if(!this.dataForm.account.length) {
-                        Swal.fire("請輸入帳號");
+                        Swal.fire("請輸入帳號", "", "error");
                         return;
                     }
                     var T = this; // @@@@
@@ -156,7 +156,7 @@
                         if(res.status == "OK"){
                             for(var i in res.data) T.dataForm[i] = res.data[i];
                         }
-                        if(!auto) Swal.fire(res.msg);
+                        if(!auto) Swal.fire(res.msg, "", "error");
                     });
                 },
                 editAccount(){
@@ -164,7 +164,7 @@
                     this.dataForm.delete = false;
                     new HTTPreq("/users/modify_user/", "fd").posta(this.dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
-                        Swal.fire(res.msg);
+                        Swal.fire(res.msg, "", "success");
                     });
                 },
                 delAccount(){
@@ -183,7 +183,7 @@
                             T.dataForm.delete = true;
                             new HTTPreq("/users/modify_user/", "fd").posta(T.dataForm).then(rcv => {
                                 var res = supfnc.toJSON(rcv.result);
-                                Swal.fire(res.msg);
+                                Swal.fire(res.msg, "", "success");
                             });
                         }
                     });
