@@ -1101,8 +1101,12 @@
                 serverSearch(){
                     if(this.loading) return;
                     var T = this;
-                    if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
-                        Swal.fire("請選擇至段小段或計劃案", "", "error")
+                    // if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
+                    //     Swal.fire("請選擇至段小段或計劃案", "", "error")
+                    //     return;
+                    // }
+                    if(!this.searchForm.land.region.city || !this.searchForm.land.region.area ) {
+                        Swal.fire("請選擇縣市行政區", "", "error")
                         return;
                     }
                     this.loading = 1;
