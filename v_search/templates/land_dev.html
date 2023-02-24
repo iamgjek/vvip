@@ -1223,8 +1223,8 @@
                     if(tmp) r.push(tmp + "公同共有");
                     // 使用分區
                     tmp = [];
-                    if(this.searchForm.land.condition.common_land) tmp.push("道路用地");
-                    if(this.searchForm.land.condition.road_land) tmp.push("公共設施保留地");
+                    if(this.searchForm.land.condition.road_land) tmp.push("道路用地");
+                    if(this.searchForm.land.condition.common_land) tmp.push("公共設施保留地");
                     tmp = [...tmp, ...this.searchForm.land.condition.inCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
                     tmp = [...tmp, ...this.searchForm.land.condition.outCity2.reduce((a,e,i) => {if(e) a.push(i); return a;}, [])];
