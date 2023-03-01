@@ -51,6 +51,36 @@ def aes_decrypt(text):
         plain_text = None
     return plain_text
 
+def retrieveLbkeys(lbtype, lbkeys, info_fields=None, profile_fields=None):
+    data = {
+        'token': settings.LBOR_INFO_TOKEN,
+        'lbtype': lbtype,
+        'lbkeys': lbkeys,
+    }
+
+    if info_fields:
+        data['info_fields'] = info_fields
+
+    if profile_fields:
+        data['profile_fields'] = profile_fields
+
+    r = requests.post("{}/infos/retrieve/lbkeys/".format(settings.LBOR_HOST), data=data)
+    jsonResult = None
+    if r.status_code == 200:
+        jsonResult = json.loads(r.text)
+    return jsonResult
+
+def getLkeyPolygon(lbkey_str):
+    data = {
+        'lkeys':lbkey_str,
+    }
+
+    r = requests.post("{}/polygon/GetLkeyPolygon/".format(settings.MAP_HOST), data=data)
+    jsonResult = None
+    if r.status_code == 200:
+        jsonResult = r.json()
+    return jsonResult
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return None
@@ -605,16 +635,53 @@ class GetSearchResponseV3View(APIView):
             data['uid_tag']  = data['uid_tag'].apply(self.apply_uid_tag)
             data['creditors_rights'] = data['creditors_rights'].apply(self.apply_creditors_rights)
             # group
+            lbkey_list = []
             try:
                 df_group_land = data.groupby(['region_name', 'lno'])
                 for gp_index in list(df_group_land.size().index):
                     dict_key = f'{gp_index[0]}_{gp_index[1]}'
                     group_data = df_group_land.get_group(gp_index).to_dict('records')
+                    lbkey_list.append(group_data[0]['lbkey'])
                     result_land[dict_key] = group_data
                     result['land_data'] = result_land
 
+                #! 增加額外資料
+                lbkey_pdf_dict = {}
+                lbkey_polygon_dict = {}
+                if lbkey_list:
+                    lbtype = 'L'
+                    lbkeys_str = ','.join(lbkey_list)
+                    info_fields = 'transcript_token'
+                    profile_fields = 'is_valid'
+                    retrieved_datas = retrieveLbkeys(lbtype, lbkeys_str, info_fields=info_fields, profile_fields=profile_fields)
+                    infos = retrieved_datas['infos']
+                    for k, v in infos.items():
+                        lbkey_pdf_dict[v['lbkey']] = v['transcript_token'] if 'transcript_token' in v and v['transcript_token'] else ''
+                    #! 附加 pdf_token
+                    for k, v in result['land_data'].items():
+                        for s, add_data in enumerate(v):
+                            lbkey = add_data['lbkey']
+                            pdf_token = lbkey_pdf_dict[lbkey] if lbkey in lbkey_pdf_dict and lbkey_pdf_dict[lbkey] else ''
+                            result['land_data'][k][s]['pdf_token'] = pdf_token
+
+                    polygon_datas = getLkeyPolygon(lbkeys_str)
+                    polygon_list = polygon_datas['datas']
+                    for polygon_data in polygon_list:
+                        lbkey_polygon_dict[polygon_data['lkey']] = {
+                                                                    'polygon': polygon_data['polygon'],
+                                                                    'point': polygon_data['point'],
+                                                                    }
+                    #! 附加中心點和多邊形座標
+                    for k, v in result['land_data'].items():
+                        for s, add_data in enumerate(v):
+                            lbkey = add_data['lbkey']
+                            if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey]:
+                                result['land_data'][k][s]['polygon'] = lbkey_polygon_dict[lbkey]['polygon']
+                                result['land_data'][k][s]['point'] = lbkey_polygon_dict[lbkey]['point']
+                            else:
+                                break
             except Exception as e:
-                print(f'輸出錯誤 {e}')
+                print(e, 'exception in line', sys.exc_info()[2].tb_lineno)
             try:
                 df_group_owner = data.groupby(['name', 'uid', 'address_re'])
                 for gp_index in list(df_group_owner.size().index):
@@ -1298,3 +1365,20 @@ class PersonalPropertyView(APIView):
         time_end = time.perf_counter()
         logger.info(f'花費時間：{time_end - time_start}秒')
         return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+
+class TranscriptDownloadView(LoginRequiredMixin, TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        token = self.kwargs['token']
+        response = self.downloadFile(token)
+        return HttpResponseRedirect(redirect_to=response.url)
+
+    def downloadFile(self, token):
+        url = '{}/files/download/{}/'.format(
+            settings.FILEFOX_HOST,
+            token)
+        headers = {
+            'Authorization': 'Token {}'.format(settings.FILEFOX_USER_TOKEN)}
+        response = requests.get(url, headers=headers)
+
+        return response
