@@ -34,4 +34,5 @@ urlpatterns = [
     re_path(r'^personal_property/$', views.PersonalPropertyView.as_view(), name='personal_property'),
     #* pdf下載
     re_path(r'pdf_download/(?P<token>[0-9a-zA-Z_-]+)/$', views.TranscriptDownloadView.as_view(), name='pdf_download'),
+    
 ]
