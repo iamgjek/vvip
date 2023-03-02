@@ -594,6 +594,7 @@
                                                 <th role="button" @click="sortf($event, searchRes, '0.build_num')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地上建物</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.owner_type')" scope="col" nowrap="nowrap" style="white-space:nowrap;">權屬種類</th>
                                                 <th role="button" @click="sortf($event, searchRes, 'length')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br2">所有權人</th>
+                                                <th role="button" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br2">下載pdf</th>
                                             </tr>
                                         </thead>
                                         <tbody class="table-body">
@@ -630,6 +631,7 @@
                                                             <a v-if="data?.[0].is_valid" :href="'#' + data?.[0].region_name + data?.[0].lno" data-toggle="collapse">(( data?.[0]?.lno || '' ))</a>
                                                             <span v-else>(( data?.[0]?.lno || '' ))</span>
                                                         </p>
+                                                        <p role="button" @click="showMap(data?.[0]?.point, data?.[0]?.polygon)">顯示地圖</p>
                                                     </td>
                                                     <td data="國土分區">
                                                         <p>(( data?.[0]?.national_land_zone || '' ))</p>
@@ -657,6 +659,9 @@
                                                     </td>
                                                     <td  class="td-right" data="所有權人" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
                                                         <p>(( data.length || 0 ))</p>
+                                                    </td>
+                                                    <td  class="td-right" data="下載pdf" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
+                                                        <a :href="'/v_search/pdf_download/' + pdf_token" target="_blank">下載pdf</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -1364,6 +1369,16 @@
                             break;
                     }
                 },
+                showMap(point, polygon){
+                    Swal.fire({
+                        title: "",
+                        width: 600,
+                        html: `<div id="googleMap" style="width: 500px; height: 500px;"></div`,
+                    });
+                    setTimeout(()=>{
+                        initMap("googleMap", solve_multi_polygon(polygon));
+                    }, 50);
+                },
             },
             mounted(){
                 var T = this;
@@ -1428,6 +1443,111 @@
         //     console.log(res);
         // });
     </script>
+    <script>
+        function get_pol(type, value) {
+            var r = [], center = [0, 0];
+            if (type == 'MULTIPOLYGON') {
+                var tmp, totalL = 0;
+                value = value.slice(15, value.length - 1).match(new RegExp("\\(\\([\\d\\.\\,\\s]+\\)\\)", "g"));
+                // value = value.slice(15, value.length - 1).match(/\(\([\d\.\,\s]+\)\)/g);
+                for (var i in value) {
+                    tmp = get_pol('POLYGON', 'POLYGON ' + value[i]);
+                    r[i] = tmp[0]
+                    center[0] += tmp[1][0] * tmp[2];
+                    center[1] += tmp[1][1] * tmp[2];
+                    totalL += tmp[2];;
+                }
+                center[0] /= totalL;
+                center[1] /= totalL;
+                return [r, center];
+            }
+            else if (type == 'POLYGON') {
+                value = value.slice(10,).replace('))', '').split(', ');
+                for (var i in value) {
+                    value[i] = value[i].split(' ');
+                    r[i] = { lng: parseFloat(value[i][0]), lat: parseFloat(value[i][1]) };
+                    center[0] += parseFloat(value[i][0]);
+                    center[1] += parseFloat(value[i][1]);
+                }
+                center[0] /= value.length;
+                center[1] /= value.length;
+                return [r, center, value.length];
+            }
+            else{
+                center = value.slice(7,value.length-1).split(" ");
+                center[0] = parseFloat(center[0])
+                center[1] = parseFloat(center[1])
+                r = {lng: center[0], lat: center[1]};
+                return [r, center, 1];
+            }
+        }
+
+        function solve_multi_polygon(raw_data) {
+            var r = {}, tmp, type = raw_data.match('MULTIPOLYGON') ? "MULTIPOLYGON" : raw_data.match('POLYGON') ? "POLYGON" : "POINT", max = {lng:0, lat:0}, min = {lng:999, lat:999}, tmp;
+            tmp = get_pol(type, raw_data);
+            r.polygon = tmp[0];
+            r.center = { lng: tmp[1][0], lat: tmp[1][1] };
+            r.type = type;
+            if (type == "MULTIPOLYGON") {
+                for(var i in r.polygon){
+                    for(var j in r.polygon[i]){
+                        if(r.polygon[i][j].lng > max.lng){max.lng = r.polygon[i][j].lng;}
+                        else if(r.polygon[i][j].lng < min.lng){min.lng = r.polygon[i][j].lng;} 
+                        if(r.polygon[i][j].lat > max.lat){max.lat = r.polygon[i][j].lat;}
+                        else if(r.polygon[i][j].lat < min.lat){min.lat = r.polygon[i][j].lat;}
+                    }
+                }
+            }
+            else if (type == "POLYGON"){
+                for(var i in r.polygon){
+                    if(r.polygon[i].lng > max.lng){max.lng = r.polygon[i].lng;}
+                    else if(r.polygon[i].lng < min.lng){min.lng = r.polygon[i].lng;} 
+                    if(r.polygon[i].lat > max.lat){max.lat = r.polygon[i].lat;}
+                    else if(r.polygon[i].lat < min.lat){min.lat = r.polygon[i].lat;}
+                }
+            }
+            else{
+                max.lat = min.lat = r.polygon.lat;
+                max.lng = min.lng = r.polygon.lng;
+            }
+            r.range = {};
+            r.range.lat = {max: max.lat, min: min.lat};
+            r.range.lng = {max: max.lng, min: min.lng};
+            r.zoom = Math.min(-Math.log2(Math.max(r.range.lng.max - r.range.lng.min, r.range.lat.max - r.range.lat.min)), 12);
+            return r;
+        }
+
+        function initMap(divID, data) {
+            if(!data) return;
+            const map = new google.maps.Map(document.getElementById(divID), {
+                zoom: Math.round(data.zoom * 2) - 2,
+                // center: now_view.center,
+                center: data.center,
+                mapTypeId: "terrain",
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            if(data.type == "POINT"){
+                const googleMapPopup = new google.maps.Marker({
+                    position: data.polygon,
+                    map: map,
+                    title:'test'
+                });
+                googleMapPopup.setMap(map);
+            }
+            else{
+                const googleMapPopup = new google.maps.Polygon({
+                    paths: data.polygon,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.35,
+                });
+                googleMapPopup.setMap(map);
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdGFGqK5bWjF_K1H8iLKpi8sfWRI7y7HU&libraries=&v=weekly" async></script>
     {% endblock %}
 </body>
 
