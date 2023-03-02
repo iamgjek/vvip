@@ -665,21 +665,21 @@ class GetSearchResponseV3View(APIView):
                             result['land_data'][k][s]['pdf_token'] = pdf_token
 
                     polygon_datas = getLkeyPolygon(lbkeys_str)
-                    polygon_list = polygon_datas['datas']
-                    for polygon_data in polygon_list:
-                        lbkey_polygon_dict[polygon_data['lkey']] = {
-                                                                    'polygon': polygon_data['polygon'],
-                                                                    'point': polygon_data['point'],
-                                                                    }
+                    try:
+                        polygon_list = polygon_datas['datas']
+                        for polygon_data in polygon_list:
+                            lbkey_polygon_dict[polygon_data['lkey']] = {
+                                                                        'polygon': polygon_data['polygon'],
+                                                                        'point': polygon_data['point'],
+                                                                        }
+                    except Exception as e:
+                        logger.info(f'取多邊形錯誤：{str(e)}')
                     #! 附加中心點和多邊形座標
                     for k, v in result['land_data'].items():
                         for s, add_data in enumerate(v):
                             lbkey = add_data['lbkey']
-                            if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey]:
-                                result['land_data'][k][s]['polygon'] = lbkey_polygon_dict[lbkey]['polygon']
-                                result['land_data'][k][s]['point'] = lbkey_polygon_dict[lbkey]['point']
-                            else:
-                                break
+                            result['land_data'][k][s]['polygon'] = lbkey_polygon_dict[lbkey]['polygon'] if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey] else ''
+                            result['land_data'][k][s]['point'] = lbkey_polygon_dict[lbkey]['point'] if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey] else ''
             except Exception as e:
                 print(e, 'exception in line', sys.exc_info()[2].tb_lineno)
             try:
