@@ -32,12 +32,34 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from t_search.models import info_config
-from users.models import Company
+from users.models import Company, CompanyUserMapping, User
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer, PersonalPropertySerializer
 from v_search.util import CustomJsonEncoder, get_dba
 
 logger = logging.getLogger(__name__)
 DB_NAME = 'diablo'
+
+def check_role(request):
+    #! 檢查sub_domain
+    user_id = User.objects.get(username=request.user.get_username()).id
+    urls = request.build_absolute_uri('/')[:-1].strip("/")
+    if '.vvips.com.tw' in urls:
+        sub_domain = urls.split('.vvips.com.tw')[0].split('//')[1]
+        companys = Company.objects.filter(sub_domain=sub_domain, is_valid=1)
+        if companys:
+            company_id = companys[0].id
+        else:
+            company_id = None
+    else:
+        company_id = 1
+    #! 檢查角色
+    #* role_dict = {0: 'Administrator(元宏本身)', 1: Manager(店東或廠商主管), 2: Operator(廠商旗下的業務), 3: other(非此sub_domain下的帳號)}
+    check_user = CompanyUserMapping.objects.filter(user_id=user_id, is_valid=1)
+    if check_user:
+        role = 3 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
+    else:
+        role = 0
+    return role
 
 def aes_decrypt(text):
     try:
@@ -691,63 +713,65 @@ class GetSearchResponseV3View(APIView):
 
 
                 #! 箇吱卜沖
-                data_dict = {}
-                data_t_dict = {}
-                data_list = []
-                for k, v in result_owner.items():
-                    for i in v:
-                        lbkey = i["lbkey"]
-                        regno = i["regno"]
-                        data_list.append(f'{lbkey};{regno}')
-                if data_list:
-                    lbkey_regno_sql = ''
-                    nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
-                    for i in data_list:
-                        lbkey = i.split(';')[0]
-                        regno = i.split(';')[1]
-                        lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
-                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8 FROM telem.i_search_citron a 
-                            left join telem.i_search_babaco b on a.c2=b.b4
-                            left join telem.i_search_abiu c on a.c2=c.a8
-                            where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
-                    datas, _ = get_dba(sql_cmd=sql)
-                    for i in datas:
-                        lbkey = i['c4']
-                        regno = i['c5']
-                        uid = aes_decrypt(i['a8'])
-                        lbkey_regno = lbkey + ';' + regno
-                        bday = aes_decrypt(i['a10'])
-                        bdata = ''.join([bday[:3], '年'])
-                        uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
-                        name = aes_decrypt(i['a9'])
-                        phone = aes_decrypt(i['b5'])
-                        if not lbkey_regno in data_dict:
-                            data_dict[lbkey_regno] = {
-                                                    'uid': uid,
-                                                    'bday': bdata,
-                                                    'uid_tag': uid_tag,
-                                                    'name': name,
-                                                    'phone': [phone]
-                                                    }
-                        else:
-                            data_dict[lbkey_regno]['phone'].append(phone)
-
+                role = check_role(self.request)
+                if role == 0:
+                    data_dict = {}
+                    data_t_dict = {}
+                    data_list = []
                     for k, v in result_owner.items():
-                        for s, i in enumerate(v):
+                        for i in v:
                             lbkey = i["lbkey"]
                             regno = i["regno"]
+                            data_list.append(f'{lbkey};{regno}')
+                    if data_list:
+                        lbkey_regno_sql = ''
+                        nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
+                        for i in data_list:
+                            lbkey = i.split(';')[0]
+                            regno = i.split(';')[1]
+                            lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
+                        sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8 FROM telem.i_search_citron a 
+                                left join telem.i_search_babaco b on a.c2=b.b4
+                                left join telem.i_search_abiu c on a.c2=c.a8
+                                where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
+                        datas, _ = get_dba(sql_cmd=sql)
+                        for i in datas:
+                            lbkey = i['c4']
+                            regno = i['c5']
+                            uid = aes_decrypt(i['a8'])
                             lbkey_regno = lbkey + ';' + regno
-                            data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
+                            bday = aes_decrypt(i['a10'])
+                            bdata = ''.join([bday[:3], '年'])
+                            uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
+                            name = aes_decrypt(i['a9'])
+                            phone = aes_decrypt(i['b5'])
+                            if not lbkey_regno in data_dict:
+                                data_dict[lbkey_regno] = {
+                                                        'uid': uid,
+                                                        'bday': bdata,
+                                                        'uid_tag': uid_tag,
+                                                        'name': name,
+                                                        'phone': [phone]
+                                                        }
+                            else:
+                                data_dict[lbkey_regno]['phone'].append(phone)
 
-                    for k, v in result_owner.items():
-                        data_t = data_t_dict[k]
-                        for s, i in enumerate(v):
-                            if data_t:
-                                result_owner[k][s]['uid'] = data_t['uid']
-                                result_owner[k][s]['bday'] = data_t['bday']
-                                result_owner[k][s]['uid_tag'] = data_t['uid_tag']
-                                result_owner[k][s]['name'] = data_t['name']
-                                result_owner[k][s]['phone'] = data_t['phone']
+                        for k, v in result_owner.items():
+                            for s, i in enumerate(v):
+                                lbkey = i["lbkey"]
+                                regno = i["regno"]
+                                lbkey_regno = lbkey + ';' + regno
+                                data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
+
+                        for k, v in result_owner.items():
+                            data_t = data_t_dict[k]
+                            for s, i in enumerate(v):
+                                if data_t:
+                                    result_owner[k][s]['uid'] = data_t['uid']
+                                    result_owner[k][s]['bday'] = data_t['bday']
+                                    result_owner[k][s]['uid_tag'] = data_t['uid_tag']
+                                    result_owner[k][s]['name'] = data_t['name']
+                                    result_owner[k][s]['phone'] = data_t['phone']
                 # print(result_owner)
                 result['owner_data'] = result_owner
             except Exception as e:
@@ -1161,6 +1185,7 @@ class GetSearchResponseV3View(APIView):
     def post(self, request, *args, **kwargs):
         result = {}
         serializer = GetSearchSerializer(data=request.data)
+        self.request = request
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
         else:
