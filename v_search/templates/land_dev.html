@@ -661,7 +661,7 @@
                                                         <p>(( data.length || 0 ))</p>
                                                     </td>
                                                     <td  class="td-right" data="下載pdf" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
-                                                        <a :href="'/v_search/pdf_download/' + pdf_token" target="_blank">下載pdf</a>
+                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank">下載pdf</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
