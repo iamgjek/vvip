@@ -661,7 +661,7 @@
                                                         <p>(( data.length || 0 ))</p>
                                                     </td>
                                                     <td  class="td-right" data="下載pdf" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
-                                                        <a :href="'/v_search/pdf_download/' + pdf_token" target="_blank">下載pdf</a>
+                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank">下載pdf</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -1559,7 +1559,7 @@
             }
         }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdGFGqK5bWjF_K1H8iLKpi8sfWRI7y7HU&libraries=&v=weekly" async></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL6b7ap8iH5-g_IhdwtluUwkWYcJbuRMU&libraries=&callback=initMap&v=weekly" async></script>
     {% endblock %}
 </body>
 
