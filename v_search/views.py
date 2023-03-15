@@ -570,7 +570,7 @@ class GetSearchResponseV3View(APIView):
             #                 "
             # 土地新欄位vvip用
             select_colunm = "\
-                            T2.city_name, T2.area_name, T2.region_name, T2.lno, \
+                            T2.city_name, T2.area_name, T2.region_name, T2.lno, T2.build_num, \
                             T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                             T2.build_num, T2.owner_type, T2.urban_type ,T2.owners_num, T2.land_zone_code, \
                             T1.lbkey, T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
@@ -639,7 +639,7 @@ class GetSearchResponseV3View(APIView):
         return result
 
     #! 替換資料地方
-    def format_data_layout(self, data):
+    def format_data_layout(self, data, base_other):
         result_land = {}
         result_owner = {}
         result = {'land_data': {}, 'owner_data': {}}
@@ -711,67 +711,117 @@ class GetSearchResponseV3View(APIView):
                     group_owner_data = df_group_owner.get_group(gp_index).to_dict('records')
                     result_owner[dict_key] = group_owner_data
 
-
                 #! 箇吱卜沖
                 role = check_role(self.request)
-                if role == 0:
-                    data_dict = {}
-                    data_t_dict = {}
-                    data_list = []
+                data_dict = {}
+                data_t_dict = {}
+                data_list = []
+                for k, v in result_owner.items():
+                    for i in v:
+                        lbkey = i["lbkey"]
+                        regno = i["regno"]
+                        data_list.append(f'{lbkey};{regno}')
+                if data_list:
+                    lbkey_regno_sql = ''
+                    nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
+                    for i in data_list:
+                        lbkey = i.split(';')[0]
+                        regno = i.split(';')[1]
+                        lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
+                    #! c.a14是出生年
+                    sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8, c.a14 FROM telem.i_search_citron a 
+                            left join telem.i_search_babaco b on a.c2=b.b4
+                            left join telem.i_search_abiu c on a.c2=c.a8
+                            where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
+                    datas, _ = get_dba(sql_cmd=sql)
+                    for i in datas:
+                        lbkey = i['c4']
+                        regno = i['c5']
+                        uid = aes_decrypt(i['a8'])
+                        lbkey_regno = lbkey + ';' + regno
+                        bday = aes_decrypt(i['a10'])
+                        bdata = ''.join([bday[:3], '年'])
+                        uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
+                        name = aes_decrypt(i['a9'])
+                        phone = aes_decrypt(i['b5'])
+                        age = i['a14']
+                        if not lbkey_regno in data_dict:
+                            data_dict[lbkey_regno] = {
+                                                    'uid': uid,
+                                                    'bday': bdata,
+                                                    'uid_tag': uid_tag,
+                                                    'name': name,
+                                                    'phone': [phone],
+                                                    'age': age
+                                                    }
+                        else:
+                            data_dict[lbkey_regno]['phone'].append(phone)
+
                     for k, v in result_owner.items():
-                        for i in v:
+                        for s, i in enumerate(v):
                             lbkey = i["lbkey"]
                             regno = i["regno"]
-                            data_list.append(f'{lbkey};{regno}')
-                    if data_list:
-                        lbkey_regno_sql = ''
-                        nationality_type = {0: '未知', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
-                        for i in data_list:
-                            lbkey = i.split(';')[0]
-                            regno = i.split(';')[1]
-                            lbkey_regno_sql += f'or (c4="{lbkey}" and c5="{regno}")' if lbkey_regno_sql else f'(c4="{lbkey}" and c5="{regno}")'
-                        sql = f'''SELECT a.id, a.c4, a.c5, b.b5, c.a10, c.a6, c.a9, c.a8 FROM telem.i_search_citron a 
-                                left join telem.i_search_babaco b on a.c2=b.b4
-                                left join telem.i_search_abiu c on a.c2=c.a8
-                                where {lbkey_regno_sql} and c6=1 and not b5 is null;'''
-                        datas, _ = get_dba(sql_cmd=sql)
-                        for i in datas:
-                            lbkey = i['c4']
-                            regno = i['c5']
-                            uid = aes_decrypt(i['a8'])
                             lbkey_regno = lbkey + ';' + regno
-                            bday = aes_decrypt(i['a10'])
-                            bdata = ''.join([bday[:3], '年'])
-                            uid_tag = nationality_type[i['a6']] if i['a6'] else '未知'
-                            name = aes_decrypt(i['a9'])
-                            phone = aes_decrypt(i['b5'])
-                            if not lbkey_regno in data_dict:
-                                data_dict[lbkey_regno] = {
-                                                        'uid': uid,
-                                                        'bday': bdata,
-                                                        'uid_tag': uid_tag,
-                                                        'name': name,
-                                                        'phone': [phone]
-                                                        }
-                            else:
-                                data_dict[lbkey_regno]['phone'].append(phone)
+                            data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
 
-                        for k, v in result_owner.items():
-                            for s, i in enumerate(v):
-                                lbkey = i["lbkey"]
-                                regno = i["regno"]
-                                lbkey_regno = lbkey + ';' + regno
-                                data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
-
+                    #! 替換控制
+                    if role == 0:
                         for k, v in result_owner.items():
                             data_t = data_t_dict[k]
-                            for s, i in enumerate(v):
-                                if data_t:
+                            if data_t:
+                                for s, i in enumerate(v):
                                     result_owner[k][s]['uid'] = data_t['uid']
                                     result_owner[k][s]['bday'] = data_t['bday']
                                     result_owner[k][s]['uid_tag'] = data_t['uid_tag']
                                     result_owner[k][s]['name'] = data_t['name']
                                     result_owner[k][s]['phone'] = data_t['phone']
+
+                    #! 條件篩選
+                    age_range = base_other.get('age_range', None)
+                    if age_range:
+                        # age_interval_dict = {0: '不拘', 1: '20-29', 2: '30-39', 3: '40-49', 4: '50-59', 5: '60-69', 6: '70-79'}
+                        year = int(datetime.strftime((datetime.now()), "%Y"))
+                        no_del_list = []
+                        for i in age_range:
+                            if i == 0:
+                                break
+                            for k, v in result_owner.items():
+                                data_t = data_t_dict[k]
+                                age = int(data_t['age'])
+                                low_age = None
+                                high_age = None
+                                if not data_t:
+                                    del result_owner[k]
+                                    continue
+                                elif i == 1:
+                                    low_age = year - 29
+                                    high_age = year - 20
+                                elif i == 2:
+                                    low_age = year - 39
+                                    high_age = year - 30
+                                elif i == 3:
+                                    low_age = year - 49
+                                    high_age = year - 40
+                                elif i == 4:
+                                    low_age = year - 59
+                                    high_age = year - 50
+                                elif i == 5:
+                                    low_age = year - 69
+                                    high_age = year - 60
+                                elif i == 6:
+                                    low_age = year - 79
+                                    high_age = year - 70
+                                if low_age and high_age and age < high_age and age > low_age:
+                                    no_del_list.append(k)
+                        if no_del_list:
+                            for k, v in result_owner.items():
+                                if not k in no_del_list:
+                                    del result_owner[k]
+
+                    country = base_other.get('country', None)
+                    if country:
+                        nationality_type = {0: '不拘', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
+
                 # print(result_owner)
                 result['owner_data'] = result_owner
             except Exception as e:
@@ -807,7 +857,7 @@ class GetSearchResponseV3View(APIView):
                     dataType = 2
                 elif len(land_number) > 1:
                     dataType = 0
-                print(f'{land_number}, 型態:{dataType}')
+                # print(f'{land_number}, 型態:{dataType}')
 
                 # 單筆
                 if dataType == 0:
@@ -816,7 +866,7 @@ class GetSearchResponseV3View(APIView):
                     result_list, star_list = self.re_regionV2(d_single)
                     if result_list:
                         if len(result_list) > 0:
-                            print(result_list)
+                            # print(result_list)
                             self.total_df = self.total_df[self.total_df['lno']==result_list[0]]
 
                 # 多筆
@@ -827,6 +877,7 @@ class GetSearchResponseV3View(APIView):
                     if result_list:
                         if len(result_list) > 0:
                             self.total_df = self.total_df[self.total_df['lno'].str.startswith(tuple(result_list))]
+                            # print(result_list)
 
                 # 區間
                 elif dataType == 2:
@@ -844,8 +895,36 @@ class GetSearchResponseV3View(APIView):
                         print(e)
                         pass
 
-            # 國土分區 多筆
+            #! 國土分區 多筆
+            # national_land_zone_list = ['不拘', '城一', '城二之一', '城二之二', '城二之三', '城三', '農一', '農二', '農三', '農四', '國一', '國二', '國三', '國四',
+            #                             '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類']
+            national_land_zone_list = ['不拘', '城鄉發展地區第一類', '城鄉發展地區第二類之一', '城鄉發展地區第二類之二', '城鄉發展地區第二類之三', '城三', '農業發展地區第一類',
+                                        '農業發展地區第二類', '農業發展地區第三類', '農業發展地區第四類', '國土保育地區第一類', '國土保育地區第二類', '國土保育地區第三類',
+                                        '國土保育地區第四類', '海一之一', '海一之二', '海一之三', '海二', '海三', '未分類']
+            n_list = []
             n_land_zone = base_region.get('national_land_zone', None)
+            if n_land_zone:
+                for s, i in enumerate(n_land_zone):
+                    if s == 0:
+                        continue
+                    if i:
+                        n_list.append(national_land_zone_list[s])
+                if n_list:
+                    self.total_df = self.total_df[self.total_df['national_land_zone'].str.startswith(tuple(n_list))]
+            # print(n_list)
+            # print(type(n_list))
+
+            #! 地上有無建物
+            landbuild = base_region.get('landbuild', None)
+            if landbuild:
+                for s, i in enumerate(landbuild):
+                    if s == 0:
+                        continue
+                    elif s == 1 and i:
+                        self.total_df = self.total_df[self.total_df['build_num']!=0]
+                        break
+                    elif s == 2 and i:
+                        self.total_df = self.total_df[self.total_df['build_num']==0]
 
     def clean_condition_data(self, base_condition):
         if base_condition:
@@ -1104,7 +1183,7 @@ class GetSearchResponseV3View(APIView):
 
         if self.fake_data:
             sql = 'SELECT \
-                    T2.city_name, T2.area_name, T2.region_name, T2.lno, \
+                    T2.city_name, T2.area_name, T2.region_name, T2.lno, T2.build_num, \
                     T2.national_land_zone, T2.plan_name, T2.land_zone, T2.urban_name, T2.land_area, T2.land_notice_value, \
                     T2.build_num, T2.owner_type, \
                     T1.regno, T1.reg_date_str, T1.reg_reason_str, T1.name, \
@@ -1154,6 +1233,8 @@ class GetSearchResponseV3View(APIView):
             #######
             print(f'df預處理後 ：{len(self.total_df)}')
 
+            fillna_str = ['national_land_zone']
+            self.total_df[fillna_str] = self.total_df[fillna_str].fillna('')
             self.clean_region_data(base_region=base_region)            
             print(f'clean_region_data 處理後 ：{len(self.total_df)}')
 
@@ -1164,13 +1245,13 @@ class GetSearchResponseV3View(APIView):
             print(f'clean_other_data 處理後 ：{len(self.total_df)}')
 
             print(f'輸出總筆數：{len(self.total_df)}')
-            fillna_str = ['bday', 'national_land_zone', 'remove_time', 'land_zone_code']
+            fillna_str = ['bday', 'remove_time', 'land_zone_code']
             fillna_zero = ['land_area', 'shared_size', 'build_num']
             self.total_df[fillna_zero] = self.total_df[fillna_zero].fillna(0)
             self.total_df[fillna_str] = self.total_df[fillna_str].fillna('')
             self.total_df = self.total_df.fillna(0)
 
-            result = self.format_data_layout(self.total_df)
+            result = self.format_data_layout(self.total_df, base_other)
         return result
 
     @extend_schema(
