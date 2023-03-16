@@ -821,6 +821,35 @@ class GetSearchResponseV3View(APIView):
                     country = base_other.get('country', None)
                     if country:
                         nationality_type = {0: '不拘', 1: '本國人', 2: '外國人或無國籍人', 3: '取得國籍之外國人', 4: '原無戶籍國民', 5: '原港澳人民', 6: '原大陸人民'}
+                        no_del_list = []
+                        for i in country:
+                            if i == 0:
+                                break
+                            for k, v in result_owner.items():
+                                data_t = data_t_dict[k]
+                                uid_tag = data_t['uid_tag']
+                                check = False
+                                if not data_t:
+                                    del result_owner[k]
+                                    continue
+                                elif i == 1 and uid_tag == '本國人':
+                                    check = True
+                                elif i == 2 and uid_tag == '外國人或無國籍人':
+                                    check = True
+                                elif i == 3 and uid_tag == '取得國籍之外國人':
+                                    check = True
+                                elif i == 4 and uid_tag == '原無戶籍國民':
+                                    check = True
+                                elif i == 5 and uid_tag == '原港澳人民':
+                                    check = True
+                                elif i == 6 and uid_tag == '原大陸人民':
+                                    check = True
+                                if check:
+                                    no_del_list.append(k)
+                        if no_del_list:
+                            for k, v in result_owner.items():
+                                if not k in no_del_list:
+                                    del result_owner[k]
 
                 # print(result_owner)
                 result['owner_data'] = result_owner
