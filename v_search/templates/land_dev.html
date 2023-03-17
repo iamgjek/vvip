@@ -449,11 +449,8 @@
                                         <script type="text/javascript">
                                             $('#example-single').multiselect();
                                         </script>
-                                        <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range" disabled>
-                                            <option :value="null">年齡區間</option>
-                                            <option :value="0">民國前</option>
-                                            <option :value="1">民國20年以前</option>
-                                            <option :value="2">民國21~30年以前</option>
+                                        <select id="example-single" class="form-select custom-select col-sm-12 w-10" v-model="searchForm.land.other.age_range">
+                                            <option :value="key" v-for="(value, key) in age_range_list">(( value ))</option>
                                         </select>
                                     </div>
                                     <!--國籍-->
@@ -463,7 +460,7 @@
                                             <span class="text-nowrap">(( searchFormText.land.other.country ))</span>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <button v-for="(v, k) in countryList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.other.country[k]}">
+                                            <button v-for="(v, k) in country_list" @click.stop class="dropdown-item" :class="{'active': searchForm.land.other.country[k]}">
                                                 <span class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="natural" :id="'country'+k" v-model="searchForm.land.other.country[k]">
                                                     <label class="form-check-label" :for="'country'+k">(( v ))</label>
@@ -944,12 +941,23 @@
                         non_public:"非公有",
                         partially_public:"部分公有"
                     },
-                    countryList:{
-                        ALL: "不拘",
-                        TW:"台灣",
-                        VN:"越南",
-                        IN:"印尼",
-                        CH:"中國",
+                    country_list:{
+                        0: '不拘',
+                        1: '本國人',
+                        2: '外國人或無國籍人',
+                        3: '取得國籍之外國人',
+                        4: '原無戶籍國民',
+                        5: '原港澳人民',
+                        6: '原大陸人民',
+                    },
+                    age_range_list: {
+                        0: '不拘',
+                        1: '20-29歲',
+                        2: '30-39歲',
+                        3: '40-49歲',
+                        4: '50-59歲',
+                        5: '60-69歲',
+                        6: '70-79歲',
                     },
                     areaTypeList: ["不拘", "總面積", "持分面積", "平均持分"],
                     inCity: ['住宅區', '工業區', '商業區', '農業區', '風景區', '別墅區', '林業區', '文教區', '水岸發展區', '水域', '行水區', '行政區', '防風林區', '其他使用分區', '服務區', '河川區', '保存區', '保護區', '活動區', '倉庫區', '旅館區', '海濱浴場區', '動植物園區', '國家公園區', '眺望區', '野餐區', '魚塭區', '景觀區', '溫泉區', '葬儀業區', '遊樂區', '遊憩區', '漁業區', '營區', '露營區', '體育運動區', '鹽田區區', '觀光農場區'],
@@ -1032,7 +1040,7 @@
                             "other": {
                                 "otherRemark": null, // 他項標記
                                 "restrictedRegistration": null, // 限制登記
-                                "age_range": null,    // 年齡範圍
+                                "age_range": 0,    // 年齡範圍
                                 "country": {},      // 國籍
                                 "p_part_valueLowerLimit": "", // 個人持分總值 下限
                                 "p_part_valueUpperLimit": "", // 個人持分總值 上限
@@ -1122,6 +1130,7 @@
                     T.person_searchResBox = [];
 
                     this.searchForm.land.region.land_number = this.landbuildNumberFix(this.searchForm.land.region.land_number, "l").res.join(",");
+                    this.searchForm.land.other.age_range = [this.searchForm.land.other.age_range]
 
                     T.getSearchOptionsList = T.getSearchOptions();
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
@@ -1268,10 +1277,10 @@
                         r.push("持分總值 " + this.searchForm.land.other.p_part_valueLowerLimit + "萬 ~ " + this.searchForm.land.other.p_part_valueUpperLimit + "萬");
                     }
                     // 年齡區間
-                    tmp = ["民國前","民國20年以前","民國21~30年以前"].getV("searchForm.land.other.age_range");
+                    tmp = this.age_range_list.getV(this.searchForm.land.other.age_range);
                     if(tmp) r.push(tmp);
                     // 國籍
-                    tmp = this.searchForm.land.other.country.reduce((a,e,i) => {if(e) a.push(this.countryList[i]); return a;}, []);
+                    tmp = this.searchForm.land.other.country.reduce((a,e,i) => {if(e) a.push(this.country_list[i]); return a;}, []);
                     if(tmp.length) r.push(tmp.join(" "));
                     // 所有權人數
                     if(this.searchForm.land.condition.ownershipNumLowerLimit || this.searchForm.land.condition.ownershipNumUpperLimit){
@@ -1443,7 +1452,7 @@
                     r.land.condition.registerReason = r.land.condition.registerReason.reduce((a,e,i) => {if(e) a.push(T.registerReasonList[i-1]); return a;}, []).join("、") || "登記原因";
                     r.land.region.national_land_zone = r.land.region.national_land_zone.reduce((a,e,i) => {if(e) a.push(T.national_land_zoneList[i]); return a;}, []).join("、") || "國土區分";
                     r.land.region.landbuild = r.land.region.landbuild.reduce((a,e,i) => {if(e) a.push(T.landbuildList[i]); return a;}, []).join("、") || "地上建物";
-                    r.land.other.country = r.land.other.country.reduce((a,e,i) => {if(e) a.push(T.countryList[i]); return a;}, []).join("、") || "國籍";
+                    r.land.other.country = r.land.other.country.reduce((a,e,i) => {if(e) a.push(T.country_list[i]); return a;}, []).join("、") || "國籍";
                     return r;
                 }
             }
