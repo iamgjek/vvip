@@ -1115,8 +1115,8 @@
                     }
                     switch(this.useSet){
                         case 0:
-                            if(!this.searchForm.land.region.section){
-                                Swal.fire("請選擇段小段", "", "error")
+                            if(!this.searchForm.land.region.section && !this.searchForm.land.region.plan){
+                                Swal.fire("請選擇段小段或計劃案", "", "error")
                                 return;
                             }
                             break;
