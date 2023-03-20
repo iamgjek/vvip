@@ -178,59 +178,58 @@
                             <!--使用分區-->
                             <div class="col w-200">
                                 <div class="dropdown width98">
-                                    <button class="btn dropdown-toggle custom-select on on1 left" type="button"
-                                        data-toggle="dropdown" data-submenu>
+                                    <button class="btn dropdown-toggle custom-select on on1 left" type="button" data-toggle="dropdown">
                                         使用分區
                                     </button>
-                                    <div class="dropdown-menu">
-                                        <div class="dropdown dropright">
-                                            <button class="dropdown-item" type="button" @click.stop="clearInOutCitty()">不拘</button>
-                                        </div>
-                                        <div class="dropdown dropright">
-                                            <button class="dropdown-item" type="button"@click.stop>
+                                    <ul class="dropdown-menu" @click.stop>
+                                        <li class="dropright">
+                                            <button class="dropdown-item" type="button" @click="clearInOutCitty()">不拘</button>
+                                        </li>
+                                        <li class="dropright">
+                                            <button class="dropdown-item" type="button">
                                                 <input type="checkbox" class="form-check-input" id="road" v-model="searchForm.land.condition.road_land">
                                                 <label class="m-0 w-100" for="road">道路用地</label>
                                             </button>
-                                        </div>
-                                        <div class="dropdown dropright">
-                                            <button class="dropdown-item" type="button" @click.stop>
+                                        </li>
+                                        <li class="dropright">
+                                            <button class="dropdown-item" type="button">
                                                 <input type="checkbox" class="form-check-input" id="reserve" v-model="searchForm.land.condition.common_land">
                                                 <label class="m-0 w-100" for="reserve">公共設施保留地</label>
                                             </button>
-                                        </div>
-                                        <div class="dropdown dropright dropdown-submenu">
-                                            <button class="dropdown-item dropdown-toggle" type="button">都內</button>
-                                            <div class="dropdown-menu dmshow1 rwd2">
-                                                <button class="dropdown-item" type="button" v-for="(i, idx) in inCity" @click.stop>
+                                        </li>
+                                        <li class="dropright">
+                                            <button class="dropdown-item dropdown-toggle" type="button" data-toggle="dropdown" @click="bootstrapSubMenuToggle($event)">都內</button>
+                                            <div id="inCity" class="dropdown-menu dropdown-submenu dmshow1 rwd2">
+                                                <button class="dropdown-item" type="button" v-for="(i, idx) in inCity">
                                                     <input type="checkbox" class="form-check-input" :id="'inCity' + idx" v-model="searchForm.land.condition.inCity[i]">
                                                     <label class="m-0 w-100" :for="'inCity' + idx">(( i ))</label>
                                                 </button>
                                             </div>
-                                        </div>
-                                        <div class="dropdown dropright dropdown-submenu">
-                                            <button class="dropdown-item dropdown-toggle" type="button">都外</button>
-                                            <div class="dropdown-menu rwd2">
+                                        </li>
+                                        <li class="dropright dropdown-submenu">
+                                            <button class="dropdown-item dropdown-toggle" type="button" data-toggle="dropdown" @click="bootstrapSubMenuToggle($event)">都外</button>
+                                            <div id="outCity" class="dropdown-menu rwd2">
                                                 <div class="dropdown dropright dropdown-submenu">
-                                                    <button class="dropdown-item dropdown-toggle" type="button">使用分區</button>
+                                                    <button class="dropdown-item dropdown-toggle" type="button" @click="bootstrapSubMenuToggle($event)">使用分區</button>
                                                     <div class="dropdown-menu rwd3">
-                                                        <button class="dropdown-item" type="button" v-for="(i, idx) in outCity" @click.stop>
+                                                        <button class="dropdown-item" type="button" v-for="(i, idx) in outCity">
                                                             <input type="checkbox" class="form-check-input" :id="'outCity' + idx" v-model="searchForm.land.condition.outCity[i]">
                                                             <label class="m-0 w-100" :for="'outCity' + idx">(( i ))</label>
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div class="dropdown dropright dropdown-submenu">
-                                                    <button class="dropdown-item dropdown-toggle" type="button">使用地類別</button>
+                                                    <button class="dropdown-item dropdown-toggle" type="button" @click="bootstrapSubMenuToggle($event)">使用地類別</button>
                                                     <div class="dropdown-menu dmshow1 rwd3">
-                                                        <button class="dropdown-item" type="button" v-for="(i, idx) in outCity2" @click.stop>
+                                                        <button class="dropdown-item" type="button" v-for="(i, idx) in outCity2">
                                                             <input type="checkbox" class="form-check-input" :id="'outCity2' + idx" v-model="searchForm.land.condition.outCity2[i]">
                                                             <label class="m-0 w-100" :for="'outCity2' + idx"p>(( i ))</label>
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                             <!--土地面積-->
@@ -1400,6 +1399,35 @@
                         initMap("googleMap", solve_multi_polygon(polygon));
                     }, 50);
                 },
+                bootstrapSubMenuToggle($event){
+                    var isParent = supfnc.isParentElement($event.target, this.lastToogle);
+                    var L = this.lastToogle?.length ?? 0;
+
+                    if(!this.lastToogle?.length) {
+                        this.lastToogle = [$event.target];
+                        $event.target.nextSibling.classList.toggle('show');
+                    }
+
+                    for(var i=L-1 ;i>=0; i--){
+                        if($event.target == this.lastToogle[i]){
+                            $event.target.nextSibling.classList.toggle('show');
+                            break;
+                        }
+                        else if(!supfnc.isParentElement($event.target.parentElement, this.lastToogle[i].parentElement)){
+                            this.lastToogle[i].nextSibling?.classList?.toggle('show');
+                            this.lastToogle.pop();
+                            if(!i){
+                                this.lastToogle.push($event.target);
+                                $event.target.nextSibling.classList.toggle('show');
+                            }
+                        }
+                        else{
+                            this.lastToogle.push($event.target);
+                            $event.target.nextSibling.classList.toggle('show');
+                            break;
+                        }
+                    }
+                },
             },
             mounted(){
                 var T = this;
@@ -1568,6 +1596,15 @@
             }
         }
     </script>
+    <script>
+        // $(document).ready(function(){
+        //     $('.dropdown-submenu button.dropdown-toggle').on("click", function(e){
+        //         $(this).next('ul').toggle();
+        //         e.stopPropagation();
+        //         e.preventDefault();
+        //     });
+        // });
+        </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDL6b7ap8iH5-g_IhdwtluUwkWYcJbuRMU&libraries=&callback=initMap&v=weekly" async></script>
     {% endblock %}
 </body>
