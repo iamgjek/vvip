@@ -1102,19 +1102,19 @@
                 },
                 serverSearch(){
                     if(this.loading) return;
-                    var T = this;
-                    // if(!this.searchForm.land.region.city || !this.searchForm.land.region.area || (!this.searchForm.land.region.plan && !this.searchForm.land.region.section)) {
+                    var T = this, searchForm = this.searchForm.duplicate();
+                    // if(!searchForm.land.region.city || !searchForm.land.region.area || (!searchForm.land.region.plan && !searchForm.land.region.section)) {
                     //     Swal.fire("請選擇至段小段或計劃案", "", "error")
                     //     return;
                     // }
                     
-                    if(!this.searchForm.land.region.city || !this.searchForm.land.region.area) {
+                    if(!searchForm.land.region.city || !searchForm.land.region.area) {
                         Swal.fire("請選擇縣市行政區", "", "error")
                         return;
                     }
                     switch(this.useSet){
                         case 0:
-                            if(!this.searchForm.land.region.section && !this.searchForm.land.region.plan){
+                            if(!searchForm.land.region.section && !searchForm.land.region.plan){
                                 Swal.fire("請選擇段小段或計劃案", "", "error")
                                 return;
                             }
@@ -1128,11 +1128,11 @@
                     T.searchResBox = [];
                     T.person_searchResBox = [];
 
-                    this.searchForm.land.region.land_number = this.landbuildNumberFix(this.searchForm.land.region.land_number, "l").res.join(",");
-                    this.searchForm.land.other.age_range = [this.searchForm.land.other.age_range]
+                    searchForm.land.region.land_number = this.landbuildNumberFix(searchForm.land.region.land_number, "l").res.join(",");
+                    searchForm.land.other.age_range = [searchForm.land.other.age_range]
 
                     T.getSearchOptionsList = T.getSearchOptions();
-                    new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm: this.searchForm}).then((rcv) => {
+                    new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm}).then((rcv) => {
                         T.loading = 0;
                         T.sortOption = "";
                         T.sortPreElement = "";
@@ -1277,10 +1277,10 @@
                     }
                     // 年齡區間
                     tmp = this.age_range_list.getV(this.searchForm.land.other.age_range);
-                    if(tmp) r.push(tmp);
+                    if(tmp) r.push("年齡 " + tmp);
                     // 國籍
                     tmp = this.searchForm.land.other.country.reduce((a,e,i) => {if(e) a.push(this.country_list[i]); return a;}, []);
-                    if(tmp.length) r.push(tmp.join(" "));
+                    if(tmp.length) r.push("國籍 " + tmp.join(" "));
                     // 所有權人數
                     if(this.searchForm.land.condition.ownershipNumLowerLimit || this.searchForm.land.condition.ownershipNumUpperLimit){
                         r.push("所有權人數 " + this.searchForm.land.condition.ownershipNumLowerLimit + "人 ~ " + this.searchForm.land.condition.ownershipNumUpperLimit + "人");
