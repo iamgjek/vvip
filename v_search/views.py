@@ -670,7 +670,9 @@ class GetSearchResponseV3View(APIView):
                 #! 增加額外資料
                 lbkey_pdf_dict = {}
                 lbkey_polygon_dict = {}
+                lbkey_recnolist_dict = {}
                 if lbkey_list:
+                    #! 附加 pdf_token
                     lbtype = 'L'
                     lbkeys_str = ','.join(lbkey_list)
                     info_fields = 'transcript_token'
@@ -679,13 +681,13 @@ class GetSearchResponseV3View(APIView):
                     infos = retrieved_datas['infos']
                     for k, v in infos.items():
                         lbkey_pdf_dict[v['lbkey']] = v['transcript_token'] if 'transcript_token' in v and v['transcript_token'] else ''
-                    #! 附加 pdf_token
                     for k, v in result['land_data'].items():
                         for s, add_data in enumerate(v):
                             lbkey = add_data['lbkey']
                             pdf_token = lbkey_pdf_dict[lbkey] if lbkey in lbkey_pdf_dict and lbkey_pdf_dict[lbkey] else ''
                             result['land_data'][k][s]['pdf_token'] = pdf_token
 
+                    #! 附加中心點和多邊形座標
                     polygon_datas = getLkeyPolygon(lbkeys_str)
                     try:
                         polygon_list = polygon_datas['datas']
@@ -696,12 +698,44 @@ class GetSearchResponseV3View(APIView):
                                                                         }
                     except Exception as e:
                         logger.info(f'取多邊形錯誤：{str(e)}')
-                    #! 附加中心點和多邊形座標
                     for k, v in result['land_data'].items():
                         for s, add_data in enumerate(v):
                             lbkey = add_data['lbkey']
                             result['land_data'][k][s]['polygon'] = lbkey_polygon_dict[lbkey]['polygon'] if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey] else ''
                             result['land_data'][k][s]['point'] = lbkey_polygon_dict[lbkey]['point'] if lbkey in lbkey_polygon_dict and lbkey_polygon_dict[lbkey] else ''
+
+                    #! 附加實價資料
+                    lbkey_str = "'" + "','".join(lbkey_list) + "'"
+                    sql = f'''SELECT rec_no, tr_year_month, total_dollar, unit_price, total_area, towers, remarks, lbkey
+                            FROM diablo.lvr_land_recnolist
+                            WHERE lbkey in ({lbkey_str}) order by tr_year_month_AD desc
+                            '''
+                    res, _ = get_dba(sql_cmd=sql, db_name=DB_NAME)
+                    for recno in res:
+                        lbkey = recno['lbkey']
+                        tr_year_month = recno['tr_year_month'] if len(recno['tr_year_month']) == 7 else None
+                        total_price = recno['total_dollar'] if recno['total_dollar'] else None
+                        single_price = recno['unit_price'] if recno['unit_price'] else None
+                        total_area = recno['total_area'] if recno['total_area'] else None
+                        towers = recno['towers'] if recno['towers'] else None
+                        remark = recno['remarks'] if recno['remarks'] else None
+                        recno_data = {
+                                    'tr_year_month': tr_year_month[:3] + '/' + tr_year_month[3:5] + '/' + tr_year_month[5:] if tr_year_month else None,
+                                    'total_price': total_price,
+                                    'single_price': single_price,
+                                    'total_area': total_area,
+                                    'towers': towers,
+                                    'remark': remark
+                                    }
+                        if lbkey in lbkey_recnolist_dict:
+                            lbkey_recnolist_dict[lbkey].append(recno_data)
+                        else:
+                            lbkey_recnolist_dict[lbkey] = [recno_data]
+                    for k, v in result['land_data'].items():
+                        for s, add_data in enumerate(v):
+                            lbkey = add_data['lbkey']
+                            recno_data = lbkey_recnolist_dict[lbkey] if lbkey in lbkey_recnolist_dict and lbkey_recnolist_dict[lbkey] else []
+                            result['land_data'][k][s]['recno_list'] = recno_data
             except Exception as e:
                 print(e, 'exception in line', sys.exc_info()[2].tb_lineno)
             try:
@@ -778,45 +812,48 @@ class GetSearchResponseV3View(APIView):
 
                     #! 條件篩選
                     age_range = base_other.get('age_range', None)
+                    del_dict_list = []
                     if age_range:
                         # age_interval_dict = {0: '不拘', 1: '20-29', 2: '30-39', 3: '40-49', 4: '50-59', 5: '60-69', 6: '70-79'}
                         year = int(datetime.strftime((datetime.now()), "%Y"))
                         no_del_list = []
                         for i in age_range:
-                            if i == 0:
+                            c_age = int(i)
+                            if c_age == 0:
+                                break
+                            elif c_age == 1:
+                                low_age = year - 29
+                                high_age = year - 20
+                            elif c_age == 2:
+                                low_age = year - 39
+                                high_age = year - 30
+                            elif c_age == 3:
+                                low_age = year - 49
+                                high_age = year - 40
+                            elif c_age == 4:
+                                low_age = year - 59
+                                high_age = year - 50
+                            elif c_age == 5:
+                                low_age = year - 69
+                                high_age = year - 60
+                            elif c_age == 6:
+                                low_age = year - 79
+                                high_age = year - 70
+                            else:
                                 break
                             for k, v in result_owner.items():
                                 data_t = data_t_dict[k]
-                                age = int(data_t['age'])
-                                low_age = None
-                                high_age = None
                                 if not data_t:
-                                    del result_owner[k]
+                                    del_dict_list.append(k)
                                     continue
-                                elif i == 1:
-                                    low_age = year - 29
-                                    high_age = year - 20
-                                elif i == 2:
-                                    low_age = year - 39
-                                    high_age = year - 30
-                                elif i == 3:
-                                    low_age = year - 49
-                                    high_age = year - 40
-                                elif i == 4:
-                                    low_age = year - 59
-                                    high_age = year - 50
-                                elif i == 5:
-                                    low_age = year - 69
-                                    high_age = year - 60
-                                elif i == 6:
-                                    low_age = year - 79
-                                    high_age = year - 70
-                                if low_age and high_age and age < high_age and age > low_age:
-                                    no_del_list.append(k)
+                                else:
+                                    age = int(data_t['age'])
+                                    if low_age and high_age and age < high_age and age > low_age:
+                                        no_del_list.append(k)
                         if no_del_list:
                             for k, v in result_owner.items():
                                 if not k in no_del_list:
-                                    del result_owner[k]
+                                    del_dict_list.append(k)
 
                     country = base_other.get('country', None)
                     if country:
@@ -830,7 +867,7 @@ class GetSearchResponseV3View(APIView):
                                 uid_tag = data_t['uid_tag']
                                 check = False
                                 if not data_t:
-                                    del result_owner[k]
+                                    del_dict_list.append(k)
                                     continue
                                 elif i == 1 and uid_tag == '本國人':
                                     check = True
@@ -849,8 +886,13 @@ class GetSearchResponseV3View(APIView):
                         if no_del_list:
                             for k, v in result_owner.items():
                                 if not k in no_del_list:
-                                    del result_owner[k]
+                                    del_dict_list.append(k)
 
+                    #! 刪除不必要的資料
+                    if del_dict_list:
+                        del_dict_list = list(set(del_dict_list))
+                        for i in del_dict_list:
+                            del result_owner[i]
                 # print(result_owner)
                 result['owner_data'] = result_owner
             except Exception as e:
