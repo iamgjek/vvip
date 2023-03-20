@@ -1129,7 +1129,8 @@
                     T.person_searchResBox = [];
 
                     searchForm.land.region.land_number = this.landbuildNumberFix(searchForm.land.region.land_number, "l").res.join(",");
-                    searchForm.land.other.age_range = [searchForm.land.other.age_range]
+                    searchForm.land.other.age_range = [parseInt(searchForm.land.other.age_range)]
+                    searchForm.land.other.country = searchForm.land.other.country.reduce((a,e) => {a.push(parseInt(e)); return a;}, [])
 
                     T.getSearchOptionsList = T.getSearchOptions();
                     new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token {{ user_token }}'}).posta({lbtype: "L", searchForm}).then((rcv) => {
