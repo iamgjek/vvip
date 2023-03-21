@@ -149,11 +149,11 @@ footer {
     background-position: center center;
 }
 
-.map{
-    width: 50%;
-    margin-left: -25px;
+.map {
+    width: 20px;
+    margin: 0 0 5px 5px;
 }
-.map1{
+.map1 {
     padding-right: 5px;
     display: flex;
     /* 水平置中 */
@@ -1373,18 +1373,18 @@ th {
 .input-group-text {
     color: #787878;
 }
-@media only screen and (min-width: 1700px) and (max-width: 1800px) {
+/* @media only screen and (min-width: 1700px) and (max-width: 1800px) {
     .map{
-        width: 100%;
-        margin-left: 1px;
-    } 
+        width: 20px;
+        margin: 0 0 5px 5px;
+    }
 }
 @media only screen and (min-width: 1000px) and (max-width: 1700px) {
     .map{
-        width: 50%;
-        margin-left: 15px;
-    } 
-}
+        width: 20px;
+        margin: 0 0 5px 5px;
+    }
+} */
 @media screen and (max-width: 1100px) {
     .colrwd{
         -ms-flex-preferred-size: 0;
@@ -1438,10 +1438,10 @@ th {
     .w-as {
         /* margin-right: 0; */
     }
-    .map {
-        width: 50%;
-        margin-left: 0;
-    }
+    /* .map {
+        width: 20px;
+        margin: 0 0 5px 5px;
+    } */
     .map2 {
         padding-left: 15px; 
     }
