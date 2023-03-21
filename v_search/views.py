@@ -35,6 +35,7 @@ from t_search.models import info_config
 from users.models import Company, CompanyUserMapping, User
 from v_search.serializers import GetSearchSerializer, PlanNameSerializer, PersonalPropertySerializer
 from v_search.util import CustomJsonEncoder, get_dba
+import copy
 
 logger = logging.getLogger(__name__)
 DB_NAME = 'diablo'
@@ -813,6 +814,7 @@ class GetSearchResponseV3View(APIView):
                     #! 條件篩選
                     age_range = base_other.get('age_range', None)
                     del_dict_list = []
+                    del_lbkey_regno_list = []
                     if age_range:
                         # age_interval_dict = {0: '不拘', 1: '20-29', 2: '30-39', 3: '40-49', 4: '50-59', 5: '60-69', 6: '70-79'}
                         year = int(datetime.strftime((datetime.now()), "%Y"))
@@ -889,10 +891,26 @@ class GetSearchResponseV3View(APIView):
                                     del_dict_list.append(k)
 
                     #! 刪除不必要的資料
+                    copy_result_owner = copy.deepcopy(result_owner)
                     if del_dict_list:
                         del_dict_list = list(set(del_dict_list))
                         for i in del_dict_list:
+                            for extract in copy_result_owner[i]:
+                                lbkey_regno = extract['lbkey'] + ';' + extract['regno']
+                                del_lbkey_regno_list.append(lbkey_regno)
                             del result_owner[i]
+                    if del_lbkey_regno_list:
+                        new_land_data = {}
+                        for k, v in result['land_data'].items():
+                            for i in v:
+                                lbkey_regno = i['lbkey'] + ';' + i['regno']
+                                if not lbkey_regno in del_lbkey_regno_list:
+                                    if k in new_land_data:
+                                        new_land_data[k].append(i)
+                                    else:
+                                        new_land_data[k] = [i]
+                        result['land_data'] = new_land_data
+
                 # print(result_owner)
                 result['owner_data'] = result_owner
             except Exception as e:
