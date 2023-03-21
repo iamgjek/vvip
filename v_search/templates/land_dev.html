@@ -589,7 +589,7 @@
                                                 <th role="button" @click="sortf($event, searchRes, '0.total_vp')" scope="col"  nowrap="nowrap" style="white-space:nowrap;">總公告</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.build_num')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地上建物</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.owner_type')" scope="col" nowrap="nowrap" style="white-space:nowrap;">權屬種類</th>
-                                                <th role="button" @click="sortf($event, searchRes, 'length')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br2">所有權人</th>
+                                                <th role="button" @click="sortf($event, searchRes, 'length')" scope="col" nowrap="nowrap" style="white-space:nowrap;">所有權人</th>
                                                 <th role="button" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br2">下載pdf</th>
                                             </tr>
                                         </thead>
@@ -623,11 +623,13 @@
                                                         <p>(( data?.[0]?.region_name || '(空白)' ))</p>
                                                     </td>
                                                     <td data="地號" nowrap="nowrap" style="white-space:nowrap;" class="fw500">
-                                                        <p>
+                                                        <div class="row">
+                                                        <p class="col map1">
                                                             <a v-if="data?.[0].is_valid" :href="'#' + data?.[0].region_name + data?.[0].lno" data-toggle="collapse">(( data?.[0]?.lno || '' ))</a>
                                                             <span v-else>(( data?.[0]?.lno || '' ))</span>
                                                         </p>
-                                                        <p role="button" @click="showMap(data?.[0]?.point, data?.[0]?.polygon)">顯示地圖</p>
+                                                        <p  class="col map2" role="button" @click="showMap(data?.[0]?.point, data?.[0]?.polygon)"><img src="/static/images/map.png" class="map"></p>
+                                                    </div>
                                                     </td>
                                                     <td data="國土分區">
                                                         <p>(( data?.[0]?.national_land_zone || '' ))</p>
@@ -653,7 +655,7 @@
                                                     <td data="權屬種類" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
                                                         <p>(( data?.[0]?.owner_type || '' ))</p>
                                                     </td>
-                                                    <td  class="td-right" data="所有權人" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
+                                                    <td data="所有權人" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
                                                         <p>(( data.length || 0 ))</p>
                                                     </td>
                                                     <td  class="td-right" data="下載pdf" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">

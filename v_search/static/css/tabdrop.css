@@ -169,7 +169,7 @@
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: #eeeeee;
+  /* background-color: #eeeeee; */
 }
 
 .nav > li > a > img {
@@ -263,7 +263,7 @@
 .nav-pills > li > a {
   padding-right: 12px;
   padding-left: 12px;
-  margin-right: 2px;
+  margin-right: 0;
   line-height: 14px;
 }
 
@@ -311,8 +311,8 @@
   margin-top: 2px;
   margin-bottom: 2px;
   -webkit-border-radius: 5px;
-     -moz-border-radius: 5px;
-          border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .nav-pills > .active > a,
