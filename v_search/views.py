@@ -1048,9 +1048,10 @@ class GetSearchResponseV3View(APIView):
             ownershipType = self.check_int(base_condition.get('ownershipType'))
             if ownershipType:
                 if ownershipType == 0:
-                    pass
+                    self.total_df = self.total_df[self.total_df['right_type']==1]
                 elif ownershipType == 1:
-                    self.total_df = self.total_df[self.total_df['right_type'].isin([0, 1, 2])]
+                    # self.total_df = self.total_df[self.total_df['right_type'].isin([0, 1, 2])]
+                    self.total_df = self.total_df[self.total_df['right_type']==2]
                 elif ownershipType == 2:
                     self.total_df = self.total_df[self.total_df['right_type']==3]
 
