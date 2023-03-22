@@ -326,28 +326,32 @@ class GetPlanNameView(APIView):
 
     def process(self, datas):
         name_res, nickname_res = [], []
-        area = datas.get('area')
-        sql = f"SELECT T1.lbkey, T2.plan_name, T2.nickname \
-                FROM diablo.t_search_landdevelopementlkeyslist T1 LEFT JOIN diablo.t_search_landdevelopementlist T2 on T1.plan_id = T2.plan_id \
-                WHERE T2.valid =1 and lbkey LIKE '{area}%' \
-                "
-        res, col = get_dba(sql_cmd=sql, db_name=DB_NAME)
-        data_df = pd.DataFrame(res)
-        if data_df.empty:
-            pass
-        else:
-            group_name = data_df['plan_name'].to_list()
-            name_res = list(set(group_name))
-            group_nickname = data_df['nickname'].to_list()
-            nickname_res = list(set(group_nickname))
+        try:
+            area = datas.get('area')
+            sql = f"SELECT T1.lbkey, T2.plan_name, T2.nickname \
+                    FROM diablo.t_search_landdevelopementlkeyslist T1 LEFT JOIN diablo.t_search_landdevelopementlist T2 on T1.plan_id = T2.plan_id \
+                    WHERE T2.valid =1 and lbkey LIKE '{area}%' \
+                    "
+            print(sql)
+            res, col = get_dba(sql_cmd=sql, db_name=DB_NAME)
+            data_df = pd.DataFrame(res)
+            if data_df.empty:
+                pass
+            else:
+                group_name = data_df['plan_name'].to_list()
+                name_res = list(set(group_name))
+                group_nickname = data_df['nickname'].to_list()
+                nickname_res = list(set(group_nickname))
 
-        sql_lmlandlist = f"SELECT plan_name FROM diablo.t_search_lmlandlist WHERE lkey LIKE '{area}%' and plan_name !='' group by plan_name"
-        res_lm, col_lm = get_dba(sql_cmd=sql_lmlandlist, db_name=DB_NAME)
-        data_df_lm = pd.DataFrame(res_lm)
-        pn_df = data_df_lm['plan_name'].to_list()
-        pn_list = list(set(pn_df))
-        pn_list = sorted(pn_list)
-        nickname_res = sorted(nickname_res)
+            sql_lmlandlist = f"SELECT plan_name FROM diablo.t_search_lmlandlist WHERE lkey LIKE '{area}%' and plan_name !='' group by plan_name"
+            res_lm, col_lm = get_dba(sql_cmd=sql_lmlandlist, db_name=DB_NAME)
+            data_df_lm = pd.DataFrame(res_lm)
+            pn_df = data_df_lm['plan_name'].to_list()
+            pn_list = list(set(pn_df))
+            pn_list = sorted(pn_list)
+            nickname_res = sorted(nickname_res)
+        except:
+            pn_list = []
         # print(pn_list)
         # print(nickname_res)
         return pn_list, nickname_res # name_res
