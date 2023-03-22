@@ -292,13 +292,13 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <!--公同共有-->
+                                    <!--持分-->
                                     <div class="w-200">
                                         <select id="bs2" class="f1 form-select custom-select col-sm-12 w-10" v-model="searchForm.land.condition.ownershipType">
-                                            <option :value="null">公同共有</option>
-                                            <option :value="0">不拘</option>
-                                            <option :value="1">排除</option>
-                                            <option :value="2">只有</option>
+                                            <option :value="null">持分</option>
+                                            <option :value="0">全部</option>
+                                            <option :value="1">持分</option>
+                                            <option :value="2">公同共有</option>
                                         </select>
                                     </div>
                                     <!--登記原因-->
@@ -659,8 +659,8 @@
                                                         <p>(( data.length || 0 ))</p>
                                                     </td>
                                                     <td  class="td-right" data="功能" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
-                                                        <!-- <a href="" class="btn btn-sm btn-success mr-2">實價登錄</a> -->
-                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-secondary">下載謄本</a>
+                                                        <button class="btn btn-sm btn-success mr-2" @click="get_recno_list(data?.[0]?.lno, data?.[0]?.recno_list)" :disabled="!data?.[0]?.recno_list?.length">查實價</button>
+                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-secondary">謄本下載</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -1245,8 +1245,8 @@
                     tmp = this.searchForm.land.condition.ownership.reduce((a,e,i) => {if(e) a.push(this.ownerShopList[i]); return a;}, []);
                     if(tmp.length) r.push(tmp.join(" "));
                     // 公同共有
-                    tmp = ["不拘", "排除", "只有"].getV(this.searchForm.land.condition.ownershipType)
-                    if(tmp) r.push(tmp + "公同共有");
+                    tmp = ["全部", "持分", "公同共有"].getV(this.searchForm.land.condition.ownershipType)
+                    if(tmp) r.push("持分 " + tmp);
                     // 使用分區
                     tmp = [];
                     if(this.searchForm.land.condition.road_land) tmp.push("道路用地");
@@ -1392,6 +1392,50 @@
                             this.searchForm.land.condition.ownership.natural = true;
                             break;
                     }
+                },
+                get_recno_list(lno, recno_list){
+                    var titleOrder = ["tr_year_month", "total_price", "single_price", "total_area", "towers", "remark"];
+                    var titleTrans = {
+                        tr_year_month: "交易日期",
+                        total_price: "總價(萬)",
+                        single_price: "單價(萬/坪)",
+                        total_area: "總面積(坪)",
+                        towers: "交易標的",
+                        remark: "備註",
+                    }
+
+                    var table = supfnc.createElement("table", {class: "table"});
+                    var trh, td;
+
+                    trh = supfnc.createElement("tr");
+                    for(var j in titleOrder){
+                        var title = titleOrder[j];
+                        td = supfnc.createElement("th", {class: "text-nowrap"});
+                        td.innerHTML = titleTrans[title];
+                        trh.appendChild(td);
+                    }
+                    table.appendChild(trh);
+
+                    for(var i in recno_list){
+                        trh = supfnc.createElement("tr");
+                        for(var j in titleOrder){
+                            var title = titleOrder[j];
+                            td = supfnc.createElement("td");
+                            td.innerHTML = recno_list[i][title];
+                            trh.appendChild(td);
+                        }
+                        table.appendChild(trh);
+                    }
+                    console.log(recno_list, table)
+
+                    Swal.fire({
+                        title: "實價登錄 " + lno,
+                        width: 800,
+                        html: table.outerHTML,
+                        confirmButtonText: "確認",
+                        cancelButtonText: "關閉",
+                        showCancelButton: true,
+                    });
                 },
                 showMap(point, polygon){
                     Swal.fire({
