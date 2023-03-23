@@ -14,10 +14,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
-    <link href='/static/css/table-fixed-header.css' rel='stylesheet' />
+    <!-- <link href='/static/css/table-fixed-header.css' rel='stylesheet' /> -->
     <link href="/static/css/tabdrop.css" rel="stylesheet">
     <!-- <script src="/static/js/jquery-1.7.2.min.js"></script> -->
-    <script src='/static/js/table-fixed-header.js'></script>
+    <!-- <script src='/static/js/table-fixed-header.js'></script> -->
     <!-- <script src="/static/js/index.js"></script> -->
     <!-- <script src="/static/js/bootstrap-dropdown.js"></script> -->
     <!-- <script src="/static/js/bootstrap-tab.js"></script> -->
@@ -660,7 +660,7 @@
                                                     </td>
                                                     <td  class="td-right" data="功能" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
                                                         <button class="btn btn-sm btn-success mr-2" @click="get_recno_list(data?.[0]?.lno, data?.[0]?.recno_list)" :disabled="!data?.[0]?.recno_list?.length">查實價</button>
-                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-secondary">謄本下載</a>
+                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-success">謄本下載</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
