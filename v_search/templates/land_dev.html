@@ -1428,7 +1428,7 @@
                         }
                         table.appendChild(trh);
                     }
-                    console.log(recno_list, table)
+                    // console.log(recno_list, table)
 
                     Swal.fire({
                         title: "實價登錄 " + lno,
@@ -1436,7 +1436,7 @@
                         html: table.outerHTML,
                         confirmButtonText: "確認",
                         cancelButtonText: "關閉",
-                        showCancelButton: true,
+                        showCancelButton: false,
                     });
                 },
                 showMap(point, polygon){
