@@ -660,7 +660,7 @@
                                                     </td>
                                                     <td  class="td-right" data="功能" nowrap="nowrap" style="white-space:nowrap;" nowrap="nowrap" style="white-space:nowrap;">
                                                         <button class="btn btn-sm btn-success mr-2" @click="get_recno_list(data?.[0]?.lno, data?.[0]?.recno_list)" :disabled="!data?.[0]?.recno_list?.length">查實價</button>
-                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-success">謄本下載</a>
+                                                        <a :href="'/v_search/pdf_download/' + data?.[0]?.pdf_token" target="_blank" class="btn btn-sm btn-secondary" :disabled="!data?.[0]?.pdf_token">謄本下載</a>
                                                     </td>
                                                 </tr>
                                                 <tr :id="data?.[0].region_name + data?.[0].lno" class="collapse cell-1 row-child tablebg2">
@@ -831,7 +831,10 @@
                                                                     <td data="縣市" nowrap="nowrap" style="white-space:nowrap;">(( line.city_name || '' ))</td>
                                                                     <td data="行政區">(( line.area_name || '' ))</td>
                                                                     <td data="段小段" nowrap="nowrap" style="white-space:nowrap;">(( line.region_name || '' ))</td>
-                                                                    <td data="地號" nowrap="nowrap" style="white-space:nowrap;">(( line.lno || '' ))</td>
+                                                                    <td data="地號" nowrap="nowrap" style="white-space:nowrap;">
+                                                                        (( line.lno || '' ))
+                                                                        <img role="button" @click="showMap(line?.point, line?.polygon)" src="/static/images/map.png" class="map">
+                                                                    </td>
                                                                     <td data="登記次序">(( line.regno || '' ))</td>
                                                                     <td data="登記日期" nowrap="nowrap" style="white-space:nowrap;">(( line.reg_date_str || '' ))</td>
                                                                     <td data="登記原因">(( line.reg_reason_str || '' ))</td>
@@ -1143,7 +1146,6 @@
 
                         if(rcv.status == 200){
                             var res = supfnc.toJSON(rcv.result);
-                            console.log(res);
                             var land_data = res.land_data, owner_data = res.owner_data;
 
                             for(var i in land_data){
