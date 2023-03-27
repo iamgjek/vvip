@@ -40,9 +40,11 @@ def check_role(request):
         company_id = 1
     #! 檢查角色
     #* role_dict = {0: 'Administrator(元宏本身)', 1: Manager(店東或廠商主管), 2: Operator(廠商旗下的業務), 3: other(非此sub_domain下的帳號)}
+    #* role_dict = {0: 'Administrator(元宏本身)', 1: Admin(老闆), 2: Manager(店東或廠商主管), 3: Operator(廠商旗下的業務), 4: other(非此sub_domain下的帳號)}
     check_user = CompanyUserMapping.objects.filter(user_id=user_id, is_valid=1)
     if check_user:
-        role = 3 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
+        # role = 3 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
+        role = 4 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2 if check_user[0].is_manager == 1 else 3
     else:
         role = 0
     return role
@@ -438,13 +440,15 @@ class GetUserList(APIView):
                         where a.username="{company_account}"'''
                 company_id = User.objects.raw(sql)[0].id
                 if company_id:
-                    sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
+                    sql = f'''SELECT a.id, b.first_name, b.username, b.phone, a.open_area_str, a.is_admin, a.is_manager, a.is_operator
+                            FROM vvip.users_companyusermapping a
                             left join vvip.users_user b on b.id=a.user_id
                             left join vvip.users_company c on c.id=a.company_id
                             where a.company_id={company_id} and a.is_admin=0 and a.is_valid=1 and b.using=1;
                             '''
                 else:
-                    sql = f'''SELECT a.id, b.first_name, b.username, b.phone FROM vvip.users_companyusermapping a
+                    sql = f'''SELECT a.id, b.first_name, b.username, b.phone, a.open_area_str, a.is_admin, a.is_manager, a.is_operator
+                            FROM vvip.users_companyusermapping a
                             left join vvip.users_user b on b.id=a.user_id
                             left join vvip.users_company c on c.id=a.company_id
                             where a.is_admin=0 and a.is_valid=1 and b.using=1;
@@ -456,6 +460,8 @@ class GetUserList(APIView):
                         'name': i.first_name,
                         'account': i.username,
                         'phone': i.phone,
+                        'open_area': i.open_area_str,
+                        'role': 2 if i.is_admin else 0 if i.is_manager else 1 if i.is_operator else None
                         })
 
                 result['status'] = 'OK'
@@ -504,10 +510,16 @@ class AddUser(APIView):
                 password2 = params.get('password2', None)
                 name = params.get('name', None)
                 phone = params.get('phone', None)
+                open_area = params.get('open_area', None)
+                role = params.get('role', None)
 
+                if not role:
+                    result['msg'] = '請選擇角色'
+                    return result
                 if not account:
                     result['msg'] = '帳號不能為空'
                     return result
+                role = int(role)
 
                 #* 檢查密碼
                 check_password = True if (not password2) or (password2 and password == password2) else False
@@ -537,7 +549,10 @@ class AddUser(APIView):
                     except:
                         result['msg'] = '已存在此帳號'
                         return result
-                    CompanyUserMapping.objects.create(user=user, company=company)
+                    if role == 0:
+                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, is_manager=1)
+                    else:
+                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, is_operator=1)
 
                 result['status'] = 'OK'
                 result['msg'] = '新增帳號成功'
@@ -585,6 +600,8 @@ class ModifyUser(APIView):
                 phone = params.get('phone', None)
                 delete = params.get('state', 'false')
                 delete = json.loads(delete)
+                open_area = params.get('open_area', None)
+                role = params.get('role', None)
 
                 #* 檢查密碼
                 check_password = True if (not password2) or (password2 and password == password2) else False
@@ -607,20 +624,24 @@ class ModifyUser(APIView):
                     result['msg'] = '不存在的帳號'
                     return result
 
-                #* 公司
-                if delete:
-                    cu_mapping = CompanyUserMapping.objects.filter(user=user, is_admin=0, is_valid=True)
-                    for i in cu_mapping:
-                        i.is_valid = 0
-
                 with transaction.atomic():
                     user.save()
                     #* 公司
-                    if delete:
-                        cu_mapping = CompanyUserMapping.objects.filter(user=user, is_admin=0, is_valid=True)
-                        for i in cu_mapping:
+                    cu_mapping = CompanyUserMapping.objects.filter(user=user, is_admin=0, is_valid=True)
+                    for i in cu_mapping:
+                        if delete:
                             i.is_valid = 0
-
+                        if open_area:
+                            i.open_area_str = open_area
+                        if role == 0:
+                            i.is_admin = 0
+                            i.is_manager = 1
+                            i.is_operator = 0
+                        elif role == 1:
+                            i.is_admin = 0
+                            i.is_manager = 0
+                            i.is_operator = 1
+                        i.save()
                 result['status'] = 'OK'
                 result['msg'] = '修改帳號資料成功'
             else:
@@ -662,13 +683,16 @@ class GetUserInfo(APIView):
                 account = params.get('account', None)
                 try:
                     data = User.objects.get(username=account)
+                    cu_mapping = CompanyUserMapping.objects.filter(user=data, is_admin=0, is_valid=True)[0]
                 except:
                     result['msg'] = '不存在的帳號'
                     return result
                 data_dict = {
                             'account': data.username,
                             'name': data.first_name,
-                            'phone': data.phone
+                            'phone': data.phone,
+                            'open_area': cu_mapping.open_area_str,
+                            'role': 2 if cu_mapping.is_admin else 0 if cu_mapping.is_manager else 1 if cu_mapping.is_operator else None
                             }
 
                 result['status'] = 'OK'

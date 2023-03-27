@@ -7,8 +7,6 @@ from rest_framework import routers
 
 from v_search import views
 
-
-
 urlpatterns = [
     re_path(r'^login/$', views.LoginView.as_view(), name='login'),
     re_path(r'^logout/$', views.LogoutView.as_view(), name='logout'),
