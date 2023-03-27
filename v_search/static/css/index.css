@@ -573,10 +573,10 @@ table thead th {
     padding: 0.22rem;
 }
 
-.table tbody th {
+/* .table tbody th {
     background-color: #669ccb;
     background-image: none;
-}
+} */
 
 .table3 td,
 .table2 th,
@@ -756,7 +756,9 @@ th {
 .table1 th,
 .table2 th,
 .table3 th,
-.table4 th {
+.table4 th,
+.table th {
+    font-size: 1rem;
     letter-spacing: 1px;
     text-align: center;
     white-space: nowrap;
@@ -1261,7 +1263,7 @@ th {
     background-color: #e3e3e3;
 }
 
-.table1 td {
+.table1 td, .table td {
     font-size: 1rem;
     color: #5e5e5e;
 }
