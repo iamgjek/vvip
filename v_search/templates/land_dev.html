@@ -324,25 +324,23 @@
                                                 aria-expanded="false">
                                                 持有年限
                                             </button>
-                                            <div class="dropdown-menu">
-                                                <form class="p3 pp row">
-                                                    <div class="col-sm-6">
-                                                        <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.other.holding_period">
-                                                            <option :value="'[' + (searchForm.land.other.holding_period_l*12) + ',' + (searchForm.land.other.holding_period_u*12) + ']'">自訂</option>
-                                                            <option value="[0,6]">半年內</option>
-                                                            <option value="[0,12]">1年內</option>
-                                                            <option value="[36,60]">3 ~ 5年內</option>
-                                                            <option value="[60,120]">5 ~ 10年內</option>
-                                                            <option value="[120,]">10 年以上</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="row v4">
-                                                        <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_l" v-number="0">
-                                                        <label class="col-form-label la1" for="edit-text-name-id">年-</label>
-                                                        <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_u" v-number="0">
-                                                        <label class="col-form-label la1" for="edit-text-name-id">年</label>
-                                                    </div>
-                                                </form>
+                                            <div class="dropdown-menu p3 pp row">
+                                                <div class="col-sm-6">
+                                                    <select class="form-control custom-select col-sm-12 w-10" v-model="searchForm.land.other.holding_period">
+                                                        <option :value="'[' + (searchForm.land.other.holding_period_l*12) + ',' + (searchForm.land.other.holding_period_u*12) + ']'">自訂</option>
+                                                        <option value="[0,6]">半年內</option>
+                                                        <option value="[0,12]">1年內</option>
+                                                        <option value="[36,60]">3 ~ 5年內</option>
+                                                        <option value="[60,120]">5 ~ 10年內</option>
+                                                        <option value="[120,]">10 年以上</option>
+                                                    </select>
+                                                </div>
+                                                <div class="row v4">
+                                                    <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_l" v-number="0">
+                                                    <label class="col-form-label la1" for="edit-text-name-id">年-</label>
+                                                    <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.other.holding_period_u" v-number="0">
+                                                    <label class="col-form-label la1" for="edit-text-name-id">年</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -365,15 +363,14 @@
                                     <!--FK-->
                                     <div class="w-200">
                                         <button type="button" class="dropdown-toggle custom-select text-center text-truncate" data-toggle="dropdown" style="width: 100%;" aria-expanded="false">
-                                            <span class="text-nowrap">(( searchFormText.land.region.landbuild ))</span>
+                                            <span class="text-nowrap">地上建物</span>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <button v-for="(v, k) in landbuildList" @click.stop class="dropdown-item" :class="{'active': searchForm.land.region.landbuild[k]}">
-                                                <span class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="natural" :id="'landbuild'+k" v-model="searchForm.land.region.landbuild[k]">
-                                                    <label class="form-check-label" :for="'landbuild'+k">(( v ))</label>
-                                                </span>
-                                            </button>
+                                            <div class="row v4">
+                                                <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.region.landbuildLowerLimit" v-number="0">
+                                                <label class="col-form-label la1" for="edit-text-name-id">~</label>
+                                                <input class="form-control col-sm-3 v2" placeholder="0" v-model="searchForm.land.region.landbuildUpperLimit" v-number="0">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1015,7 +1012,8 @@
                                 "includeInvalid": 0, //包含失效
                                 "land_number": "", // 地號
                                 "national_land_zone": [], // 國土分區
-                                "landbuild": {},
+                                "landbuildLowerLimit": null,
+                                "landbuildUpperLimit": null,
                             },
                             "condition": {
                                 "registerReason": { // 登記原因
@@ -1529,7 +1527,6 @@
                     r.land.condition.ownership = r.land.condition.ownership.reduce((a,e,i) => {if(e) a.push(T.ownerShopList[i]); return a;}, []).join("、") || "權屬";
                     r.land.condition.registerReason = r.land.condition.registerReason.reduce((a,e,i) => {if(e) a.push(T.registerReasonList[i-1]); return a;}, []).join("、") || "登記原因";
                     r.land.region.national_land_zone = r.land.region.national_land_zone.reduce((a,e,i) => {if(e) a.push(T.national_land_zoneList[i]); return a;}, []).join("、") || "國土區分";
-                    r.land.region.landbuild = r.land.region.landbuild.reduce((a,e,i) => {if(e) a.push(T.landbuildList[i]); return a;}, []).join("、") || "地上建物";
                     r.land.other.country = r.land.other.country.reduce((a,e,i) => {if(e) a.push(T.country_list[i]); return a;}, []).join("、") || "國籍";
                     return r;
                 }
