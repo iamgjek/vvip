@@ -1012,6 +1012,14 @@ class GetSearchResponseV3View(APIView):
             #! 地上有無建物
             landbuildLowerLimit = base_region.get('landbuildLowerLimit', None)
             landbuildUpperLimit = base_region.get('landbuildUpperLimit', None)
+            try:
+                landbuildLowerLimit = int(landbuildLowerLimit)
+            except:
+                landbuildLowerLimit = 'no limit'
+            try:
+                landbuildUpperLimit = int(landbuildUpperLimit)
+            except:
+                landbuildUpperLimit = 'no limit'
             if isinstance(landbuildLowerLimit, int) or isinstance(landbuildUpperLimit, int):
                 if isinstance(landbuildLowerLimit, str):
                     self.total_df = self.total_df[(self.total_df['build_num']>=0) & (self.total_df['build_num']<=landbuildUpperLimit)]
@@ -1019,7 +1027,6 @@ class GetSearchResponseV3View(APIView):
                     self.total_df = self.total_df[self.total_df['build_num']>=landbuildLowerLimit]
                 else:
                     self.total_df = self.total_df[(self.total_df['build_num']>=landbuildLowerLimit) & (self.total_df['build_num']<=landbuildUpperLimit)]
-                self.total_df = self.total_df[(self.total_df['build_num']>=landbuildLowerLimit) & (self.total_df['build_num']<=landbuildUpperLimit)]
 
     def clean_condition_data(self, base_condition):
         if base_condition:
