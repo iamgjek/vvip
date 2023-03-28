@@ -60,9 +60,11 @@ def check_role(request):
     if check_user:
         # role = 3 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2
         role = 4 if company_id and check_user[0].company_id != company_id else 1 if check_user[0].is_admin == 1 else 2 if check_user[0].is_manager == 1 else 3
+        user_data = check_user[0]
     else:
         role = 0
-    return role
+        user_data = None
+    return role, user_data
 
 def aes_decrypt(text):
     try:
@@ -680,14 +682,15 @@ class GetSearchResponseV3View(APIView):
                 lbkey_recnolist_dict = {}
                 if lbkey_list:
                     #! 附加 pdf_token
-                    lbtype = 'L'
-                    lbkeys_str = ','.join(lbkey_list)
-                    info_fields = 'transcript_token'
-                    profile_fields = 'is_valid'
-                    retrieved_datas = retrieveLbkeys(lbtype, lbkeys_str, info_fields=info_fields, profile_fields=profile_fields)
-                    infos = retrieved_datas['infos']
-                    for k, v in infos.items():
-                        lbkey_pdf_dict[v['lbkey']] = v['transcript_token'] if 'transcript_token' in v and v['transcript_token'] else ''
+                    if self.role in [0, 1, 2]:
+                        lbtype = 'L'
+                        lbkeys_str = ','.join(lbkey_list)
+                        info_fields = 'transcript_token'
+                        profile_fields = 'is_valid'
+                        retrieved_datas = retrieveLbkeys(lbtype, lbkeys_str, info_fields=info_fields, profile_fields=profile_fields)
+                        infos = retrieved_datas['infos']
+                        for k, v in infos.items():
+                            lbkey_pdf_dict[v['lbkey']] = v['transcript_token'] if 'transcript_token' in v and v['transcript_token'] else ''
                     for k, v in result['land_data'].items():
                         for s, add_data in enumerate(v):
                             lbkey = add_data['lbkey']
@@ -695,16 +698,17 @@ class GetSearchResponseV3View(APIView):
                             result['land_data'][k][s]['pdf_token'] = pdf_token
 
                     #! 附加中心點和多邊形座標
-                    polygon_datas = getLkeyPolygon(lbkeys_str)
-                    try:
-                        polygon_list = polygon_datas['datas']
-                        for polygon_data in polygon_list:
-                            lbkey_polygon_dict[polygon_data['lkey']] = {
-                                                                        'polygon': polygon_data['polygon'],
-                                                                        'point': polygon_data['point'],
-                                                                        }
-                    except Exception as e:
-                        logger.info(f'取多邊形錯誤：{str(e)}')
+                    if self.role in [0, 1, 2]:
+                        polygon_datas = getLkeyPolygon(lbkeys_str)
+                        try:
+                            polygon_list = polygon_datas['datas']
+                            for polygon_data in polygon_list:
+                                lbkey_polygon_dict[polygon_data['lkey']] = {
+                                                                            'polygon': polygon_data['polygon'],
+                                                                            'point': polygon_data['point'],
+                                                                            }
+                        except Exception as e:
+                            logger.info(f'取多邊形錯誤：{str(e)}')
                     for k, v in result['land_data'].items():
                         for s, add_data in enumerate(v):
                             lbkey = add_data['lbkey']
@@ -753,7 +757,6 @@ class GetSearchResponseV3View(APIView):
                     result_owner[dict_key] = group_owner_data
 
                 #! 箇吱卜沖
-                role = check_role(self.request)
                 data_dict = {}
                 data_t_dict = {}
                 data_list = []
@@ -806,7 +809,7 @@ class GetSearchResponseV3View(APIView):
                             data_t_dict[k] = data_dict[lbkey_regno] if lbkey_regno in data_dict else {}
 
                     #! 替換控制
-                    if role == 0:
+                    if self.role in [0, 1]:
                         for k, v in result_owner.items():
                             data_t = data_t_dict[k]
                             if data_t:
@@ -1303,7 +1306,22 @@ class GetSearchResponseV3View(APIView):
         else:
             # vvip 搜尋優化 條件只下行政區====================================
             st1 = time.perf_counter()
+            city = base_region.get('city', None)
             area = base_region.get('area', None)
+            #! 限制閱覽資料區域
+            check = False
+            if self.have_range != 'all':
+                for i in self.have_range:
+                    if city in i and self.role == 2:
+                        check = True
+                    elif area in i and self.role == 3:
+                        check = True
+            else:
+                check = True
+            if not check:
+                result['msg'] = '不允許瀏覽該區域'
+                return result
+
             section = base_region.get('section', None)
             if section:
                 self.query_list.append('and T2.lkey like "{}%"'.format(section))
@@ -1370,9 +1388,19 @@ class GetSearchResponseV3View(APIView):
         result = {}
         serializer = GetSearchSerializer(data=request.data)
         self.request = request
+        self.role, user_data = check_role(self.request)
+        result['role'] = self.role
         if not serializer.is_valid():
             raise ParseError('格式錯誤')
+        elif self.role == 4:
+            logger.info(f'非此sub_domain下的帳號')
+            return Response(result)
         else:
+            #! 擁有閱覽縣市行政區的權限
+            if self.role in [0, 1]:
+                self.have_range = 'all'
+            else:
+                self.have_range = json.loads(user_data.open_area_code) if user_data.open_area_code else []
             # 預設參數
             self.df_delete_column_list = ['reg_reason', 'right_type', 'owners_num', 'case_type', 'restricted_type', 'urban_type', 'remove_time']
 
