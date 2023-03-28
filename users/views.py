@@ -502,7 +502,7 @@ class AddUser(APIView):
         result = {'status': 'NG'}
         try:
             role = check_role(request)
-            if role in [0, 1]:
+            if role in [0, 1, 2]:
                 params = request.POST
                 company_account = self.username
                 account = params.get('account', None)
@@ -520,6 +520,7 @@ class AddUser(APIView):
                     result['msg'] = '帳號不能為空'
                     return result
                 role = int(role)
+                open_area_code = [i.split(';')[0] for i in json.loads(open_area)] if open_area else None
 
                 #* 檢查密碼
                 check_password = True if (not password2) or (password2 and password == password2) else False
@@ -550,9 +551,9 @@ class AddUser(APIView):
                         result['msg'] = '已存在此帳號'
                         return result
                     if role == 0:
-                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, is_manager=1)
+                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, open_area_code=open_area_code, is_manager=1)
                     else:
-                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, is_operator=1)
+                        CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, open_area_code=open_area_code, is_operator=1)
 
                 result['status'] = 'OK'
                 result['msg'] = '新增帳號成功'
@@ -590,8 +591,8 @@ class ModifyUser(APIView):
     def process(self, request):
         result = {'status': 'NG'}
         try:
-            role = check_role(request)
-            if role in [0, 1, 2]:
+            o_role = check_role(request)
+            if o_role in [0, 1, 2, 3]:
                 params = request.POST
                 account = params.get('account', None)
                 name = params.get('name', None)
@@ -602,6 +603,7 @@ class ModifyUser(APIView):
                 delete = json.loads(delete)
                 open_area = params.get('open_area', None)
                 role = params.get('role', None)
+                open_area_code = [i.split(';')[0] for i in json.loads(open_area)] if open_area else None
 
                 #* 檢查密碼
                 check_password = True if (not password2) or (password2 and password == password2) else False
@@ -610,15 +612,22 @@ class ModifyUser(APIView):
                     return result
 
                 #* 帳號
+                check_user = False
                 try:
                     user = User.objects.get(username=account)
+                    #! 不能自己修改自己
+                    if self.user.id == user.id:
+                        check_user = True
                     if name:
                         user.first_name = name
                     if phone:
                         user.phone = phone
                     if password:
                         user.password = make_password(password)
-                    if delete:
+                    if check_user and delete:
+                        result['msg'] = '不能自己刪自己'
+                        return result
+                    elif delete:
                         user.is_active = 0
                 except:
                     result['msg'] = '不存在的帳號'
@@ -631,8 +640,15 @@ class ModifyUser(APIView):
                     for i in cu_mapping:
                         if delete:
                             i.is_valid = 0
-                        if open_area:
+                        if check_user and open_area != i.open_area_str:
+                            result['msg'] = '不能改自己開放地區'
+                            return result
+                        elif open_area:
                             i.open_area_str = open_area
+                            i.open_area_code = open_area_code
+                        if check_user and role != o_role:
+                            result['msg'] = '不能改自己角色'
+                            return result
                         if role == 0:
                             i.is_admin = 0
                             i.is_manager = 1
@@ -662,6 +678,7 @@ class ModifyUser(APIView):
     )
 
     def post(self, request):
+        self.user = User.objects.get(username=request.user.get_username())
         logger.info('修改帳號(使用者)')
         time_start = time.perf_counter()
         result = self.process(request)
