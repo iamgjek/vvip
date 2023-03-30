@@ -1447,7 +1447,25 @@ class GetLogoView(View):
                     logo = company_data[0].logo.url
                 if company_data[0].company_name:
                     company_name = company_data[0].company_name
-        result = {'logo': logo, 'company_name': company_name}
+        #! 判斷角色和開放地區
+        try:
+            role, _ = check_role(request)
+            user = User.objects.get(username=request.user.get_username())
+            cu_mapping = CompanyUserMapping.objects.filter(user_id=user.id, is_valid=True)
+            if cu_mapping:
+                cu_mapping = cu_mapping[0]
+                if cu_mapping.is_admin == 1:
+                    open_area = 'all'
+                elif not cu_mapping.open_area_str:
+                    open_area = None
+                else:
+                    open_area = json.loads(cu_mapping.open_area_str)
+            if role == 0:
+                open_area = 'all'
+        except:
+            role = None
+            open_area = None
+        result = {'logo': logo, 'company_name': company_name, 'role': role, 'open_area': open_area}
         return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
 
 class PersonalPropertyView(APIView):
