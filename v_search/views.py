@@ -1,9 +1,11 @@
 import base64
+import copy
 import json
 import logging
 import operator
 import sys
 import time
+from collections import OrderedDict
 from datetime import date, datetime, timedelta
 from functools import reduce
 
@@ -15,6 +17,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          JsonResponse)
 from django.shortcuts import HttpResponseRedirect, redirect, render
@@ -33,12 +36,21 @@ from rest_framework.views import APIView
 
 from t_search.models import info_config
 from users.models import Company, CompanyUserMapping, User
-from v_search.serializers import GetSearchSerializer, PlanNameSerializer, PersonalPropertySerializer
+from v_search.models import LBkeyClassification
+from v_search.serializers import (GetSearchSerializer,
+                                  PersonalPropertySerializer,
+                                  PlanNameSerializer)
 from v_search.util import CustomJsonEncoder, get_dba
-import copy
 
 logger = logging.getLogger(__name__)
 DB_NAME = 'diablo'
+
+def sort_by_rank(d):
+    rank = d[1][0].get('rank')
+    if rank == '':
+        return chr(127)  # 將''排到最後
+    else:
+        return rank
 
 def check_role(request):
     #! 檢查sub_domain
@@ -899,7 +911,15 @@ class GetSearchResponseV3View(APIView):
                                 if not k in no_del_list:
                                     del_dict_list.append(k)
 
+                    #! 拉出等級
+                    classification_dict = {}
+                    lbkey_classification = LBkeyClassification.objects.filter(lbkey__in=lbkey_list)
+                    if lbkey_classification:
+                        for i in lbkey_classification:
+                            classification_dict[i.lbkey] = i.rank if i.rank else ''
+
                     #! 刪除不必要的資料
+                    #* 所有權
                     copy_result_owner = copy.deepcopy(result_owner)
                     if del_dict_list:
                         del_dict_list = list(set(del_dict_list))
@@ -908,6 +928,7 @@ class GetSearchResponseV3View(APIView):
                                 lbkey_regno = extract['lbkey'] + ';' + extract['regno']
                                 del_lbkey_regno_list.append(lbkey_regno)
                             del result_owner[i]
+                    #* 地號
                     if del_lbkey_regno_list:
                         new_land_data = {}
                         for k, v in result['land_data'].items():
@@ -919,6 +940,15 @@ class GetSearchResponseV3View(APIView):
                                     else:
                                         new_land_data[k] = [i]
                         result['land_data'] = new_land_data
+                    for k, v in result['land_data'].items():
+                        for s, add_data in enumerate(v):
+                            lbkey = add_data['lbkey']
+                            rank = classification_dict[lbkey] if lbkey in classification_dict and classification_dict[lbkey] else ''
+                            result['land_data'][k][s]['rank'] = rank
+
+                    #! 等級做排序
+                    datass = dict(OrderedDict(sorted(result["land_data"].items(), key=lambda t: sort_by_rank(t))))
+                    result["land_data"] = datass
 
                 # print(result_owner)
                 result['owner_data'] = result_owner
@@ -1637,3 +1667,74 @@ class TranscriptDownloadView(LoginRequiredMixin, TemplateView):
         response = requests.get(url, headers=headers)
 
         return response
+
+class SetLBkeyRankView(View):
+    TAG = '[LBkeyView]'
+
+    def process(self, request):
+        result = {'status': 'NG'}
+        try:
+            params = request.POST
+            lbkey_list = params.get('lbkey_list', None)
+            rank = params.get('rank', None)
+            if not lbkey_list:
+                result['msg'] = '請輸入地建號清單'
+                return result
+            if not rank:
+                result['msg'] = '請輸入等級'
+                return result
+            if not rank in ['A', 'B', 'C', '0', 0]:
+                result['msg'] = '輸入等級錯誤'
+                return result
+            if rank == 0:
+                rank = '0'
+            if lbkey_list:
+                lbkey_list = json.loads(lbkey_list)
+            datetime_now = timezone.now()
+            create_list = []
+            update_list = []
+            have_list = []
+
+            #! 更新
+            have_data = LBkeyClassification.objects.filter(lbkey__in=lbkey_list)
+            for update in have_data:
+                if rank == '0':
+                    update.rank = ''
+                else:
+                    update.rank = rank
+                update.update_time = datetime_now
+                have_list.append(update.lbkey)
+                update_list.append(update)
+
+            #! 新增
+            lbkey_list = list(set(lbkey_list) - set(have_list))
+            for i in lbkey_list:
+                kwargs = {
+                        'lbkey': i,
+                        'rank': rank
+                        }
+                create = LBkeyClassification(**kwargs)
+                create_list.append(create)
+
+            with transaction.atomic():
+                if create_list:
+                    logger.info(f'LBkeyClassification新建筆數：{len(create_list)}')
+                    LBkeyClassification.objects.bulk_create(create_list, batch_size=1000, ignore_conflicts=True)
+                if update_list:
+                    logger.info(f'LBkeyClassification更新筆數：{len(update_list)}')
+                    LBkeyClassification.objects.bulk_update(update_list, batch_size=1000, fields=['rank', 'update_time'])
+            result['status'] = 'OK'
+            result['msg'] = '設定成功'
+        except Exception as e:
+            logger.info(f'錯誤訊息：{e}，錯誤行數：{sys.exc_info()[2].tb_lineno}')
+        return result
+
+    def post(self, request):
+        logger.info('儲存地建號等級')
+        time_start = time.perf_counter()
+        result = self.process(request)
+        time_end = time.perf_counter()
+        logger.info(f'花費時間：{time_end - time_start}秒')
+        if 'status' in result and result['status'] == 'NG':
+            return HttpResponseBadRequest(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type="application/json; charset=utf-8")
+        return HttpResponse(json.dumps(result, ensure_ascii=False, cls=CustomJsonEncoder), content_type='application/json; charset=utf-8')
