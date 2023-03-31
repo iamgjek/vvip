@@ -101,12 +101,28 @@
                                         <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
                                     </div>
                                 </div>
-                                </div>
-                                <div class="row">
+                            </div>
+                            <div class="row">
                                 <div class="px-2 col">
                                     <label>電話</label>
                                     <div class="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="px-2 col">
+                                    <label>開放地區</label>
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">開放地區</button>
+                                        <ul class="dropdown-menu">
+                                            <li v-for="(city, cityKey) in cityList" @click.stop>
+                                                <div class="dropdown-item">
+                                                    <input :id="'allowed' + cityKey" type="checkbox" v-model="dataForm.open_area[cityKey]">
+                                                    <label :for="'allowed' + cityKey" class="ms-2 w-100" role="button">(( city ))</label>
+                                                </div>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -127,12 +143,14 @@
             delimiters: ['((', '))'],
             data() {
                 return {
+                    cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     dataForm:{
                         account: "",
                         password: "",
                         password2: "",
                         name: "",
                         phone: "",
+                        open_area: {},
                     }
                 }
             },
