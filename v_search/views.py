@@ -313,7 +313,32 @@ class GetAreaListView(APIView):
         url = f'{settings.LBOR_V3_HOST}/common/car/get_area/?city={city_code}'
         result = requests.get(url)
         res = json.loads(result.text)
-        return Response(res)
+
+        #! 限制顯示開放區域
+        data_list = []
+        user = User.objects.get(username=request.user.get_username())
+        cu_mapping = CompanyUserMapping.objects.filter(user_id=user.id, is_valid=True)
+        if cu_mapping:
+            cu_mapping = cu_mapping[0]
+            if cu_mapping.is_admin == 1 or cu_mapping.is_manager == 1:
+                data_list = res
+            else:
+                open_area = []
+                for i in json.loads(cu_mapping.open_area_str):
+                    if len(i.split(';')) == 2:
+                        data_list = res
+                        break
+                    area_name = i.split(';')[2]
+                    if not area_name in open_area:
+                        open_area.append(area_name)
+            if not data_list:
+                for i in res:
+                    if i['area_name'] in open_area:
+                        data_list.append(i)
+        else:
+            data_list = res
+
+        return Response(data_list)
 
 class GetRegionListView(APIView):
     authentication_classes = [authentication.SessionAuthentication]
@@ -1489,10 +1514,16 @@ class GetLogoView(View):
                 elif not cu_mapping.open_area_str:
                     open_area = None
                 else:
-                    open_area = json.loads(cu_mapping.open_area_str)
+                    open_area = []
+                    for i in json.loads(cu_mapping.open_area_str):
+                        city_str = i.split(';')[0]
+                        city_code = city_str.split('_')[0] if '_' in city_str else city_str
+                        if not city_code in open_area:
+                            open_area.append(city_code)
             if role == 0:
                 open_area = 'all'
-        except:
+        except Exception as e:
+            logger.info(f'錯誤訊息：{e}，錯誤行數：{sys.exc_info()[2].tb_lineno}')
             role = None
             open_area = None
         result = {'logo': logo, 'company_name': company_name, 'role': role, 'open_area': open_area}
