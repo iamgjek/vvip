@@ -228,12 +228,12 @@
                                 console.log("city, area", city, area)
                                 
                                 if(area){
-                                    T.dataForm.open_area[city][key] = 1
+                                    T.dataForm.open_area[city][key] = true;
                                 }
                                 else{
-                                    T.dataForm.open_area[city].all = 1
+                                    T.dataForm.open_area[city].all = true;
                                 }
-                                T.dataForm.open_area[city].checked = 1;
+                                T.dataForm.open_area[city].checked = true;
                                 T.getArea(city);
                             });
                         }
