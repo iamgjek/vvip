@@ -233,6 +233,8 @@
                                 else{
                                     T.dataForm.open_area[city].all = 1
                                 }
+                                T.dataForm.open_area[city].checked = 1;
+                                T.getArea(city);
                             });
                         }
                         if(!auto) Swal.fire(res.msg, "", "error");
