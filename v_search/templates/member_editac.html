@@ -75,9 +75,9 @@
                         <div class="px-2 col">
                             <label>權限</label>
                             <div class="input-group mb-3">
-                                <select class="form-select">
-                                    <option value="2" selected>主管</option>
-                                    <option value="3">專員</option>>
+                                <select class="form-select" v-model="dataForm.role">
+                                    <option value="0">主管</option>
+                                    <option value="1">專員</option>
                                 </select>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                         <div class="px-2 col">
                             <label>名稱</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
+                                <input type="text" class="form-control" placeholder="名稱" v-model="dataForm.name">
                             </div>
                         </div>
                     </div>
@@ -117,17 +117,7 @@
                         <div class="px-2 col">
                             <label>電話</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="px-2 col">
-                            <label>權限</label>
-                            <div class="input-group mb-3">
-                                <select class="form-select" v-model="dataForm.role">
-                                    <option v-for="(roleTxt, role) in roles" :value="role">(( roleTxt ))</option>
-                                </select>
+                                <input type="text" class="form-control" placeholder="電話" v-model="dataForm.phone">
                             </div>
                         </div>
                     </div>
@@ -237,7 +227,7 @@
                                 T.getArea(city);
                             });
                         }
-                        if(!auto) Swal.fire(res.msg, "", "error");
+                        else if(!auto) Swal.fire(res.msg, "", "error");
                     });
                 },
                 editAccount(){
@@ -285,7 +275,7 @@
             },
             mounted(){
                 this.dataForm.account = supfnc.getHrefArg().account;
-                this.getAccountData();
+                this.getAccountData(0);
             },
             created(){
                 this.dataForm.open_area = this.cityList.reduce((a, e, i) => {
