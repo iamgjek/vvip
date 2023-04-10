@@ -462,7 +462,7 @@ class GetUserList(APIView):
                         'name': i.first_name,
                         'account': i.username,
                         'phone': i.phone,
-                        'open_area': i.open_area_str,
+                        'open_area': json.loads(i.open_area_str) if i.open_area_str else [],
                         'role': 2 if i.is_admin else 0 if i.is_manager else 1 if i.is_operator else None
                         })
 
