@@ -63,26 +63,26 @@
                 </div>
             </div>
             <div class="row mntable2" style="background:initial ;">
-            <table class="my-4 table table-bordered table4">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th v-for="title in titleOrder">(( titleTrans.getV(title, title) ))</th>
-                        <th>動作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(row, rowIdx) in dataBox">
-                        <td class="text-center">(( (nowPage-1) * onepageNum + rowIdx + 1 ))</td>
-                        <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
-                        <td class="text-center"><a :href="'/v_search/member_editac?account=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
-                    </td>
-                    <tr v-if="!dataBox.length">
-                        <td :colspan="titleOrder.length+2" class="text-center">無資料</td>
-                    </tr>
-                </tbody>
-            </table>
-           </div>
+                <table class="my-4 table table-bordered table4">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th v-for="title in titleOrder">(( titleTrans.getV(title, title) ))</th>
+                            <th>動作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(row, rowIdx) in dataBox">
+                            <td class="text-center">(( (nowPage-1) * onepageNum + rowIdx + 1 ))</td>
+                            <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
+                            <td class="text-center"><a :href="'/v_search/member_editac?account=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
+                        </td>
+                        <tr v-if="!dataBox.length">
+                            <td :colspan="titleOrder.length+2" class="text-center">無資料</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     {% endblock %}
@@ -93,13 +93,13 @@
             delimiters: ['((', '))'],
             data() {
                 return {
-                    titleOrder: ["name", "account", "phone"],
+                    titleOrder: ["name", "account", "phone", "open_area", "role"],
                     titleTrans: {
                         name: "名稱",
                         account: "帳號",
                         phone: "電話",
-                        // "開放地區"
-                        // "角色",
+                        open_area: "開放地區",
+                        role: "權限"
                     },
 
                     data:[],

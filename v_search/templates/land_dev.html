@@ -1482,6 +1482,13 @@
                 ms[0] = this.multipleSelect;
                 this.searchFormOrig = this.searchForm.duplicate();
                 setTimeout(() => T.setForm(0), 50);
+                new HTTPreq("/v_search/get_logo/").geta().then((rcv)=>{
+                    var res = supfnc.toJSON(rcv.result);
+                    if(res.open_area != "all") this.cityList = this.cityList.reduce((a, e) => {
+                        if(res.open_area.includes(e)) a.push(e);
+                        return a;
+                    }, []);
+                });
             },
             created(){},
             updated(){},

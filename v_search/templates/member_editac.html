@@ -70,75 +70,95 @@
             </nav>
             <div class="form1 row">
                 <h3 class="text-center h3bottom">編輯帳號</h3>
-                        <div class="width50">
-                            <div class="row">
-                                <div class="px-2 col">
-                                    <label>權限</label>
-                                    <div class="input-group mb-3">
-                                        <select class="form-select">
-                                            <option value="2" selected>主管</option>
-                                            <option value="3">專員</option>>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="px-2 col">
-                                    <label>帳號</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">                        
-                                <div class="px-2 col">
-                                    <label>密碼</label>
-                                    <div class="input-group mb-3">
-                                        <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
-                                    </div>
-                                </div>
-                                <div class="px-2 col">
-                                    <label>確認密碼</label>
-                                    <div class="input-group mb-3">
-                                        <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="hr"/>
-                            <div class="row">
-                                <div class="px-2 col">
-                                    <label>名稱</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="px-2 col">
-                                    <label>電話</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="px-2 col">
-                                    <label>開放地區</label>
-                                    <div class="input-group mb-3">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">開放地區</button>
-                                        <ul class="dropdown-menu">
-                                            <li v-for="(city, cityKey) in cityList" @click.stop>
-                                                <div class="dropdown-item">
-                                                    <input :id="'allowed' + cityKey" type="checkbox" v-model="dataForm.open_area[cityKey]">
-                                                    <label :for="'allowed' + cityKey" class="ms-2 w-100" role="button">(( city ))</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                <div class="width50">
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>權限</label>
+                            <div class="input-group mb-3">
+                                <select class="form-select">
+                                    <option value="2" selected>主管</option>
+                                    <option value="3">專員</option>>
+                                </select>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>帳號</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="帳號" v-model="dataForm.account" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">                        
+                        <div class="px-2 col">
+                            <label>密碼</label>
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" placeholder="密碼" v-password v-model="dataForm.password">
+                            </div>
+                        </div>
+                        <div class="px-2 col">
+                            <label>確認密碼</label>
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" placeholder="確認密碼" v-password v-model="dataForm.password2">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>名稱</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="密碼" v-model="dataForm.name">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>電話</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="確認密碼" v-model="dataForm.phone">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>權限</label>
+                            <div class="input-group mb-3">
+                                <select class="form-select" v-model="dataForm.role">
+                                    <option v-for="(roleTxt, role) in roles" :value="role">(( roleTxt ))</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>開放地區</label>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">開放地區</button>
+                                <ul class="dropdown-menu" style="max-height: 600px; overflow: hidden overlay;">
+                                    <li v-for="(city, cityKey) in cityList" @click.stop>
+                                        <div class="dropdown-item">
+                                            <input :id="'allowed' + cityKey" type="checkbox" v-model="dataForm.open_area[cityKey].checked" @click="getArea(cityKey)">
+                                            <label :for="'allowed' + cityKey" class="ms-2 w-100" role="button">(( city ))</label>
+                                        </div>
+                                        <div class="ms-4" v-if="dataForm.open_area[cityKey].checked">
+                                            <div class="dropdown-item">
+                                                <input id="allowedAllArea" type="checkbox" v-model="dataForm.open_area[cityKey].all">
+                                                <label for="allowedAllArea" class="ms-2 w-100" role="button">全區</label>
+                                            </div>
+                                            <div class="dropdown-item" v-for="(area, areaKey) in areaList[cityKey]">
+                                                <input :id="'allowed' + areaKey" type="checkbox" v-model="dataForm.open_area[cityKey][areaKey]">
+                                                <label :for="'allowed' + areaKey" class="ms-2 w-100" role="button">(( area ))</label>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="width70">
                     <button class="btn btn-primary btn003 width100 btnaa" @click="editAccount()">確認</button>
                     <button class="btn btn-danger float-end width101 btnaa" @click="delAccount()">刪除帳號</button>
@@ -155,6 +175,11 @@
             data() {
                 return {
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
+                    areaList: {},
+                    roles: {
+                        0: "管理員",
+                        1: "操作員",
+                    },
                     dataForm:{
                         account: "",
                         password: "",
@@ -162,6 +187,7 @@
                         name: "",
                         phone: "",
                         open_area: {},
+                        role: 0
                     }
                 }
             },
@@ -174,6 +200,17 @@
                         }
                     });
                 },
+                getArea(city){
+                    var T = this;
+                    if(!city || this.areaList[city]) return;
+                    new HTTPreq("/v_search/get_area/?city=" + city).geta().then((rcv) => {
+                        var res = supfnc.toJSON(rcv.result), data = {};
+                        for(var i in res){
+                            data[city + "_" + res[i].area_code] = res[i].area_name;
+                        }
+                        T.areaList[city] = data;
+                    });
+                },
                 getAccountData(auto = true){
                     if(!this.dataForm.account.length) {
                         Swal.fire("請輸入帳號", "", "error");
@@ -183,15 +220,41 @@
                     new HTTPreq("/users/get_user_info/", "fd").posta({account: this.dataForm.account}).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         if(res.status == "OK"){
-                            for(var i in res.data) T.dataForm[i] = res.data[i];
+                            for(var i in res.data) if(i != "open_area")T.dataForm[i] = res.data[i];
+                            res.data.open_area.forEach(e => {
+                                var [key, ...value] = e.split(";");
+                                console.log("key, value", key, value)
+                                var [city, area] = key.split("_");
+                                console.log("city, area", city, area)
+                                
+                                if(area){
+                                    T.dataForm.open_area[city][key] = 1
+                                }
+                                else{
+                                    T.dataForm.open_area[city].all = 1
+                                }
+                            });
                         }
                         if(!auto) Swal.fire(res.msg, "", "error");
                     });
                 },
                 editAccount(){
                     var T = this;
-                    this.dataForm.delete = false;
-                    new HTTPreq("/users/modify_user/", "fd").posta(this.dataForm).then(rcv => {
+                    var dataForm = this.dataForm.duplicate();
+                    dataForm.delete = false;
+                    dataForm.open_area = dataForm.open_area.reduce((a, e, i) => {
+                        if(e.all){
+                            a.push(`${ i };${ T.cityList[i] }`);
+                        }
+                        else{
+                            for(var area in e){
+                                if(["all", "checked"].includes(area)) continue;
+                                if(e[area]) a.push(`${ area };${ T.cityList[i] };${ T.areaList[i][area] }`);
+                            }
+                        }
+                        return a;
+                    }, []);
+                    new HTTPreq("/users/modify_user/", "fd").posta(dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         Swal.fire(res.msg, "", "success");
                     });
@@ -222,7 +285,12 @@
                 this.dataForm.account = supfnc.getHrefArg().account;
                 this.getAccountData();
             },
-            created(){},
+            created(){
+                this.dataForm.open_area = this.cityList.reduce((a, e, i) => {
+                    a[i] = {};
+                    return a;
+                }, {});
+            },
             updated(){},
             beforeUpdate(){},
         });
