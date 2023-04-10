@@ -42,19 +42,19 @@
                     <svg  class="svg5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z"></path></svg>
                 </a>
                 <ul id="usermenu" class="dropdown-menu dropdown-menu-end">
-                    <li class="d-none">
+                    <li class="">
                         <a href="/v_search/member_pw/" class="btn dropdown-item">
-                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;變更密碼
+                            變更密碼
                         </a>
                     </li>
-                    <li class="d-none tmp">
+                    <li class="tmp">
                         <a href="/v_search/member_aclist/" class="btn dropdown-item">
-                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;帳號管理
+                            帳號管理
                         </a>
                     </li>
                     <li>
                         <a href="#" id="buttonForLogout" class="btn dropdown-item" @click="logout()">
-                            <img src="/static/images/返回.png" style="width: 24px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登出
+                            登出
                         </a>
                     </li>
                 </ul>
@@ -71,6 +71,17 @@
             <div class="form1 row">
                 <h3 class="text-center h3bottom">編輯帳號</h3>
                         <div class="width50">
+                            <div class="row">
+                                <div class="px-2 col">
+                                    <label>權限</label>
+                                    <div class="input-group mb-3">
+                                        <select class="form-select">
+                                            <option value="2" selected>主管</option>
+                                            <option value="3">專員</option>>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="px-2 col">
                                     <label>帳號</label>
