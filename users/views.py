@@ -431,7 +431,7 @@ class GetUserList(APIView):
         result = {'status': 'NG'}
         try:
             role = check_role(request)
-            if role in [0, 1]:
+            if role in [0, 1, 2]:
                 company_account = self.username
                 sql = f'''SELECT c.id
                         FROM vvip.users_user a
@@ -456,6 +456,8 @@ class GetUserList(APIView):
                 users = User.objects.raw(sql)
                 data_list = []
                 for i in users:
+                    if company_account == i.username:
+                        continue
                     data_list.append({
                         'name': i.first_name,
                         'account': i.username,
@@ -708,7 +710,7 @@ class GetUserInfo(APIView):
                             'account': data.username,
                             'name': data.first_name,
                             'phone': data.phone,
-                            'open_area': cu_mapping.open_area_str,
+                            'open_area': json.loads(cu_mapping.open_area_str) if cu_mapping.open_area_str else [],
                             'role': 2 if cu_mapping.is_admin else 0 if cu_mapping.is_manager else 1 if cu_mapping.is_operator else None
                             }
 
