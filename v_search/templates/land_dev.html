@@ -538,30 +538,33 @@
                     
                     <div v-if="showResult">
                         <div class="a01">
-                        <ul class="nav nav-pills mb-3 p-tab" id="pills-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active sbtn1" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
-                                    aria-controls="pills-home" aria-selected="true">
-                                    <svg class="svg01" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
-                                        fill="#FFFFFF">
-                                        <path d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                    </svg>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link sbtn2" id="pills-profile-tabs" data-toggle="pill" href="#pills-profile" role="tab"
-                                    aria-controls="pills-profile" aria-selected="false">
-                                    <svg class="svg02" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
-                                        fill="#FFFFFF">
-                                        <path d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="p-tab mb-3">
+                            <button class="btn btn-primary align-top mr-2" @click="markRank()">等級標示</button>
+                            <ul class="nav nav-pills m-0 d-inline-flex" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active sbtn1" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                                        aria-controls="pills-home" aria-selected="true">
+                                        <svg class="svg01" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                                            fill="#FFFFFF">
+                                            <path d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link sbtn2" id="pills-profile-tabs" data-toggle="pill" href="#pills-profile" role="tab"
+                                        aria-controls="pills-profile" aria-selected="false">
+                                        <svg class="svg02" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"
+                                            fill="#FFFFFF">
+                                            <path d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                         <div class="h3" style="width: calc(100% - 150px);">
                             <template v-for="(op, opIdx) in getSearchOptionsList">
                                 <span class="grey" v-if="opIdx">+</span> (( op ))
@@ -574,7 +577,9 @@
                                     <table  id="mytable" cellspacing="0" class=" table1 ttable table-bordered table-fixed-header">
                                         <thead class="header">
                                             <tr>
-                                                <th role="button" @click="sortf($event, searchRes, '0.city_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">縣市</th>
+                                                <th role="button" scope="col" nowrap="nowrap" style="white-space:nowrap;" class="br1">勾選</th>
+                                                <th role="button" @click="sortf($event, searchRes, '0.rank')" scope="col" nowrap="nowrap" style="white-space:nowrap;">等級</th>
+                                                <th role="button" @click="sortf($event, searchRes, '0.city_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">縣市</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.area_name')" scope="col"  nowrap="nowrap" style="white-space:nowrap;">行政區</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.region_name')" scope="col" nowrap="nowrap" style="white-space:nowrap;">段小段</th>
                                                 <th role="button" @click="sortf($event, searchRes, '0.lno')" scope="col" nowrap="nowrap" style="white-space:nowrap;">地號</th>
@@ -610,6 +615,12 @@
                                             </tr>
                                             <template v-for="(data, dataIdx) in searchResBox" class="tablebg1">
                                                 <tr data-node="treetable-1">
+                                                    <td class="td-left" data="勾選" nowrap="nowrap" style="white-space:nowrap;">
+                                                        <input type="checkbox" v-model="data[0].checked" v-if="data[0]">
+                                                    </td>
+                                                    <td class="td-left" data="等級" nowrap="nowrap" style="white-space:nowrap;">
+                                                        <p>(( data?.[0]?.rank || '' ))</p>
+                                                    </td>
                                                     <td class="td-left" data="縣市" nowrap="nowrap" style="white-space:nowrap;">
                                                         <p>(( data?.[0]?.city_name || '(空白)' ))</p>
                                                     </td>
@@ -1476,6 +1487,48 @@
                         }
                     }
                 },
+                markRank(){
+                    var T = this;
+                    Swal.fire({
+                        title: "選擇等級",
+                        input: 'select',
+                        inputOptions: {
+                            A: "A",
+                            B: "B",
+                            C: "C",
+                            0: "清除"
+                        },
+                        inputPlaceholder: "設定等級",
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (!value) {
+                                    resolve('請選擇一個')
+                                }
+                                else resolve();
+                            })
+                        }
+                    }).then(({ value: rank }) => {
+                        var lbkey_list = [];
+                        var changed = [];
+                        for(var i in T.searchRes){
+                            if(T.searchRes[i][0].checked){
+                                changed.push(T.searchRes[i][0])
+                                lbkey_list.push(T.searchRes[i][0].lbkey);
+                            }
+                        }
+                        new HTTPreq("/v_search/set_lbkey_rank/", "fd").posta({lbkey_list, rank: rank}).then(rcv => {
+                            var res = supfnc.toJSON(rcv.result);
+                            if(res.status == "OK"){
+                                for(var i in changed){
+                                    changed[i].checked = false;
+                                    changed[i].rank = rank;
+                                }
+                            }
+                            else Swal.fire(res.msg)
+                        });
+                    });
+                }
             },
             mounted(){
                 var T = this;
@@ -1539,12 +1592,6 @@
                 }
             }
         });
-
-        // test
-        // new HTTPreq("/v_search/get_search_responseV3/", "fd").setHeaders({'Authorization': 'token a021bd4735ebec44a3564cea9390d91aadfdabff'}).posta({lbtype: "L", searchForm: vm.searchForm, fake_data: true}).then((rcv) => {
-        //     var res = supfnc.toJSON(rcv.result);
-        //     console.log(res);
-        // });
     </script>
     <script>
         function get_pol(type, value) {

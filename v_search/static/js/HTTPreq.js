@@ -12,6 +12,7 @@ class HTTPreq{
     }
 
     async posta(data){
+        console.log(data)
         this.sendReq("POST", data);
         await this.returnValue();
         return this;
