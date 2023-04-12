@@ -456,6 +456,8 @@ class GetUserList(APIView):
                 users = User.objects.raw(sql)
                 data_list = []
                 for i in users:
+                    if role == 2 and i.is_manager:
+                        continue
                     if company_account == i.username:
                         continue
                     data_list.append({
