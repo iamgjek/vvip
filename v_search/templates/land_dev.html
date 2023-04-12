@@ -1522,7 +1522,7 @@
                             if(res.status == "OK"){
                                 for(var i in changed){
                                     changed[i].checked = false;
-                                    changed[i].rank = rank;
+                                    changed[i].rank = rank == "0" ? "" : rank;
                                 }
                             }
                             else Swal.fire(res.msg)

@@ -77,10 +77,10 @@
                         <div class="px-2 col">
                             <label>權限</label>
                             <div class="input-group mb-3">
-                                <select class="form-select">
-                                    <option selected>請選擇權限</option>
-                                    <option value="2">主管</option>
-                                    <option value="3">專員</option>>
+                                <select class="form-select" v-model="dataForm.role">
+                                    <option>請選擇權限</option>
+                                    <option value="0">主管</option>
+                                    <option value="1">專員</option>
                                 </select>
                             </div>
                         </div>
@@ -124,6 +124,33 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="px-2 col">
+                            <label>開放地區</label>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">開放地區</button>
+                                <ul class="dropdown-menu" style="max-height: 600px; overflow: hidden overlay;">
+                                    <li v-for="(city, cityKey) in cityList" @click.stop>
+                                        <div class="dropdown-item">
+                                            <input :id="'allowed' + cityKey" type="checkbox" v-model="dataForm.open_area[cityKey].checked" @click="getArea(cityKey)">
+                                            <label :for="'allowed' + cityKey" class="ms-2 w-100" role="button">(( city ))</label>
+                                        </div>
+                                        <div class="ms-4" v-if="dataForm.open_area[cityKey].checked">
+                                            <div class="dropdown-item">
+                                                <input id="allowedAllArea" type="checkbox" v-model="dataForm.open_area[cityKey].all">
+                                                <label for="allowedAllArea" class="ms-2 w-100" role="button">全區</label>
+                                            </div>
+                                            <div class="dropdown-item" v-for="(area, areaKey) in areaList[cityKey]">
+                                                <input :id="'allowed' + areaKey" type="checkbox" v-model="dataForm.open_area[cityKey][areaKey]">
+                                                <label :for="'allowed' + areaKey" class="ms-2 w-100" role="button">(( area ))</label>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-inline-block width80">
                         <button class="btn btn-primary btn003 width102 btnaa" @click="addAccount()">確認</button>
                     </div>
@@ -145,6 +172,8 @@
                         password2: "",
                         name: "",
                         phone: "",
+                        open_area: {},
+                        role: 0
                     }
                 }
             },
@@ -157,9 +186,34 @@
                         }
                     });
                 },
+                getArea(city){
+                    var T = this;
+                    if(!city || this.areaList[city]) return;
+                    new HTTPreq("/v_search/get_area/?city=" + city).geta().then((rcv) => {
+                        var res = supfnc.toJSON(rcv.result), data = {};
+                        for(var i in res){
+                            data[city + "_" + res[i].area_code] = res[i].area_name;
+                        }
+                        T.areaList[city] = data;
+                    });
+                },
                 addAccount(){
                     var T = this;
-                    new HTTPreq("/users/add_user/", "fd").posta(this.dataForm).then(rcv => {
+                    var dataForm = this.dataForm.duplicate();
+                    dataForm.delete = false;
+                    dataForm.open_area = dataForm.open_area.reduce((a, e, i) => {
+                        if(e.all){
+                            a.push(`${ i };${ T.cityList[i] }`);
+                        }
+                        else{
+                            for(var area in e){
+                                if(["all", "checked"].includes(area)) continue;
+                                if(e[area]) a.push(`${ area };${ T.cityList[i] };${ T.areaList[i][area] }`);
+                            }
+                        }
+                        return a;
+                    }, []);
+                    new HTTPreq("/users/add_user/", "fd").posta(dataForm).then(rcv => {
                         var res = supfnc.toJSON(rcv.result);
                         Swal.fire(res.msg, "", "success");
                     });
