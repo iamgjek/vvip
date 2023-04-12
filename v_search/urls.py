@@ -5,7 +5,7 @@ from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
                                    SpectacularSwaggerView)
 from rest_framework import routers
 
-from v_search import views
+from v_search import views, views2
 
 urlpatterns = [
     re_path(r'^login/$', views.LoginView.as_view(), name='login'),
@@ -34,4 +34,7 @@ urlpatterns = [
     re_path(r'pdf_download/(?P<token>[0-9a-zA-Z_-]+)/$', views.TranscriptDownloadView.as_view(), name='pdf_download'),
     #* 設定地建號等級
     re_path(r'set_lbkey_rank/$', views.SetLBkeyRankView.as_view(), name='set_lbkey_rank'),
+    #* 取得範圍內實價資料
+    re_path(r'get_recno_range/$', views2.GetRecnoRangeView.as_view(), name='get_recno_range'),
+    
 ]
