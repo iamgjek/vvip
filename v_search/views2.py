@@ -38,7 +38,7 @@ class GetRecnoRangeView(View):
             lon = float(lon)
             lat = float(lat)
             dis = int(dis) * 0.00001
-            sql = f'''SELECT *, (ST_Distance(POINT({lon},{lat}) ,point) * 100000) as distance
+            sql = f'''SELECT *, ST_AsGeoJSON(point) as point, (ST_Distance(POINT({lon},{lat}) ,point) * 100000) as distance
                         FROM diablo.lvr_land_recnolist
                         where point is not null and (ST_Distance(POINT({lon},{lat}), point)) <= {dis}
                         order by distance
