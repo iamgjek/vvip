@@ -235,6 +235,7 @@
                     var dataForm = this.dataForm.duplicate();
                     dataForm.delete = false;
                     dataForm.open_area = dataForm.open_area.reduce((a, e, i) => {
+                        if(!e.checked) return a;
                         if(e.all){
                             a.push(`${ i };${ T.cityList[i] }`);
                         }
