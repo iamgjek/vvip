@@ -604,7 +604,7 @@ class ModifyUser(APIView):
                 password = params.get('password', None)
                 password2 = params.get('password2', None)
                 phone = params.get('phone', None)
-                delete = params.get('state', 'false')
+                delete = params.get('delete', 'false')
                 delete = json.loads(delete)
                 open_area = params.get('open_area', None)
                 role = params.get('role', None)
