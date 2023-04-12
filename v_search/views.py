@@ -373,7 +373,7 @@ class GetPlanNameView(APIView):
                     FROM diablo.t_search_landdevelopementlkeyslist T1 LEFT JOIN diablo.t_search_landdevelopementlist T2 on T1.plan_id = T2.plan_id \
                     WHERE T2.valid =1 and lbkey LIKE '{area}%' \
                     "
-            print(sql)
+            # print(sql)
             res, col = get_dba(sql_cmd=sql, db_name=DB_NAME)
             data_df = pd.DataFrame(res)
             if data_df.empty:
@@ -754,7 +754,7 @@ class GetSearchResponseV3View(APIView):
 
                     #! 附加實價資料
                     lbkey_str = "'" + "','".join(lbkey_list) + "'"
-                    sql = f'''SELECT rec_no, tr_year_month, total_dollar, unit_price, total_area, towers, remarks, lbkey
+                    sql = f'''SELECT rec_no, tr_year_month, total_dollar, unit_price, total_area, towers, remarks, lbkey, longitude, latitude
                             FROM diablo.lvr_land_recnolist
                             WHERE lbkey in ({lbkey_str}) order by tr_year_month_AD desc
                             '''
@@ -767,13 +767,17 @@ class GetSearchResponseV3View(APIView):
                         total_area = recno['total_area'] if recno['total_area'] else None
                         towers = recno['towers'] if recno['towers'] else None
                         remark = recno['remarks'] if recno['remarks'] else None
+                        lon = recno['longitude'] if recno['longitude'] and int(recno['longitude']) != 0 else None
+                        lat = recno['latitude'] if recno['latitude'] and int(recno['latitude']) != 0 else None
                         recno_data = {
                                     'tr_year_month': tr_year_month[:3] + '/' + tr_year_month[3:5] + '/' + tr_year_month[5:] if tr_year_month else None,
                                     'total_price': total_price,
                                     'single_price': single_price,
                                     'total_area': total_area,
                                     'towers': towers,
-                                    'remark': remark
+                                    'remark': remark,
+                                    'lon': lon,
+                                    'lat': lat
                                     }
                         if lbkey in lbkey_recnolist_dict:
                             lbkey_recnolist_dict[lbkey].append(recno_data)
