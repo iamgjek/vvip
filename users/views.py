@@ -463,7 +463,7 @@ class GetUserList(APIView):
                         'account': i.username,
                         'phone': i.phone,
                         'open_area': json.loads(i.open_area_str) if i.open_area_str else [],
-                        'role': 2 if i.is_admin else 0 if i.is_manager else 1 if i.is_operator else None
+                        'role': 1 if i.is_admin else 2 if i.is_manager else 3 if i.is_operator else None
                         })
 
                 result['status'] = 'OK'
@@ -522,6 +522,9 @@ class AddUser(APIView):
                     result['msg'] = '帳號不能為空'
                     return result
                 role = int(role)
+                if not role in [2, 3]:
+                    result['msg'] = '無此角色，請重選'
+                    return result
                 open_area_code = [i.split(';')[0] for i in json.loads(open_area)] if open_area else None
 
                 #* 檢查密碼
@@ -552,9 +555,9 @@ class AddUser(APIView):
                     except:
                         result['msg'] = '已存在此帳號'
                         return result
-                    if role == 0:
+                    if role == 2:
                         CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, open_area_code=open_area_code, is_manager=1)
-                    else:
+                    elif role == 3:
                         CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, open_area_code=open_area_code, is_operator=1)
 
                 result['status'] = 'OK'
@@ -605,6 +608,10 @@ class ModifyUser(APIView):
                 delete = json.loads(delete)
                 open_area = params.get('open_area', None)
                 role = params.get('role', None)
+                role = int(role)
+                if not role in [2, 3]:
+                    result['msg'] = '無此角色，請重選'
+                    return result
                 open_area_code = [i.split(';')[0] for i in json.loads(open_area)] if open_area else None
 
                 #* 檢查密碼
@@ -651,11 +658,11 @@ class ModifyUser(APIView):
                         if check_user and role != o_role:
                             result['msg'] = '不能改自己角色'
                             return result
-                        if role == 0:
+                        if role == 2:
                             i.is_admin = 0
                             i.is_manager = 1
                             i.is_operator = 0
-                        elif role == 1:
+                        elif role == 3:
                             i.is_admin = 0
                             i.is_manager = 0
                             i.is_operator = 1
@@ -711,7 +718,7 @@ class GetUserInfo(APIView):
                             'name': data.first_name,
                             'phone': data.phone,
                             'open_area': json.loads(cu_mapping.open_area_str) if cu_mapping.open_area_str else [],
-                            'role': 2 if cu_mapping.is_admin else 0 if cu_mapping.is_manager else 1 if cu_mapping.is_operator else None
+                            'role': 1 if cu_mapping.is_admin else 2 if cu_mapping.is_manager else 3 if cu_mapping.is_operator else None
                             }
 
                 result['status'] = 'OK'
