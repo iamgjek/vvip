@@ -1537,10 +1537,10 @@
                 setTimeout(() => T.setForm(0), 50);
                 new HTTPreq("/v_search/get_logo/").geta().then((rcv)=>{
                     var res = supfnc.toJSON(rcv.result);
-                    if(res.open_area != "all") this.cityList = this.cityList.reduce((a, e) => {
-                        if(res.open_area.includes(e)) a.push(e);
+                    if(res.open_area != "all") this.cityList = this.cityList.reduce((a, e, i) => {
+                        if(res.open_area.includes(i)) a[i] = e;
                         return a;
-                    }, []);
+                    }, {});
                 });
             },
             created(){},
