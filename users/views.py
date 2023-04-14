@@ -557,7 +557,6 @@ class AddUser(APIView):
                     except:
                         result['msg'] = '已存在此帳號'
                         return result
-                    open_area = json.dumps(open_area, ensure_ascii=False)
                     open_area_code = json.dumps(open_area_code, ensure_ascii=False)
                     if role == 2:
                         CompanyUserMapping.objects.create(user=user, company=company, open_area_str=open_area, open_area_code=open_area_code, is_manager=1)
