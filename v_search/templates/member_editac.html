@@ -167,8 +167,8 @@
                     cityList: { "A": "臺北市", "C": "基隆市", "F": "新北市", "H": "桃園市", "O": "新竹市", "J": "新竹縣", "B": "臺中市", "K": "苗栗縣", "N": "彰化縣", "M": "南投縣", "P": "雲林縣", "D": "臺南市", "E": "高雄市", "I": "嘉義市", "Q": "嘉義縣", "T": "屏東縣", "G": "宜蘭縣", "U": "花蓮縣", "V": "臺東縣",/* "X": "澎湖縣", "W": "金門縣", "Z": "連江縣" */},
                     areaList: {},
                     roles: {
-                        0: "管理員",
-                        1: "操作員",
+                        2: "管理員",
+                        3: "操作員",
                     },
                     dataForm:{
                         account: "",
@@ -177,7 +177,7 @@
                         name: "",
                         phone: "",
                         open_area: {},
-                        role: 0
+                        role: 3
                     }
                 }
             },
@@ -277,6 +277,14 @@
             mounted(){
                 this.dataForm.account = supfnc.getHrefArg().account;
                 this.getAccountData(0);
+
+                new HTTPreq("/v_search/get_logo/").geta().then((rcv)=>{
+                    var res = supfnc.toJSON(rcv.result);
+                    if(res.open_area != "all") this.cityList = this.cityList.reduce((a, e, i) => {
+                        if(res.open_area.includes(i)) a[i] = e;
+                        return a;
+                    }, {});
+                });
             },
             created(){
                 this.dataForm.open_area = this.cityList.reduce((a, e, i) => {
