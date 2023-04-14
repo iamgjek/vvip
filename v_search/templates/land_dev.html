@@ -597,7 +597,7 @@
                                         </thead>
                                         <tbody class="table-body">
                                             <tr class="tab-content" v-if="loading">
-                                                <td class="p-4" colspan="14">
+                                                <td class="p-4" colspan="16">
                                                     <div class="loadingData">
                                                         <span></span>
                                                         <span></span>
@@ -607,7 +607,7 @@
                                                 </td>
                                             </tr>
                                             <tr class="tab-content" v-else-if="!searchResBox.length">
-                                                <td class="p-4" colspan="14">
+                                                <td class="p-4" colspan="16">
                                                     <img style="height:217px;" src="/static/images/nodata.svg">
                                                     <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
                                                     <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
@@ -774,7 +774,7 @@
                                                 </td>
                                             </tr>
                                             <tr class="tab-content" v-else-if="!person_searchResBox.length">
-                                                <td class="p-4" colspan="14">
+                                                <td class="p-4" colspan="10">
                                                     <img style="height:217px;" src="/static/images/nodata.svg">
                                                     <h6 style="position: relative; margin-top: 3rem;" v-if="serverError">資料筆數過多，請縮小範圍重新查詢！</h6>
                                                     <h6 style="position: relative; margin-top: 3rem;" v-else>查無資料</h6>
@@ -857,7 +857,7 @@
                                                                     </td>
                                                                 </tr>
                                                                 <tr v-if="!data.personal_property && data?.[0]?.owner_type != '公法人'">
-                                                                    <td colspan="14" class="text-left">
+                                                                    <td colspan="16" class="text-left">
                                                                         <button class="btn btn-sm btn-primary" @click="personal_property(data.key, dataIdx)">查詢總歸戶</button>
                                                                     </td>
                                                                 </tr>
