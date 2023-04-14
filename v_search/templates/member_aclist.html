@@ -68,6 +68,8 @@
                         <tr>
                             <th>#</th>
                             <th v-for="title in titleOrder">(( titleTrans.getV(title, title) ))</th>
+                            <th>開放地區</th>
+                            <th>權限</th>
                             <th>動作</th>
                         </tr>
                     </thead>
@@ -75,6 +77,10 @@
                         <tr v-for="(row, rowIdx) in dataBox">
                             <td class="text-center">(( (nowPage-1) * onepageNum + rowIdx + 1 ))</td>
                             <td class="text-center" v-for="title in titleOrder">(( row.getV(title, '--') ))</td>
+                            <td class="text-center">
+                                <p class="mx-1" v-for="area in row.open_area">(( area.split(";").slice(1).join(" ") ))</p>
+                            </td>
+                            <td class="text-center">(( roles[row.role] ))</td>
                             <td class="text-center"><a :href="'/v_search/member_editac?account=' + row.account"><button class="btn btn-outline-secondary">編輯</button></a></th>
                         </td>
                         <tr v-if="!dataBox.length">
@@ -93,13 +99,17 @@
             delimiters: ['((', '))'],
             data() {
                 return {
-                    titleOrder: ["name", "account", "phone", "open_area", "role"],
+                    titleOrder: ["name", "account", "phone"],
                     titleTrans: {
                         name: "名稱",
                         account: "帳號",
                         phone: "電話",
                         open_area: "開放地區",
                         role: "權限"
+                    },
+                    roles: {
+                        2: "管理員",
+                        3: "操作員",
                     },
 
                     data:[],
@@ -160,6 +170,9 @@
                         this.selectPage(this.nowPage, oV);
                     }
                 },
+            },
+            computed:{
+
             }
         });
     </script>
