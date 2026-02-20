@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from cloghandler import ConcurrentRotatingFileHandler
+try:
+    from cloghandler import ConcurrentRotatingFileHandler
+except ImportError:
+    ConcurrentRotatingFileHandler = None  # 使用標準 RotatingFileHandler 作為 fallback
 import ast
 import os
 from pathlib import Path
@@ -269,7 +272,7 @@ LOGGING = {
         },
         'file': {
             'level': LOG_LEVEL,
-            'class': 'logging.handlers.ConcurrentRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler' if ConcurrentRotatingFileHandler is None else 'cloghandler.ConcurrentRotatingFileHandler',  # noqa: E501
             'filename': LOG_PATH,
             'maxBytes': 1024*1024*10,
             'backupCount': 10,
